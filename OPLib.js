@@ -123,7 +123,7 @@ var oplib = (function() {
                     //1 Leerzeichen nach einer Klasse
                     var end = /\s*$/;
                     classAttr = classAttr.replace(end, " " + name);
-                    OPLib(this).addAttr("class", classAttr);
+                    OPLib(this).attr("class", classAttr);
                 }
             }, [name]);
 
@@ -138,7 +138,7 @@ var oplib = (function() {
                     //1 Leerzeichen nach einer Klasse
                     var replace = new RegExp("[ ]*" + name, "g");
                     classAttr = classAttr.replace(replace, "");
-                    OPLib(this).setAttr("class", classAttr);
+                    OPLib(this).attr("class", classAttr);
                 }
             }, [name]);
         },
@@ -153,10 +153,68 @@ var oplib = (function() {
                 return this.getAttr("class").search(name) != -1 ? true : false;
             }
         },
-        css: function(name) {
-            
+        //TODO
+        css: function(name, value) {
+            //Eigenschaften als Object übergeben
+            if ( typeof name === "object") {
+                //Array ohne Eigenschaften - EIGENSCHAFTEN AUSLESEN
+                if (name.length != undefined) {
+                    var obj = {};
+                    for (var i = 0; i < name.length; i++) {
+                        obj[i] = this[0]["style"][name[i]];
+                    }
+                    return obj;
+                }
+                //Object mit Eigenschaften - CSS SETZEN
+                else {
+                    for (var i in name) {
+                        this.each(this, function(name, value) {
+                            this["style"][i] = value;
+                        }, [i, name[i]]);
+                    }
+                }
+
+            }
+            //Kein Wert übergeben -> WERT AUSLESEN
+            else if (!value) {
+                return this[0]["style"][name];
+            }
+            //Name und Wert übergeben -> CSS SETZEN
+            else {
+                return this.each(this, function(name, value) {
+                    this["style"][name] = value;
+                }, [name, value]);
+            }
+            return this;
+        },
+        removeCss: function(name) {
+            //Mehrere Css Werte löschen
+            if ( typeof name === "object") {
+                //Als Array angegeben
+                if (name.length != undefined) {
+                    for (var i = 0; i < name.length; i++) {
+                        this.each(this, function(name) {
+                            delete this["style"][name];
+                        }, [name[i]]);
+                    }
+                }
+                //Als Object angegeben
+                else {
+                    for (var i in name) {
+                        this.each(this, function(name) {
+                            delete this["style"][name];
+                        }, [i]);
+                    }
+                }
+            }
+            //Nur ein Css Wert löschen
+            else {
+                return this.each(this, function(name) {
+                    delete this["style"][name];
+                }, [name]);
+            }
+            return this;
         }
-        
     };
 
     //Objecte zusammenführen
@@ -325,7 +383,12 @@ var oplib = (function() {
         //TODO Regexausdrücke und Abfragen hinzufügen
         return elems;
     };
-
+    
+    //Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor") entsprechend anpassen
+    oplib.fn.finalizeCssExpressions = function() {
+        //TODO
+    };
+    
     //Object erweitern
     oplib.fn.extend(Object.prototype, {
         compare: function(obj1, obj2) {
