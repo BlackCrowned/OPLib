@@ -20,7 +20,7 @@ var oplib = (function() {
             return this;
         },
         //Attribut setzen
-        setAttr: function(name, property) {
+        addAttr: function(name, property) {
             //Wurde ein Object mit den Attributen übergeben?
             if ( typeof name === "object") {
                 for (var i in name) {
@@ -114,7 +114,7 @@ var oplib = (function() {
             }
         },
         //Klasse hinzufügen
-        setClass: function(name) {
+        addClass: function(name) {
             return this.each(this, function(name) {
                 var classAttr = OPLib(this).getAttr("class");
                 var regex = new RegExp(name);
