@@ -7,28 +7,111 @@ var oplib = (function() {
     };
 
     oplib.fn = oplib.prototype = {
-        constructor : oplib,
+        constructor: oplib,
         //Elemente auswählen
-        Init : function(selector, context) {
+        Init: function(selector, context) {
             //Ausgewählte Elemente zuweisen
-            this.elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.fn.ElementSelection(selector, context);
+            for (var i = 0; i < elems.length; i++) {
+                this[i] = elems[i];
+            }
+            this.length = elems.length;
 
-            this.context = undefined;
-            this.length = undefined;
             return this;
         },
-        attr : function(type, name, property) {
-            var args = {};
-            
-            /*
-             * TYPE: 1 == "set" "add"
-             * TYPE: 2 == "remove" "delete"
-             * TYPE: 3 == "get"
-             */
-            //TODO
-            oplib.fn.each(this, function(elem) {
+        //Attribut setzen
+        setAttr: function(name, property) {
+            //Wurde ein Object mit den Attributen übergeben?
+            if ( typeof name === "object") {
+                for (var i in name) {
+                    //Attribute setzen
+                    this.each(this, function(name, prop) {
+                        this.setAttribute(name, prop);
+                    }, [i, name[i]]);
+                }
+            }
+            //Es wurde ein einzelnes Attribut übergeben
+            else {
+                //Attribut setzen
+                this.each(this, function(name, prop) {
+                    this.setAttribute(name, prop);
+                }, [name, property]);
+            }
+            return this;
+        },
+        //Attribut entfernen
+        removeAttr: function(name) {
+            //Wurde ein Object mit den Attributen übergeben?
+            if ( typeof name === "object") {
+                if (name.length != undefined) {
+                    for (var i = 0; i < name.length; i++) {
+                        //Attribute entfernen
+                        this.each(this, function(name) {
+                            this.removeAttribute(name);
+                        }, [name[i]]);
+                    }
+                }
+                else {
+                    for (var i in name) {
+                        //Attribute entfernen
+                        this.each(this, function(name) {
+                            this.removeAttribute(name);
+                        }, [i, name[i]]);
+                    }
+                }
 
-            }, this.elems);
+            }
+            //Es wurde ein einzelnes Attribut übergeben
+            else {
+                //Attribut entfernen
+                this.each(this, function(name) {
+                    this.removeAttribute(name);
+                }, [name]);
+            }
+            return this;
+        },
+        //Attribut abfragen
+        getAttr: function(name) {
+            //Wurde ein Object mit den Attributen übergeben?
+            if ( typeof name === "object") {
+                this.attributes = {};
+
+                if (name.length != undefined) {
+                    for (var i = 0; i < name.length; i++) {
+                        //Attribute übergeben
+                        attributes[i] = this[0].getAttribute(i);
+                    }
+                }
+                else {
+                    for (var i in name) {
+                        //Attribute übergeben
+                        attributes[i] = this[0].getAttribute(i);
+                    }
+                }
+                return attributes;
+
+            }
+            //Es wurde ein einzelnes Attribut übergeben
+            else {
+                //Attribut übergeben
+                return this[0].getAttribute(name);
+            }
+        },
+        //Attribute
+        attr: function(type, name, property) {
+            if (type == "set" || type == "add") {
+                return this.setAttr(name, property);
+            }
+            else if (type == "remove" || type == "delete") {
+                return this.removeAttr(name);
+            }
+            else if (type == "get") {
+                return this.getAttr(name);
+            }
+            else {
+                console.log(".attr(): unknown type!");
+                return this;
+            }
         }
     };
 
@@ -55,6 +138,24 @@ var oplib = (function() {
         //Objecte zusammenführen und zurückgeben
         return this.merge(obj, probs);
 
+    };
+
+    //Funktion in einem bestimmten Context mit verschiedenen Argumenten ausführen
+    oplib.fn.each = function(obj, fn, args) {
+        //Alle Argument für die Funktion durchgehen
+        if (obj.length != undefined) {
+            for (var i = 0; i < obj.length; i++) {
+                fn.apply(obj[i], args);
+            }
+
+        }
+        else {
+            for (var i in obj) {
+                //Funktion mit Argumenten in verschiedenen Contexten ausführen
+                fn.apply(i, args);
+            }
+        }
+        return obj;
     };
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
@@ -164,7 +265,8 @@ var oplib = (function() {
                 else {
                     _selector = "";
                 }
-                //Elemente die auf selector passen in wählen, kann nur im gesamten document gewählt werden
+                //Elemente die auf selector passen in wählen, kann nur im
+                // gesamten document gewählt werden
                 elems.push(document.getElementById(selector));
 
                 if (_selector != "") {
@@ -182,19 +284,11 @@ var oplib = (function() {
         return elems;
     };
 
-    //Funktion in einem bestimmten Context mit verschiedenen Argumenten ausführen
-    oplib.fn.each = function(context, fn, args) {
-        //Alle Argument für die Funktion durchgehen
-        for (var i in args) {
-            //Funktion mit Argument[i] im Context ausführen
-            fn.apply(context, args[i]);
-        }
-    };
-
     //Object erweitern
     oplib.fn.extend(Object.prototype, {
-        compare : function(obj1, obj2) {
-            //Nur ein Argument angegeben? -> Dieses Object mit Argument vergleichen
+        compare: function(obj1, obj2) {
+            //Nur ein Argument angegeben? -> Dieses Object mit Argument
+            // vergleichen
             if (arguments.length == 1) {
                 obj2 = arguments[0];
                 obj1 = this;
@@ -225,15 +319,16 @@ var oplib = (function() {
             return newObj;
         },
         //Merge für alle Obejects freigeben
-        merge : oplib.fn.merge,
+        merge: oplib.fn.merge,
         //Extend für alle Objecte freigeben
-        extend : oplib.fn.extend
+        extend: oplib.fn.extend
     });
 
     //Array erweitern
     oplib.fn.extend(Array.prototype, {
-        sameElements : function(arr1, arr2) {
-            //Nur ein Argument angegeben? -> Dieses Object mit Argument vergleichen
+        sameElements: function(arr1, arr2) {
+            //Nur ein Argument angegeben? -> Dieses Object mit Argument
+            // vergleichen
             if (arguments.length == 1) {
                 arr2 = arguments[0];
                 arr1 = this;
@@ -258,23 +353,23 @@ var oplib = (function() {
                 for (var i = 0; i < newArr.length; i++) {
                     //Neue Elemente dem eigenen Array zuweisen
                     this.push(newArr[i]);
-                    
+
                 }
             }
             return newArr;
         }
     });
 
-//Debugging Console - Bugfix for IE
+    //Debugging Console - Bugfix for IE
     if (!window.console) {
         window.console = {
             //Erstellt leere Funktion um IE-Crash zu verhindern
-            log : function() {
+            log: function() {
             }
         };
-        
+
     }
-    
+
     window._OPLib = window.OPLib;
     window._$ = window.$;
     window.OPLib = oplib;
