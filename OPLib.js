@@ -20,7 +20,7 @@ var oplib = (function() {
             return this;
         },
         //Attribut setzen
-        addAttr: function(name, property) {
+        attr: function(name, property) {
             //Wurde ein Object mit den Attributen übergeben?
             if ( typeof name === "object") {
                 for (var i in name) {
@@ -70,7 +70,7 @@ var oplib = (function() {
             }
             return this;
         },
-        //Attribut abfragen
+        //Attribut abfragen - DEPRECATED
         getAttr: function(name) {
             //Wurde ein Object mit den Attributen übergeben?
             if ( typeof name === "object") {
@@ -97,8 +97,8 @@ var oplib = (function() {
                 return this[0].getAttribute(name);
             }
         },
-        //Attribute
-        attr: function(type, name, property) {
+        //Attribute - DEPRECATED
+        _attr: function(type, name, property) {
             if (type == "set" || type == "add") {
                 return this.setAttr(name, property);
             }
@@ -123,7 +123,7 @@ var oplib = (function() {
                     //1 Leerzeichen nach einer Klasse
                     var end = /\s*$/;
                     classAttr = classAttr.replace(end, " " + name);
-                    OPLib(this).setAttr("class", classAttr);
+                    OPLib(this).addAttr("class", classAttr);
                 }
             }, [name]);
 
@@ -143,7 +143,7 @@ var oplib = (function() {
             }, [name]);
         },
         //Klasse übeprüfen / zurückgeben
-        getClass: function(name) {
+        hasClass: function(name) {
             //Keine Klasse angegeben: alle Klassen zurückgeben
             if (!name) {
                 return this.getAttr("class").split(" ");
@@ -152,7 +152,11 @@ var oplib = (function() {
             else {
                 return this.getAttr("class").search(name) != -1 ? true : false;
             }
+        },
+        css: function(name) {
+            
         }
+        
     };
 
     //Objecte zusammenführen
