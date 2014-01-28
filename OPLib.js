@@ -216,8 +216,6 @@ var oplib = (function() {
         context = oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(context);
         //Gewählte Elemente zuweisen
         elems = oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(selector, context);
-        //Console Log
-        console.log("Selected: " + elems + " in " + context);
         //Ausgewählte Elemente zurückgeben
         return elems;
     };
