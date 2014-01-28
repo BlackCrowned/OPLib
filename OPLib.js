@@ -112,6 +112,46 @@ var oplib = (function() {
                 console.log(".attr(): unknown type!");
                 return this;
             }
+        },
+        //Klasse hinzufügen
+        setClass: function(name) {
+            return this.each(this, function(name) {
+                var classAttr = OPLib(this).getAttr("class");
+                var regex = new RegExp(name);
+                //Ist die Klasse bereits gesetzt?
+                if (!regex.test(classAttr)) {
+                    //1 Leerzeichen nach einer Klasse
+                    var end = /\s*$/;
+                    classAttr = classAttr.replace(end, " " + name);
+                    OPLib(this).setAttr("class", classAttr);
+                }
+            }, [name]);
+
+        },
+        //Klasse entfernen
+        removeClass: function(name) {
+            return this.each(this, function(name) {
+                var classAttr = OPLib(this).getAttr("class");
+                var regex = new RegExp(name);
+                //Ist die Klasse überhaupt gesetzt?
+                if (regex.test(classAttr)) {
+                    //1 Leerzeichen nach einer Klasse
+                    var replace = new RegExp("[ ]*" + name, "g");
+                    classAttr = classAttr.replace(replace, "");
+                    OPLib(this).setAttr("class", classAttr);
+                }
+            }, [name]);
+        },
+        //Klasse übeprüfen / zurückgeben
+        getClass: function(name) {
+            //Keine Klasse angegeben: alle Klassen zurückgeben
+            if (!name) {
+                return this.getAttr("class").split(" ");
+            }
+            //Klasse angegeben: überprüfen, ob sie vorhanden ist
+            else {
+                return this.getAttr("class").search(name) != -1 ? true : false;
+            }
         }
     };
 
