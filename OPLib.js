@@ -413,9 +413,8 @@ var oplib = (function() {
             value = value.toString();
             //"width" -> Einheit benötigt
             if (expression.search(/width/i)) {
-                //TODO: Definable standart unit
                 if (!args) {
-                    value += "px";
+                    value += oplib.fn.defaults.cssUnit;
                 }
                 else {
                     value += args;
@@ -423,9 +422,8 @@ var oplib = (function() {
 
             }
             else if (expression.search(/height/i)) {
-                //TODO: Definable standart unit
                 if (!args) {
-                    value += "px";
+                    value += oplib.fn.defaults.cssUnit;
                 }
                 else {
                     value += args;
@@ -434,6 +432,16 @@ var oplib = (function() {
         }
         return [expression, value];
     };
+
+    //Standart Werte für name setzen
+    oplib.fn.defaults = function(name, value) {
+        oplib.fn.defaults[name] = value;;
+        return this;
+    };
+    //Standartwerte
+    oplib.fn.extend(oplib.fn.defaults, {
+       cssUnit: "px" 
+    });
 
     //Object erweitern
     oplib.fn.extend(Object.prototype, {
