@@ -153,7 +153,6 @@ var oplib = (function() {
                 return this.getAttr("class").search(name) != -1 ? true : false;
             }
         },
-        //TODO
         css: function(name, value) {
             //Eigenschaften als Object übergeben
             if ( typeof name === "object") {
@@ -194,7 +193,7 @@ var oplib = (function() {
                 if (name.length != undefined) {
                     for (var i = 0; i < name.length; i++) {
                         this.each(this, function(name) {
-                            delete this["style"][name];
+                            this["style"][name] = "";
                         }, [name[i]]);
                     }
                 }
@@ -202,7 +201,7 @@ var oplib = (function() {
                 else {
                     for (var i in name) {
                         this.each(this, function(name) {
-                            delete this["style"][name];
+                            this["style"][name] = "";
                         }, [i]);
                     }
                 }
@@ -210,7 +209,7 @@ var oplib = (function() {
             //Nur ein Css Wert löschen
             else {
                 return this.each(this, function(name) {
-                    delete this["style"][name];
+                    this["style"][name] = "";
                 }, [name]);
             }
             return this;
