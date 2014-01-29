@@ -153,7 +153,12 @@ var oplib = (function() {
                 return this.getAttr("class").search(name) != -1 ? true : false;
             }
         },
-        css: function(name, value) {
+        //Css-Attribut hinzufügen/bearbeiten/auslesen
+        css: function(name, value, args) {
+            //Werte abschließend anpassen
+            var finalizedExpressions = this.finalizeCssExpressions(name, value, args);
+            name = finalizedExpressions[0];
+            value = finalizedExpressions[1];
             //Eigenschaften als Object übergeben
             if ( typeof name === "object") {
                 //Array ohne Eigenschaften - EIGENSCHAFTEN AUSLESEN
@@ -186,6 +191,7 @@ var oplib = (function() {
             }
             return this;
         },
+        //Css-Attribute entfernen
         removeCss: function(name) {
             //Mehrere Css Werte löschen
             if ( typeof name === "object") {
@@ -382,12 +388,53 @@ var oplib = (function() {
         //TODO Regexausdrücke und Abfragen hinzufügen
         return elems;
     };
-    
-    //Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor") entsprechend anpassen
-    oplib.fn.finalizeCssExpressions = function() {
-        //TODO
+
+    //Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor")
+    // entsprechend anpassen
+    oplib.fn.finalizeCssExpressions = function(expression, value, args) {
+        //Expression
+        //Bereits ein String
+        if ( typeof expression === "string") {
+            //Bindestriche entfernen und folgendes Zeichen großschreiben
+            expression = expression.replace(/-([a-z]|[A-Z])/g, function(match) {
+                return match[1].toUpperCase();
+            });
+        }
+
+        //Wert
+        //Bereits ein String
+        if ( typeof value === "string") {
+            //Bindestriche entfernen und folgendes Zeichen großschreiben
+            expression = expression.replace(/-([a-z]|[A-Z])/g, function(match) {
+                return match[1].toUpperCase();
+            });
+        }
+        else if ( typeof value === "number") {
+            value = value.toString();
+            //"width" -> Einheit benötigt
+            if (expression.search(/width/i)) {
+                //TODO: Definable standart unit
+                if (!args) {
+                    value += "px";
+                }
+                else {
+                    value += args;
+                }
+
+            }
+            else if (expression.search(/height/i)) {
+                //TODO: Definable standart unit
+                if (!args) {
+                    value += "px";
+                }
+                else {
+                    value += args;
+                }
+            }
+        }
+        return [expression, value];
     };
-    
+
     //Object erweitern
     oplib.fn.extend(Object.prototype, {
         compare: function(obj1, obj2) {
