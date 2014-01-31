@@ -412,7 +412,7 @@ var oplib = (function() {
         else if ( typeof value === "number") {
             value = value.toString();
             //"width" -> Einheit benötigt
-            if (expression.search(/width/i)) {
+            if (expression.search(/(width|height|position|origin|size|padding|margin|spacing|gap)/i)) {
                 if (!args) {
                     value += oplib.fn.defaults.cssUnit;
                 }
@@ -421,7 +421,8 @@ var oplib = (function() {
                 }
 
             }
-            else if (expression.search(/height/i)) {
+            //"top" -> Einheit benötigt
+            else if (expression.search(/^(top|bottom|left|rigth|flex-?basis)/i)) {
                 if (!args) {
                     value += oplib.fn.defaults.cssUnit;
                 }
@@ -435,12 +436,13 @@ var oplib = (function() {
 
     //Standart Werte für name setzen
     oplib.fn.defaults = function(name, value) {
-        oplib.fn.defaults[name] = value;;
+        oplib.fn.defaults[name] = value;
+        ;
         return this;
     };
     //Standartwerte
     oplib.fn.extend(oplib.fn.defaults, {
-       cssUnit: "px" 
+        cssUnit: "px"
     });
 
     //Object erweitern
