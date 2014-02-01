@@ -434,6 +434,114 @@ var oplib = (function() {
         return [expression, value];
     };
 
+    //Adds Events | Dispatches Events
+    oplib.fn.events = function(type, fn) {
+        if (!fn) {
+            return this.each(this, function(type) {
+                oplib.fn.events.dispatchEvent(type, this);
+            }, [type]);
+        }
+        else {
+            return this.each(this, function(type, fn) {
+                oplib.fn.events.addEvent(type, fn, this);
+            }, [type, fn]);
+        }
+
+    };
+
+    //Removes Events
+    oplib.fn.removeEvents = function(type, fn) {
+        return this.each(this, function(type, fn) {
+            oplib.fn.events.removeEvent(type, fn, this);
+        }, [type, fn]);
+    };
+
+    //Event Klasse
+    oplib.fn.extend(oplib.fn.events, {
+        //Wurde der GLOBALE Handler bereits für dieses Event gesetzt? DARF NUR EINMAL GESTZT WERDEN
+        handleAttached: {},
+        //Listener dem globalen handler hinzufügen
+        addEvent: function(type, fn, elem) {
+            //handleAttached überprüfen
+            if (this.handleAttached[elem] == undefined) {
+                this.handleAttached[elem] = {};
+            }
+            if (this.handleAttached[elem][type] == undefined) {
+                this.handleAttached[elem][type] = true;
+                elem.addEventListener(type, oplib.fn.handler, false);
+            }
+            return oplib.fn.handler.addListener(type, fn, elem);
+        },
+        //Listener dem globalen Handler entfernen
+        removeEvent: function(type, fn, elem) {
+            return oplib.fn.handler.removeListener(type, fn, elem);
+        },
+        //Event ausführen
+        dispatchEvent: function(e, elem) {
+            if (typeof e === "string") {
+                e = new Event(e);
+            }
+            return elem.dispatchEvent(e);
+        }
+    });
+
+    //Verarbeitet Event-Listener
+    oplib.fn.handler = function(e) {
+        elem = e.target;
+        type = e.type;
+        //Entsprechenden Listener ausführen
+        return oplib.fn.handler.dispatchListener(type, elem, e);
+
+    };
+
+    //Handler Klasse
+    oplib.fn.extend(oplib.fn.handler, {
+        //Aufbau: handleList.element[...].type[...].{function, text, enabled}
+        handleList: {},
+
+        //Der HandleList einen neuen Listener hinzufügen
+        addListener: function(type, listener, elem) {
+            if (this.handleList[elem] == undefined) {
+                this.handleList[elem] = {};
+            }
+            if (this.handleList[elem][type] == undefined) {
+                this.handleList[elem][type] = [];
+            }
+            return (this.handleList[elem][type].push({
+                fn: listener,
+                text: listener.toString(),
+                enabled: true
+            }) - 1);
+        },
+        //Disabled einen Listener durch setzen deaktivieren des enabled-flags
+        removeListener: function(type, listener, elem) {
+            if ( typeof listner === "number") {
+                this.handleList[elem][type][listener]["enabled"] = false;
+                return 1;
+            }
+            else {
+                var listenerId = [];
+                for (var i = 0; i < this.handleList[elem][type].length; i++) {
+                    if (this.handleList[elem][type][i]["text"] == listener.toString()) {
+                        listenerId.push(i);
+                    }
+                }
+                for (var i = 0; i < listenerId.length; i++) {
+                    this.handleList[elem][type][listenerId[i]]["enabled"] = false;
+                }
+                return listenerId;
+            }
+        },
+        //Listeners aufrufen
+        dispatchListener: function(type, elem, e) {
+            for (var i = 0; i < oplib.fn.handler.handleList[elem][type].length; i++) {
+                if (oplib.fn.handler.handleList[elem][type][i]["enabled"]) {
+                    oplib.fn.handler.handleList[elem][type][i]["fn"].apply(this, [e]);
+                }
+            }
+        }
+    });
+
     //Standart Werte für name setzen
     oplib.fn.defaults = function(name, value) {
         oplib.fn.defaults[name] = value;
@@ -445,6 +553,7 @@ var oplib = (function() {
         cssUnit: "px"
     });
 
+    //FIXME
     //Object erweitern
     oplib.fn.extend(Object.prototype, {
         compare: function(obj1, obj2) {
