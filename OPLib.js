@@ -434,8 +434,8 @@ var oplib = (function() {
         return [expression, value];
     };
 
-    //Shortcuts for events
-    oplib.fn.extend({
+    //Abkürzungen für events
+    oplib.fn.extend(oplib.fn, {
         click: function(fn) {
             return this.events("click", fn);
         },
