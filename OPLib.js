@@ -434,6 +434,41 @@ var oplib = (function() {
         return [expression, value];
     };
 
+    //Shortcuts for events
+    oplib.fn.extend({
+        click: function(fn) {
+            return this.events("click", fn);
+        },
+        dblclick: function(fn) {
+            return this.events("dblclick", fn);
+        },
+        mouseover: function(fn) {
+            return this.events("mouseover", fn);
+        },
+        mouseout: function(fn) {
+            return this.events("mouseout", fn);
+        },
+        hover: function(fn_over, fn_out) {
+            this.events("mouseover", fn_over);
+            return this.events("mouseout", fn_out);
+        },
+        focus: function(fn) {
+            return this.events("focus", fn);  
+        },
+        blur: function(fn) {
+            return this.events("blur", fn);
+        },
+        change: function(fn) {
+            return this.events("change", fn);
+        },
+        select: function(fn) {
+          return this.events("select", fn);  
+        },
+        submit: function(fn) {
+            return this.events("submit", fn);
+        }
+    });
+
     //Adds Events | Dispatches Events
     oplib.fn.events = function(type, fn) {
         if (!fn) {
@@ -458,7 +493,8 @@ var oplib = (function() {
 
     //Event Klasse
     oplib.fn.extend(oplib.fn.events, {
-        //Wurde der GLOBALE Handler bereits für dieses Event gesetzt? DARF NUR EINMAL GESTZT WERDEN
+        //Wurde der GLOBALE Handler bereits für dieses Event gesetzt? DARF NUR
+        // EINMAL GESTZT WERDEN
         handleAttached: {},
         //Listener dem globalen handler hinzufügen
         addEvent: function(type, fn, elem) {
@@ -478,7 +514,7 @@ var oplib = (function() {
         },
         //Event ausführen
         dispatchEvent: function(e, elem) {
-            if (typeof e === "string") {
+            if ( typeof e === "string") {
                 e = new Event(e);
             }
             return elem.dispatchEvent(e);
