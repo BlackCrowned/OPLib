@@ -219,7 +219,15 @@ var oplib = (function() {
                 }, [name]);
             }
             return this;
-        }
+        },
+        append: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.each(this, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    this.appendChild(elems[i]);
+                }
+            }, [elems]);
+        },
     };
 
     //Objecte zusammenführen
@@ -271,6 +279,8 @@ var oplib = (function() {
     oplib.fn.ClassRegex = /\.\w*/;
     //Regex für ID Selectoren
     oplib.fn.IdRegex = /#\w*/;
+    //Regex für HTML-Strings
+    oplib.fn.HtmlStringRegex = /^<\w*>\w*<\/\w*>$/;
     //Regex für HTML-Tag Selectoren
     oplib.fn.HtmlTagRegex = /<\w*>/;
     //Regex für alle möglichen Selectoren
@@ -379,14 +389,43 @@ var oplib = (function() {
                     elems.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
                 }
             }
+
+            //Enthält selector ein HTML String
+            else if (oplib.fn.HtmlStringRegex.test(selector)) {
+                elems.push(oplib.fn.createDOBObeject(selector));
+            }
+
             //Enthält selector ein HtmlTag?
             else if (oplib.fn.HtmlTagRegex.test(selector)) {
                 //TODO HTML TAG SELECTOR
+            }
+            //Wurde kein Selector erkannt?
+            else {
+                var elem = document.createElement("div");
+                elem.innerHTML = selector;
+                elems.push(elem);
             }
         }
 
         //TODO Regexausdrücke und Abfragen hinzufügen
         return elems;
+    };
+
+
+    //TODO: oplib.fn.ElementSelection.getText, etc..
+    
+    
+    //Erstellt ein DOMObject anhand eines Strings
+    oplib.fn.createDOBObeject = function(text) {
+        var tag = text.match(/^<\w*>/)[0];
+        tag = tag.slice(1, tag.length - 1);
+        
+        console.log(tag);
+        
+        var elem = document.createElement(tag);
+        //FIXME Weitere ElementSelection-Funktionen benötigt
+        elem.innerHTML = text;
+        return elem;
     };
 
     //Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor")
@@ -453,7 +492,7 @@ var oplib = (function() {
             return this.events("mouseout", fn_out);
         },
         focus: function(fn) {
-            return this.events("focus", fn);  
+            return this.events("focus", fn);
         },
         blur: function(fn) {
             return this.events("blur", fn);
@@ -462,7 +501,7 @@ var oplib = (function() {
             return this.events("change", fn);
         },
         select: function(fn) {
-          return this.events("select", fn);  
+            return this.events("select", fn);
         },
         submit: function(fn) {
             return this.events("submit", fn);
