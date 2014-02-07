@@ -280,7 +280,7 @@ var oplib = (function() {
     //Regex für ID Selectoren
     oplib.fn.IdRegex = /#\w*/;
     //Regex für HTML-Strings
-    oplib.fn.HtmlStringRegex = /^<\w*>\w*<\/\w*>$/;
+    oplib.fn.HtmlStringRegex = /^<[\w\s="'`´]*>\w*<\/\w*>$/;
     //Regex für HTML-Tag Selectoren
     oplib.fn.HtmlTagRegex = /<\w*>/;
     //Regex für alle möglichen Selectoren
@@ -407,24 +407,57 @@ var oplib = (function() {
             }
         }
 
-        //TODO Regexausdrücke und Abfragen hinzufügen
         return elems;
     };
 
+    //Gibt das Tag aus einem HTML-String zurück
+    oplib.fn.ElementSelection.tag = function(htmlString) {
+        return htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/(>|\s+)/));
+    };
+    
+    //Gibt den Text aus einem HTML-String zurück
+    oplib.fn.ElementSelection.text = function(htmlString) {
+        //HTML-Tags entfernen
+        return htmlString.replace(/<\/*\w*>/g, "");
+    };
 
-    //TODO: oplib.fn.ElementSelection.getText, etc..
-    
-    
+    //Gibt die Attribute aus einem HTML-String zurück
+    oplib.fn.ElementSelection.attr = function(htmlString) {
+        //Attribute in einem Array speichern [{name, value}]
+        var attr = [];
+        htmlString = htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/>/)).trim();
+        //Tag entfernen
+        htmlString = htmlString.replace(/\w*\s/, "");
+
+        //Attribute einteilen
+        matchedAttr = htmlString.match(/\w*\s*=\s*("|'|`|´)[\w\s]*("|'|`|´)/g);
+
+        //Keine Attribute gefunden, leeres Array zurückgeben
+        if (!matchedAttr) {
+            return attr;
+        }
+
+        //Durch gefundene Attribute gehen, und attr[] zuweisen
+        for (var i = 0; i < matchedAttr.length; i++) {
+            attr.push({
+                name: matchedAttr[i].slice(matchedAttr[i].search(/\w*/), matchedAttr[i].search(/\s*=/)),
+                value: matchedAttr[i].slice(matchedAttr[i].search(/("|'|`|´)(\w*\s*)/) + 1, matchedAttr[i].search(/("|'|`|´)\s*$/))
+            });
+        }
+        return attr;
+
+    };
+
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOBObeject = function(text) {
-        var tag = text.match(/^<\w*>/)[0];
-        tag = tag.slice(1, tag.length - 1);
+        var elem = document.createElement(oplib.fn.ElementSelection.tag(text));
         
-        console.log(tag);
-        
-        var elem = document.createElement(tag);
-        //FIXME Weitere ElementSelection-Funktionen benötigt
-        elem.innerHTML = text;
+        elem.innerHTML = oplib.fn.ElementSelection.text(text);
+       
+        var attr = oplib.fn.ElementSelection.attr(text);
+        for (var i = 0; i < attr.length; i++) {
+            elem.setAttribute(attr[i].name, attr[i].value);
+        }
         return elem;
     };
 
