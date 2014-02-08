@@ -220,7 +220,7 @@ var oplib = (function() {
             }
             return this;
         },
-		//Hängt Elemente an die übereinstimmenden Elemente an
+        //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.each(this, function(elems) {
@@ -229,9 +229,59 @@ var oplib = (function() {
                 }
             }, [elems]);
         },
-		prepend: function(selector, context) {
-			
-		},
+        //Hängt Elemente an die übereinstimmenden Elemente am Anfang an
+        prepend: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.each(this, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    if (this.item(0) != null) {
+                        this.insertBefore(elems[i], this.item(0));
+                    }
+                    else {
+                        this.appendChild(elems[i]);
+                    }
+                }
+            }, [elems]);
+        },
+        //Hängt Elemente vor die übereinstimmenden Elemente an
+        before: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.each(this, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    this.insertBefore(elems[i], this);
+                }
+            }, [elems]);
+        },
+        //Hängt Elemente nach die übereinstimmenden Elemente an
+        after: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.each(this, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    if (this.nextSibling != null) {
+                        //Entfernt Text-Nodes | CDataSection-Nodes |
+                        // Comment-Nodes
+                        var test = function(nS) {
+                            if (nS.nodeType == 3 || nS.nodeType == 4 || nS.nodeType == 8) {
+                                nS = nS.nextSibling;
+                            }
+                            if (nS == null) {
+                                return this.parentNode.appendChild(elems[i]);
+                            }
+                            if (nS.nodeType == 3 || nS.nodeType == 4 || nS.nodeType == 8) {
+                                return test(nS);
+                            }
+                            else {
+                                return nS;
+                            }
+                        };
+                        test.apply(this, [this.nextSibling]).parentNode.insertBefore(elems[i], test.apply(this, [this.nextSibling]));
+                    }
+                    else {
+                        this.parentNode.appendChild(elems[i]);
+                    }
+                }
+            }, [elems]);
+        },
     };
 
     //Objecte zusammenführen
@@ -284,7 +334,7 @@ var oplib = (function() {
     //Regex für ID Selectoren
     oplib.fn.IdRegex = /#\w*/;
     //Regex für HTML-Strings
-    oplib.fn.HtmlStringRegex = /^<[\w\s="'`´]*>\w*<\/\w*>$/;
+    oplib.fn.HtmlStringRegex = /^<[\w\s="'`´]*>.*<\/\w*>$/;
     //Regex für HTML-Tag Selectoren
     oplib.fn.HtmlTagRegex = /<\w*>/;
     //Regex für alle möglichen Selectoren
@@ -332,8 +382,13 @@ var oplib = (function() {
         }
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
+            //Enthält selector ein HTML String
+            if (oplib.fn.HtmlStringRegex.test(selector)) {
+                elems.push(oplib.fn.createDOBObeject(selector));
+            }
+
             //Enthält selector einen Klassenausdruck?
-            if (oplib.fn.ClassRegex.test(selector)) {
+            else if (oplib.fn.ClassRegex.test(selector)) {
                 //Variable für .Class Selector String
                 var _selector = "";
                 //Position des Klassen Selectors
@@ -394,11 +449,6 @@ var oplib = (function() {
                 }
             }
 
-            //Enthält selector ein HTML String
-            else if (oplib.fn.HtmlStringRegex.test(selector)) {
-                elems.push(oplib.fn.createDOBObeject(selector));
-            }
-
             //Enthält selector ein HtmlTag?
             else if (oplib.fn.HtmlTagRegex.test(selector)) {
                 //TODO HTML TAG SELECTOR
@@ -418,11 +468,11 @@ var oplib = (function() {
     oplib.fn.ElementSelection.tag = function(htmlString) {
         return htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/(>|\s+)/));
     };
-    
+
     //Gibt den Text aus einem HTML-String zurück
     oplib.fn.ElementSelection.text = function(htmlString) {
         //HTML-Tags entfernen
-        return htmlString.replace(/<\/*\w*>/g, "");
+        return htmlString.replace(/<[\/\w\s="'`´]*>/g, "");
     };
 
     //Gibt die Attribute aus einem HTML-String zurück
@@ -454,10 +504,11 @@ var oplib = (function() {
 
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOBObeject = function(text) {
+        //Tag
         var elem = document.createElement(oplib.fn.ElementSelection.tag(text));
-        
+        //Text
         elem.innerHTML = oplib.fn.ElementSelection.text(text);
-       
+        //Attribute
         var attr = oplib.fn.ElementSelection.attr(text);
         for (var i = 0; i < attr.length; i++) {
             elem.setAttribute(attr[i].name, attr[i].value);
