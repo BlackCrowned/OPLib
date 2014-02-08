@@ -220,6 +220,7 @@ var oplib = (function() {
             }
             return this;
         },
+		//Hängt Elemente an die übereinstimmenden Elemente an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.each(this, function(elems) {
@@ -228,6 +229,9 @@ var oplib = (function() {
                 }
             }, [elems]);
         },
+		prepend: function(selector, context) {
+			
+		},
     };
 
     //Objecte zusammenführen
