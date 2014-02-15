@@ -282,10 +282,11 @@ var oplib = (function() {
                 }
             }, [elems]);
         },
-        //Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente hinzu - Rekursive suche möglich
+        //Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente
+        // hinzu - Rekursive suche möglich
         children: function(R) {
             var children = [];
-            
+
             //Funktion die alle untergeordneten Nodes findet
             var getChildren = function(parent, children, R) {
                 for (var j = 0; j < parent.children.length; j++) {
@@ -299,7 +300,7 @@ var oplib = (function() {
                 }
                 return children;
             };
-            
+
             //Für alle übereinstimmenden Elemente untergeordnete Nodes finden
             for (var i = 0; i < this.length; i++) {
                 children = getChildren(this[i], children, R);
@@ -309,6 +310,11 @@ var oplib = (function() {
                 this.push(children[i]);
             }
             return this;
+        },
+        //Fügt dem Object die übergeordnete Node der übereinstimmenden Elemente
+        // hinzu - Rekursive suche möglich
+        parent: function(R) {
+            //TODO
         },
     };
 
@@ -591,6 +597,11 @@ var oplib = (function() {
             }
         }
         return [expression, value];
+    };
+
+    //Parses JSON Data
+    oplib.fn.JSON = function(json) {
+        //TODO
     };
 
     //Abkürzungen für events
