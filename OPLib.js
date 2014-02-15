@@ -220,6 +220,11 @@ var oplib = (function() {
             }
             return this;
         },
+        
+        /*
+         * TODO: Elements need to be cloned if multiple Elements are matched
+         */
+        
         //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
