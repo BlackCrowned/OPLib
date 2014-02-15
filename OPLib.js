@@ -282,6 +282,34 @@ var oplib = (function() {
                 }
             }, [elems]);
         },
+        //Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente hinzu - Rekursive suche möglich
+        children: function(R) {
+            var children = [];
+            
+            //Funktion die alle untergeordneten Nodes findet
+            var getChildren = function(parent, children, R) {
+                for (var j = 0; j < parent.children.length; j++) {
+                    children.push(parent.children[j]);
+                    //Rekursiv?
+                    if (R) {
+                        if (parent.children[j].children.length != 0) {
+                            children = (getChildren(parent.children[j], children, R));
+                        }
+                    }
+                }
+                return children;
+            };
+            
+            //Für alle übereinstimmenden Elemente untergeordnete Nodes finden
+            for (var i = 0; i < this.length; i++) {
+                children = getChildren(this[i], children, R);
+            }
+            //OPlib hinzufügen
+            for (var i = 0; i < children.length; i++) {
+                this.push(children[i]);
+            }
+            return this;
+        },
     };
 
     //Objecte zusammenführen
@@ -326,6 +354,10 @@ var oplib = (function() {
         }
         return obj;
     };
+
+    //Array Funktionen zugänglich machen
+    oplib.fn.push = Array.prototype.push;
+    oplib.fn.pop = Array.prototype.pop;
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
