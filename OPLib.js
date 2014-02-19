@@ -21,6 +21,16 @@ var oplib = (function() {
         },
         //Attribut setzen
         attr: function(name, property) {
+            //Wurde nur 'name' übergeben? - Attribut zurückgeben
+            if (arguments.length == 1) {
+                if (this.length != 0) {
+                    return this[0].getAttribute(name);
+                }
+                else {
+                    return this;
+                }
+            }
+
             //Wurde ein Object mit den Attributen übergeben?
             if ( typeof name === "object") {
                 for (var i in name) {
@@ -69,49 +79,6 @@ var oplib = (function() {
                 }, [name]);
             }
             return this;
-        },
-        //Attribut abfragen - DEPRECATED
-        getAttr: function(name) {
-            //Wurde ein Object mit den Attributen übergeben?
-            if ( typeof name === "object") {
-                this.attributes = {};
-
-                if (name.length != undefined) {
-                    for (var i = 0; i < name.length; i++) {
-                        //Attribute übergeben
-                        attributes[i] = this[0].getAttribute(i);
-                    }
-                }
-                else {
-                    for (var i in name) {
-                        //Attribute übergeben
-                        attributes[i] = this[0].getAttribute(i);
-                    }
-                }
-                return attributes;
-
-            }
-            //Es wurde ein einzelnes Attribut übergeben
-            else {
-                //Attribut übergeben
-                return this[0].getAttribute(name);
-            }
-        },
-        //Attribute - DEPRECATED
-        _attr: function(type, name, property) {
-            if (type == "set" || type == "add") {
-                return this.setAttr(name, property);
-            }
-            else if (type == "remove" || type == "delete") {
-                return this.removeAttr(name);
-            }
-            else if (type == "get") {
-                return this.getAttr(name);
-            }
-            else {
-                console.log(".attr(): unknown type!");
-                return this;
-            }
         },
         //Klasse hinzufügen
         addClass: function(name) {
@@ -220,11 +187,11 @@ var oplib = (function() {
             }
             return this;
         },
-        
+
         /*
-         * TODO: Elements need to be cloned if multiple Elements are matched
-         */
-        
+        * TODO: Elements need to be cloned if multiple Elements are matched
+        */
+
         //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
