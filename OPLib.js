@@ -195,7 +195,7 @@ var oplib = (function() {
         //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.each(this, function(elems) {
+            return this.finalizeDOMManipulation(function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     this.appendChild(elems[i]);
                 }
@@ -204,11 +204,21 @@ var oplib = (function() {
         //Hängt Elemente an die übereinstimmenden Elemente am Anfang an
         prepend: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.each(this, function(elems) {
+            return this.finalizeDOMManipulation(function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    if (this.item(0) != null) {
-                        this.insertBefore(elems[i], this.item(0));
+                    console.log( typeof this);
+                    //Gibt es bereits untergeordnete Elemente?
+                    if (this.hasChildNodes()) {
+                        //Node
+                        if (this.childNodes && this.childNodes[0] != null) {
+                            this.insertBefore(elems[i], this.childNodes[0]);
+                        }
+                        //NodeList
+                        else if (this.item && this.item(0) != null) {
+                            this.insertBefore(elems[i], this.item(0));
+                        }
                     }
+                    //Keine untergeordneten Element ==> .appendChild möglich
                     else {
                         this.appendChild(elems[i]);
                     }
@@ -569,6 +579,43 @@ var oplib = (function() {
             }
         }
         return [expression, value];
+    };
+
+    //Klont Elemente, etc...
+    oplib.fn.finalizeDOMManipulation = function(fn, args) {
+        this.each(this, function(fn, elems) {
+            var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
+            fn.apply(this, [clones]);
+        }, [fn, args[0]]);
+        //==> Elemente
+
+        //Element löschen
+        return this.each(args[0], function() {
+            if (this.parentNode) {
+                this.parentNode.removeChild(this);
+            }
+            //Element muss in DOM eingeordnet werden
+            else {
+                document.body.appendChild(this);
+                document.body.removeChild(this);
+            }
+        }, []);
+
+    };
+    //Klont Elemente        //FIXME - EVENTS
+    oplib.fn.finalizeDOMManipulation.clone = function(elems) {
+        if ( typeof elems === "object") {
+            var clones = [];
+            for (var i = 0; i < elems.length; i++) {
+                var clone = elems[i].cloneNode(true);
+                clones.push(clone);
+            }
+            return clones;
+        }
+        else {
+            var clone = elems.cloneNode(true);
+            return [clone];
+        }
     };
 
     //Parses JSON Data
