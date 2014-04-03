@@ -241,25 +241,8 @@ var oplib = (function() {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.each(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    //TODO: nextElementSibling
-                    if (this.nextSibling != null) {
-                        //Entfernt Text-Nodes | CDataSection-Nodes |
-                        // Comment-Nodes
-                        var test = function(nS) {
-                            if (nS.nodeType == 3 || nS.nodeType == 4 || nS.nodeType == 8) {
-                                nS = nS.nextSibling;
-                            }
-                            if (nS == null) {
-                                return this.parentNode.appendChild(elems[i]);
-                            }
-                            if (nS.nodeType == 3 || nS.nodeType == 4 || nS.nodeType == 8) {
-                                return test(nS);
-                            }
-                            else {
-                                return nS;
-                            }
-                        };
-                        test.apply(this, [this.nextSibling]).parentNode.insertBefore(elems[i], test.apply(this, [this.nextSibling]));
+                    if (this.nextElementSibling != null) {
+                        this.nextSibling.parentNode.insertBefore(elems[i], this.nextSibling);
                     }
                     else {
                         this.parentNode.appendChild(elems[i]);
