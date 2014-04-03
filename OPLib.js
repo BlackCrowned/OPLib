@@ -250,10 +250,12 @@ var oplib = (function() {
          * Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente
          * hinzu
          * R: Rekursive suche möglich
-         * O: Enthält auch eigenes Element
+         * O: Enthält auch eigene(s) Element(e)
          */
         children: function(R, O) {
             var children = [];
+
+            //TODO: isDouble(arr, elem)
 
             //Funktion die alle untergeordneten Nodes findet
             var getChildren = function(parent, children, R) {
@@ -273,24 +275,86 @@ var oplib = (function() {
             for (var i = 0; i < this.length; i++) {
                 children = getChildren(this[i], children, R);
             }
+
+            //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
+            //löschen
+            if (!O) {
+                for (var x = 0; x < this.length; x++) {
+                    delete this.x;
+                }
+                this.length = 0;
+            }
             //OPlib hinzufügen
             for (var i = 0; i < children.length; i++) {
-                //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
-                // löschen
-                if (!O) {
-                    for (var x = 0; x < this.length; x++) {
-                        delete this.x;
-                    }
-                    this.length = 0;
-                }
+
                 this.push(children[i]);
             }
             return this;
         },
-        //Fügt dem Object die übergeordnete Node der übereinstimmenden Elemente
-        // hinzu - Rekursive suche möglich
-        parent: function(R) {
+        /* Fügt dem Object die übergeordnete Node der übereinstimmenden Elemente
+         * hinzu
+         * R: Rekursive Suche möglich
+         * rekursionLimit: Limit für rekursive Suche
+         * O: Enthält auch eigene(s) Element(e)
+         */
+        parents: function(R, rekursionLimit, O) {
             //TODO
+            var Parents = [];
+            var topLimit;
+            
+            if (rekursionLimit && rekursionLimit.parentNode) {
+                topLimit = rekursionLimit.parentNode;
+            }
+            else {
+                topLimit = document.body;
+            }
+
+            //Parents dürfen nicht mehr als einmal vorkommen
+            var isDouble = function(arr, elem) {
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i] == elem) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            //Für alle übereinstimmenden Elemente parentNodes (rekursiv) finden.
+            var getParents = function(children, parents, R) {
+                for (var i = 0; i < children.length; i++) {
+                    //topLimit ist die höchste Ebene, falls rekursiv gesucht wird
+                    if (!(!children[i].parentNode || (children[i].parentNode == topLimit && R))) {
+                        //Keine doppelten parentNodes.
+                        if (!isDouble(parents, children[i].parentNode)) {
+                            //parentNode gefunden
+                            parents.push(children[i].parentNode);
+                            //Rekursive Suche??
+                            if (R) {
+                                parents = getParents([children[i].parentNode], parents, R);
+                            }
+                        }
+                    }
+
+                }
+                //Ergebnis der Suche zurückgeben
+                return parents;
+            };
+            //Ergebnis der Suche
+            Parents = getParents(this, Parents, R);
+
+            //OPLib soll nur parentNodes enthalten - Vorherige ELemente
+            //löschen
+            if (!O) {
+                for (var x = 0; x < this.length; x++) {
+                    delete this.x;
+                }
+                this.length = 0;
+            }
+            //Parents in OPLib speichern
+            for (var i = 0; i < Parents.length; i++) {
+                this.push(Parents[i]);
+            }
+            return this;
         },
     };
 
