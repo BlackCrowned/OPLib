@@ -228,9 +228,11 @@ var oplib = (function() {
         //Hängt Elemente vor die übereinstimmenden Elemente an
         before: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.each(this, function(elems) {
+            return this.finalizeDOMManipulation(function(elems) {
                 for (var i = 0; i < elems.length; i++) {
+                    console.log(elems[i]);
                     this.insertBefore(elems[i], this);
+
                 }
             }, [elems]);
         },
@@ -239,6 +241,7 @@ var oplib = (function() {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.each(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
+                    //TODO: nextElementSibling
                     if (this.nextSibling != null) {
                         //Entfernt Text-Nodes | CDataSection-Nodes |
                         // Comment-Nodes
@@ -264,9 +267,13 @@ var oplib = (function() {
                 }
             }, [elems]);
         },
-        //Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente
-        // hinzu - Rekursive suche möglich
-        children: function(R) {
+        /*
+         * Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente
+         * hinzu
+         * R: Rekursive suche möglich
+         * O: Enthält auch eigenes Element
+         */
+        children: function(R, O) {
             var children = [];
 
             //Funktion die alle untergeordneten Nodes findet
@@ -289,6 +296,14 @@ var oplib = (function() {
             }
             //OPlib hinzufügen
             for (var i = 0; i < children.length; i++) {
+                //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
+                // löschen
+                if (!O) {
+                    for (var x = 0; x < this.length; x++) {
+                        delete this.x;
+                    }
+                    this.length = 0;
+                }
                 this.push(children[i]);
             }
             return this;
@@ -395,6 +410,7 @@ var oplib = (function() {
             elems.push(selector);
 
         }
+        //Ist selector eine NodeList?
         else if ( selector instanceof NodeList) {
             for (var i = 0; i < selector.length; i++) {
                 elems.push(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(selector[i]));
@@ -608,12 +624,24 @@ var oplib = (function() {
             var clones = [];
             for (var i = 0; i < elems.length; i++) {
                 var clone = elems[i].cloneNode(true);
+                if (elems[i].parentNode) {
+                    //elems[i].parentNode.appendChild(clone);       //Unnötig???
+                }
+                else {
+                    //document.body.appendChild(clone);
+                }
                 clones.push(clone);
             }
             return clones;
         }
         else {
             var clone = elems.cloneNode(true);
+            if (elems.parentNode) {
+                //elems.parentNode.appendChild(clone);
+            }
+            else {
+                //document.body.appendChild(clone);
+            }
             return [clone];
         }
     };
