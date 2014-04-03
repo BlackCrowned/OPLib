@@ -188,10 +188,6 @@ var oplib = (function() {
             return this;
         },
 
-        /*
-        * TODO: Elements need to be cloned if multiple Elements are matched
-        */
-
         //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
@@ -239,7 +235,7 @@ var oplib = (function() {
         //Hängt Elemente nach die übereinstimmenden Elemente an
         after: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.each(this, function(elems) {
+            return this.finalizeDOMManipulation(function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
                         this.nextSibling.parentNode.insertBefore(elems[i], this.nextSibling);
