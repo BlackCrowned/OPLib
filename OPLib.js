@@ -255,18 +255,29 @@ var oplib = (function() {
         children: function(R, O) {
             var children = [];
 
-            //TODO: isDouble(arr, elem)
+            //childNodes dürfen nicht mehr als einmal vorkommen
+            var isDouble = function(arr, elem) {
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i] == elem) {
+                        return true;
+                    }
+                }
+                return false;
+            };
 
             //Funktion die alle untergeordneten Nodes findet
             var getChildren = function(parent, children, R) {
                 for (var j = 0; j < parent.children.length; j++) {
-                    children.push(parent.children[j]);
-                    //Rekursiv?
-                    if (R) {
-                        if (parent.children[j].children.length != 0) {
-                            children = (getChildren(parent.children[j], children, R));
+                    if (!isDouble(children, parent.children[j])) {
+                        children.push(parent.children[j]);
+                        //Rekursiv?
+                        if (R) {
+                            if (parent.children[j].children.length != 0) {
+                                children = (getChildren(parent.children[j], children, R));
+                            }
                         }
                     }
+
                 }
                 return children;
             };
@@ -301,7 +312,7 @@ var oplib = (function() {
             //TODO
             var Parents = [];
             var topLimit;
-            
+
             if (rekursionLimit && rekursionLimit.parentNode) {
                 topLimit = rekursionLimit.parentNode;
             }
