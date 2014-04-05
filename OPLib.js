@@ -309,7 +309,6 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         parents: function(R, rekursionLimit, O) {
-            //TODO
             var Parents = [];
             var topLimit;
 
@@ -702,7 +701,12 @@ var oplib = (function() {
 
     //Parses JSON Data
     oplib.fn.JSON = function(json) {
-        //TODO
+        return oplib.fn.JSON.parse(json);
+    };
+    oplib.fn.JSON.parse = function(json) {
+        //Use native Broswser Parser
+        //TODO: Own Parser
+        JSON.parse(json);
     };
 
     //Abkürzungen für events
