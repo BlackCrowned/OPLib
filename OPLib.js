@@ -708,6 +708,11 @@ var oplib = (function() {
         //TODO: Own Parser
         JSON.parse(json);
     };
+    
+    //Handles Ajax-Calls
+    oplib.fn.AJAX = function(param) {
+        //TODO: AJAX
+    };
 
     //Abkürzungen für events
     oplib.fn.extend(oplib.fn, {
