@@ -366,6 +366,11 @@ var oplib = (function() {
             }
             return this;
         },
+        inner: function(html) {
+            return this.each(this, function() {
+                this.innerHTML = html;
+            }, [html]);  
+        },
     };
 
     //Objecte zusammenführen
@@ -656,10 +661,9 @@ var oplib = (function() {
             var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
             fn.apply(this, [clones]);
         }, [fn, args[0]]);
-        //==> Elemente
 
         //Element löschen
-        return this.each(args[0], function() {
+        this.each(args[0], function() {
             if (this.parentNode) {
                 this.parentNode.removeChild(this);
             }
@@ -669,7 +673,9 @@ var oplib = (function() {
                 document.body.removeChild(this);
             }
         }, []);
-
+        
+        return this;
+        
     };
     //Klont Elemente        //FIXME - EVENTS
     oplib.fn.finalizeDOMManipulation.clone = function(elems) {
@@ -708,10 +714,159 @@ var oplib = (function() {
         //TODO: Own Parser
         JSON.parse(json);
     };
-    
+
     //Handles Ajax-Calls
-    oplib.fn.AJAX = function(param) {
-        //TODO: AJAX
+    oplib.fn.AJAX = function(url, fn, header, settings) {
+        var xmlhttp = new XMLHttpRequest();
+        var ajaxSettings = oplib.fn.defaults.ajaxSettings;
+
+        //Other settings than default?
+        if (settings) {
+            if (settings.method) {
+                ajaxSettings.method = settings.method;
+            }
+            if (settings.async) {
+                ajaxSettings.async = settings.async;
+            }
+            if (settings.contentType) {
+                ajaxSettings.contentType = settings.contentType;
+            }
+            if (settings.content) {
+                ajaxSettings.content = settings.content;
+            }
+            if (settings.connected) {
+                ajaxSettings.connected = settings.connected;
+            }
+            if (settings.received) {
+                ajaxSettings.received = settings.received;
+            }
+            if (settings.processing) {
+                ajaxSettings.processing = settings.processing;
+            }
+        }
+
+        xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
+        if (ajaxSettings.async == true) {
+            xmlhttp = oplib.fn.AJAX.response.async(xmlhttp, fn, ajaxSettings);
+        }
+        else {
+            xmlhttp = oplib.fn.AJAX.response.sync(xmlhttp, fn, ajaxSettings);
+        }
+
+        return this;
+    };
+    oplib.fn.AJAX.request = {
+        get: function(xmlhttp, url, fn, header, ajaxSettings) {
+            var parsedHeader = "";
+            if (header) {
+                if ( typeof header === "string") {
+                    if (header[0] != '?' || header[0] != '&') {
+                        header = "?" + header;
+                    }
+                    parsedHeader = header;
+                }
+                else {
+                    for (var i = 0; i < header.length; i++) {
+                        if (parsedHeader != "?") {
+                            parsedHeader += ("&" + header[i].key + "=" + header[i].value);
+                        }
+                        else {
+                            parsedHeader += (header[i].key + "=" + header[i].value);
+                        }
+                    }
+                }
+                url += parsedHeader;
+            }
+
+            xmlhttp.open("get", url, ajaxSettings.async);
+            xmlhttp.send();
+
+            return xmlhttp;
+        },
+        post: function(xmlhttp, url, fn, header, ajaxSettings) {
+            var parsedHeader = "";
+
+            xmlhttp.open("post", url, ajaxSettings.async);
+            xmlhttp.setRequestHeader("Content-type", ajaxSettings.contentType);
+            if (header) {
+                if ( typeof header === "string") {
+                    if (header[0] == '?') {
+                        header = header.slice(1, header.length - 1);
+                    }
+                    parsedHeader = header;
+                }
+                else {
+                    for (var i = 0; i < header.length; i++) {
+                        if (!parsedHeader) {
+                            parsedHeader = header[i].key + "=" + header[i].value;
+                        }
+                        else {
+                            parsedHeader += "&" + header[i].key + "=" + header[i].value;
+                        }
+
+                    }
+                }
+
+            }
+
+            xmlhttp.send(parsedHeader);
+
+            return xmlhttp;
+        }
+    };
+    oplib.fn.AJAX.response = {
+        async: function(xmlhttp, fn, ajaxSettings) {
+            if (ajaxSettings.content == "text") {
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 1) {
+                        ajaxSettings.connected.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 2) {
+                        ajaxSettings.received.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 3) {
+                        ajaxSettings.processing.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 4) {
+                        fn.apply(this, [xmlhttp.responseText, xmlhttp.readystate, xmlhttp.status]);
+                    }
+                };
+            }
+            else if (ajaxSettings.content == "xml") {
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 1) {
+                        ajaxSettings.connected.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 2) {
+                        ajaxSettings.received.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 3) {
+                        ajaxSettings.processing.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 4) {
+                        fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status]);
+                    }
+                };
+            }
+            else {
+                console.log(ajaxSettings.content + ": is not a valid contentType");
+            }
+
+            return xmlhttp;
+        },
+        sync: function(xmlhttp, fn, ajaxSettings) {
+            if (ajaxSettings.content == "text") {
+                fn.apply(this, [xmlhttp.responseText]);
+            }
+            else if (ajaxSettings.content == "xml") {
+                fn.apply(this, [xmlhttp.responseXML]);
+            }
+            else {
+                console.log(ajaxSettings.content + ": is not a valid contentType");
+            }
+
+            return xmlhttp;
+        }
     };
 
     //Abkürzungen für events
@@ -866,7 +1021,22 @@ var oplib = (function() {
     };
     //Standartwerte
     oplib.fn.extend(oplib.fn.defaults, {
-        cssUnit: "px"
+        cssUnit: "px",
+        ajaxSettings: {
+            method: "get",
+            async: true,
+            contentType: "application/x-www-form-urlencoded",
+            content: "text",
+            connected: function() {
+                console.log("Coining...");
+            },
+            received: function() {
+                console.log("This is our town, SCRUB!");
+            },
+            processing: function() {
+                console.log("Yeah, beat it!");
+            }
+        }
     });
 
     //FIXME
