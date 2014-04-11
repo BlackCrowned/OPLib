@@ -253,45 +253,13 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         children: function(R, O) {
-            var children = [];
-
-            //childNodes dürfen nicht mehr als einmal vorkommen
-            var isDouble = function(arr, elem) {
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i] == elem) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-
-            //Funktion die alle untergeordneten Nodes findet
-            var getChildren = function(parent, children, R) {
-                for (var j = 0; j < parent.children.length; j++) {
-                    if (!isDouble(children, parent.children[j])) {
-                        children.push(parent.children[j]);
-                        //Rekursiv?
-                        if (R) {
-                            if (parent.children[j].children.length != 0) {
-                                children = (getChildren(parent.children[j], children, R));
-                            }
-                        }
-                    }
-
-                }
-                return children;
-            };
-
-            //Für alle übereinstimmenden Elemente untergeordnete Nodes finden
-            for (var i = 0; i < this.length; i++) {
-                children = getChildren(this[i], children, R);
-            }
+           var children = oplib.fn.ElementSelection.children(this, R);
 
             //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
             //löschen
             if (!O) {
                 for (var x = 0; x < this.length; x++) {
-                    delete this.x;
+                    delete this[x];
                 }
                 this.length = 0;
             }
@@ -309,54 +277,13 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         parents: function(R, rekursionLimit, O) {
-            var Parents = [];
-            var topLimit;
-
-            if (rekursionLimit && rekursionLimit.parentNode) {
-                topLimit = rekursionLimit.parentNode;
-            }
-            else {
-                topLimit = document.body;
-            }
-
-            //Parents dürfen nicht mehr als einmal vorkommen
-            var isDouble = function(arr, elem) {
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i] == elem) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-
-            //Für alle übereinstimmenden Elemente parentNodes (rekursiv) finden.
-            var getParents = function(children, parents, R) {
-                for (var i = 0; i < children.length; i++) {
-                    //topLimit ist die höchste Ebene, falls rekursiv gesucht wird
-                    if (!(!children[i].parentNode || (children[i].parentNode == topLimit && R))) {
-                        //Keine doppelten parentNodes.
-                        if (!isDouble(parents, children[i].parentNode)) {
-                            //parentNode gefunden
-                            parents.push(children[i].parentNode);
-                            //Rekursive Suche??
-                            if (R) {
-                                parents = getParents([children[i].parentNode], parents, R);
-                            }
-                        }
-                    }
-
-                }
-                //Ergebnis der Suche zurückgeben
-                return parents;
-            };
-            //Ergebnis der Suche
-            Parents = getParents(this, Parents, R);
+            var Parents = oplib.fn.ElementSelection.parents(this, R, rekursionLimit);
 
             //OPLib soll nur parentNodes enthalten - Vorherige ELemente
             //löschen
             if (!O) {
                 for (var x = 0; x < this.length; x++) {
-                    delete this.x;
+                    delete this[x];
                 }
                 this.length = 0;
             }
@@ -366,13 +293,29 @@ var oplib = (function() {
             }
             return this;
         },
+        //Setzt .innerHTML für die ausgewählten Elemente
         inner: function(html) {
             return this.each(this, function() {
                 this.innerHTML = html;
             }, [html]);
         },
-        find: function(options) {
-            //TODO: .find()
+        //Findet alle Elemente anhand den in options angegebenen Einschränkungen
+        //limitedTo: Darf nur Elemente aus limitedTo enthalten
+        //O: Enthält auch eigene(s) Element(e)
+        find: function(options, limitedTo, O) {
+            var elems = oplib.fn.ElementSelection.find(options, limitedTo);
+
+            if (O) {
+                for (var i = 0; i < this.length; i++) {
+                    delete this[i];
+                }
+            }
+
+            for (var i = 0; i < elems.length; i++) {
+                this.push(elems[i]);
+            }
+
+            return this;
         }
     };
 
@@ -614,6 +557,115 @@ var oplib = (function() {
         }
         return attr;
 
+    };
+
+    /*
+     * Findet untergeordnete Nodes für die Elemente
+     * R: Rekursive suche möglich
+     */
+    oplib.fn.ElementSelection.children = function(parents, R) {
+        var children = [];
+
+        //Funktion die alle untergeordneten Nodes findet
+        var getChildren = function(parents, children, R) {
+            for (var i = 0; i < parents.length; i++) {
+                for (var j = 0; j < parents[i].children.length; j++) {
+                    if (!oplib.fn.array.includes(children, parents[i].children[j])) {
+                        children.push(parents[i].children[j]);
+                        //Rekursiv?
+                        if (R) {
+                            if (parents[i].children[j].children.length != 0) {
+                                children = (getChildren(parents[i].children[j], children, R));
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return children;
+        };
+
+        return getChildren(parents, children, R);
+    };
+
+    /* Findet übergeordnete Nodes für die Elemente
+     * R: Rekursive Suche möglich
+     * rekursionLimit: Limit für rekursive Suche
+     */
+    oplib.fn.ElementSelection.parents = function(children, R, rekursionLimit) {
+
+        var Parents = [];
+        var topLimit;
+
+        if (rekursionLimit && rekursionLimit.parentNode) {
+            topLimit = rekursionLimit.parentNode;
+        }
+        else {
+            topLimit = document.body;
+        }
+
+        //Für alle übereinstimmenden Elemente parentNodes (rekursiv) finden.
+        var getParents = function(children, parents, R) {
+            for (var i = 0; i < children.length; i++) {
+                //topLimit ist die höchste Ebene, falls rekursiv gesucht wird
+                if (!(!children[i].parentNode || (children[i].parentNode == topLimit && R))) {
+                    //Keine doppelten parentNodes.
+                    if (!oplib.fn.array.includes(parents, children[i].parentNode)) {
+                        //parentNode gefunden
+                        parents.push(children[i].parentNode);
+                        //Rekursive Suche??
+                        if (R) {
+                            parents = getParents([children[i].parentNode], parents, R);
+                        }
+                    }
+                }
+
+            }
+            //Ergebnis der Suche zurückgeben
+            return parents;
+        };
+        //Ergebnis der Suche
+        return getParents(children, Parents, R);
+    };
+
+    /* Findet entsprechende Elemente
+     * options: tag: Tags ["tag1 tag2 tag3"]
+     * limitedTo: Auf diese Elemente beschränkt
+     */
+    oplib.fn.ElementSelection.find = function(options, limitedTo) {
+        var elems = [];
+
+        if (options.tag) {
+            //Mehrere Tags angegeben?
+            var tags = options.tag.split(" ");
+            //Elemente durchgehen
+            for (var i = 0; i < this.length; i++) {
+                //Tags durchgehen
+                for (var j = 0; j < tags.length; j++) {
+                    var tmp = this[i].getElementsByTagName(tags[j]);
+                    //Elemente mit übereinstimmendem Tag durchgehen
+                    for (var x = 0; x < tmp.length; x++) {
+                        //Elemente müssen falls vorhanden in limitedTo vorkommen
+                        if (!limitedTo || oplib.fn.array.includes(limitedTo, tmp[x])) {
+                            //ELemente mit übereinstimmendem Tag dürfen nur
+                            // einmal vorkommen
+                            if (!oplib.fn.array.includes(elems, tmp[x])) {
+                                elems.push(tmp[x]);
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            delete options.tag;
+            return oplib.fn.ElementSelection.find(options, elems);
+        }
+        if (options.attr) {
+
+        }
+        return elems;
     };
 
     //Erstellt ein DOMObject anhand eines Strings
@@ -1147,6 +1199,18 @@ var oplib = (function() {
             }
         },
     });
+
+    //Funktionen die mit Arrays arbeiten
+    oplib.array = oplib.fn.array = {
+        includes: function(arr, elem) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] == elem) {
+                    return true;
+                }
+            }
+            return false;
+        },
+    };
 
     //Standart Werte für name setzen
     oplib.fn.defaults = function(name, value) {
