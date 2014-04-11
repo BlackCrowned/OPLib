@@ -253,7 +253,7 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         children: function(R, O) {
-           var children = oplib.fn.ElementSelection.children(this, R);
+            var children = oplib.fn.ElementSelection.children(this, R);
 
             //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
             //löschen
@@ -493,7 +493,12 @@ var oplib = (function() {
 
             //Enthält selector ein HtmlTag?
             else if (oplib.fn.ElementSelection.onlyTag(selector)) {
-                //TODO HTML TAG SELECTOR
+                var elements = oplib.fn.ElementSelection.find({
+                    tag: oplib.fn.ElementSelection.tag
+                }, oplib.fn.ElementSelection.children(context, 1));
+                for (var i = 0; i < elements.length; i++) {
+                    elems.push(elements[i]);
+                }
             }
             //Wurde kein Selector erkannt?
             else {
