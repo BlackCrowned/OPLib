@@ -567,7 +567,7 @@ var oplib = (function() {
     oplib.fn.ElementSelection.isHtmlString = function(htmlString) {
         return oplib.fn.HtmlStringRegex.test(htmlString);
     };
-    
+
     //Überprüft ob der HTML-String ein einzelnes Element enthält.
     oplib.fn.ElementSelection.singleElement = function(htmlString) {
         return oplib.fn.HtmlStringSingleElementRegex.test(htmlString);
@@ -798,11 +798,11 @@ var oplib = (function() {
                 }
                 else {
                     for (var i = 0; i < header.length; i++) {
-                        if (parsedHeader != "?") {
-                            parsedHeader += ("&" + header[i].key + "=" + header[i].value);
+                        if (!parsedHeader) {
+                            parsedHeader += ("?" + header[i].key + "=" + header[i].value);
                         }
                         else {
-                            parsedHeader += (header[i].key + "=" + header[i].value);
+                            parsedHeader += ("&" + header[i].key + "=" + header[i].value);
                         }
                     }
                 }
@@ -879,6 +879,22 @@ var oplib = (function() {
                     }
                 };
             }
+            else if (ajaxSettings.content == "json") {
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 1) {
+                        ajaxSettings.connected.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 2) {
+                        ajaxSettings.received.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 3) {
+                        ajaxSettings.processing.apply(this, [xmlhttp.readyState]);
+                    }
+                    else if (xmlhttp.readyState == 4) {
+                        fn.apply(this, [oplib.fn.JSON(xmlhttp.responseXML), xmlhttp.readystate, xmlhttp.status]);
+                    }
+                };
+            }
             else {
                 console.log(ajaxSettings.content + ": is not a valid contentType");
             }
@@ -892,6 +908,9 @@ var oplib = (function() {
             else if (ajaxSettings.content == "xml") {
                 fn.apply(this, [xmlhttp.responseXML]);
             }
+            else if (ajaxSettings.content == "json") {
+                fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText)]);
+            }
             else {
                 console.log(ajaxSettings.content + ": is not a valid contentType");
             }
@@ -899,7 +918,7 @@ var oplib = (function() {
             return xmlhttp;
         }
     };
-    
+
     //Auch über $.AJAX aufrufbar
     oplib.AJAX = oplib.fn.AJAX;
 
