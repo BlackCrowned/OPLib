@@ -423,18 +423,16 @@ var oplib = (function() {
     oplib.fn.push = Array.prototype.push;
     oplib.fn.pop = Array.prototype.pop;
 
-    //FIXME: Sonderzeichen!!
-    
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
     //Regex für Klassen Selectoren
-    oplib.fn.ClassRegex = /\.\w*/;
+    oplib.fn.ClassRegex = /\.\w\d*/;
     //Regex für ID Selectoren
-    oplib.fn.IdRegex = /#\w*/;
+    oplib.fn.IdRegex = /#\w\d*/;
     //Regex für HTML-Strings
-    oplib.fn.HtmlStringRegex = /^<[\w\s="'`´]*>.*<\/\w*>$/;
+    oplib.fn.HtmlStringRegex = /^<[\w\d\s="'`´]*>[\w\W]*<\/[\w\s]*>$/;
     //Regex für HTML-Strings, die nur ein Element enthalten
-    oplib.fn.HtmlStringSingleElementRegex = /^<[\w\s="'`´]*>[^<>]*<\/\w*>$/;
+    oplib.fn.HtmlStringSingleElementRegex = /^<[\w\d\s="'`´]*>[^<>]*<\/[\w\s]*>$/;
     //Regex für HTML-Tag Selectoren
     oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
     //Regex für alle möglichen Selectoren
