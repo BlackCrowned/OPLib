@@ -371,6 +371,9 @@ var oplib = (function() {
                 this.innerHTML = html;
             }, [html]);
         },
+        find: function(options) {
+            //TODO: .find()
+        }
     };
 
     //Objecte zusammenführen
@@ -428,8 +431,10 @@ var oplib = (function() {
     oplib.fn.IdRegex = /#\w*/;
     //Regex für HTML-Strings
     oplib.fn.HtmlStringRegex = /^<[\w\s="'`´]*>.*<\/\w*>$/;
+    //Regex für HTML-Strings, die nur ein Element enthalten
+    oplib.fn.HtmlStringSingleElementRegex = /^<[\w\s="'`´]*>[^<>]*<\/\w*>$/;
     //Regex für HTML-Tag Selectoren
-    oplib.fn.HtmlTagRegex = /<\w*>/;
+    oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
     //Regex für alle möglichen Selectoren
     oplib.fn.PossibleSelectorsRegex = /[.#<]/;
 
@@ -477,7 +482,7 @@ var oplib = (function() {
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
             //Enthält selector ein HTML String
-            if (oplib.fn.HtmlStringRegex.test(selector)) {
+            if (oplib.fn.ElementSelection.isHtmlString(selector)) {
                 elems.push(oplib.fn.createDOBObeject(selector));
             }
 
@@ -544,7 +549,7 @@ var oplib = (function() {
             }
 
             //Enthält selector ein HtmlTag?
-            else if (oplib.fn.HtmlTagRegex.test(selector)) {
+            else if (oplib.fn.ElementSelection.onlyTag(selector)) {
                 //TODO HTML TAG SELECTOR
             }
             //Wurde kein Selector erkannt?
@@ -556,6 +561,21 @@ var oplib = (function() {
         }
 
         return elems;
+    };
+
+    //Überprüft ob es sich um einen HTML-String handelt
+    oplib.fn.ElementSelection.isHtmlString = function(htmlString) {
+        return oplib.fn.HtmlStringRegex.test(htmlString);
+    };
+    
+    //Überprüft ob der HTML-String ein einzelnes Element enthält.
+    oplib.fn.ElementSelection.singleElement = function(htmlString) {
+        return oplib.fn.HtmlStringSingleElementRegex.test(htmlString);
+    };
+
+    //Überprüft ob der HTML-String nur aus einem Tag besteht <tag>
+    oplib.fn.ElementSelection.onlyTag = function(htmlString) {
+        return oplib.fn.HtmlTagRegex.test(htmlString);
     };
 
     //Gibt das Tag aus einem HTML-String zurück
@@ -598,16 +618,27 @@ var oplib = (function() {
 
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOBObeject = function(text) {
-        //Tag
-        var elem = document.createElement(oplib.fn.ElementSelection.tag(text));
-        //Text
-        elem.innerHTML = oplib.fn.ElementSelection.text(text);
-        //Attribute
-        var attr = oplib.fn.ElementSelection.attr(text);
-        for (var i = 0; i < attr.length; i++) {
-            elem.setAttribute(attr[i].name, attr[i].value);
+        //Funktioniert nur wenn der String ein einzelnes HTML-Element enthält
+        if (oplib.fn.ElementSelection.singleElement(text)) {
+            //Tag
+            var elem = document.createElement(oplib.fn.ElementSelection.tag(text));
+            //Text
+            elem.innerHTML = oplib.fn.ElementSelection.text(text);
+            //Attribute
+            var attr = oplib.fn.ElementSelection.attr(text);
+            for (var i = 0; i < attr.length; i++) {
+                elem.setAttribute(attr[i].name, attr[i].value);
+            }
+            return elem;
         }
-        return elem;
+        //Funktioniert auch mit mehreren Elementen
+        else {
+            //TODO: .createDOMObject - mehrere Elemente
+            var elem = document.createElement("div");
+            elem.innerHTML = text;
+            return elem;
+        }
+
     };
 
     //Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor")
@@ -1048,7 +1079,8 @@ var oplib = (function() {
 
             return 0;
         },
-        //Enthält funktionen, die beim readyState-Wechsel ausgeführt werden müssen
+        //Enthält funktionen, die beim readyState-Wechsel ausgeführt werden
+        // müssen
         handleList: {},
         //Enthält, ob ein Element bereits bereit ist.
         isReadyState: {},
