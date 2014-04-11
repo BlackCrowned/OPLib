@@ -423,6 +423,8 @@ var oplib = (function() {
     oplib.fn.push = Array.prototype.push;
     oplib.fn.pop = Array.prototype.pop;
 
+    //FIXME: Sonderzeichen!!
+    
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
     //Regex für Klassen Selectoren
@@ -899,6 +901,9 @@ var oplib = (function() {
             return xmlhttp;
         }
     };
+    
+    //Auch über $.AJAX aufrufbar
+    oplib.AJAX = oplib.fn.AJAX;
 
     //Abkürzungen für events
     oplib.fn.extend(oplib.fn, {
