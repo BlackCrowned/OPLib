@@ -721,17 +721,16 @@ var oplib = (function() {
         else if ( typeof value === "number") {
             value = value.toString();
             //"width" -> Einheit benötigt
-            if (expression.search(/(width|height|position|origin|size|padding|margin|spacing|gap)/i)) {
+            if (expression.search(/(width|height|position|origin|size|padding|margin|spacing|gap)/i) != -1) {
                 if (!args) {
                     value += oplib.fn.defaults.cssUnit;
                 }
                 else {
                     value += args;
                 }
-
             }
             //"top" -> Einheit benötigt
-            else if (expression.search(/^(top|bottom|left|rigth|flex-?basis)/i)) {
+            else if (expression.search(/^(top|bottom|left|rigth|flex-?basis)/i) != -1) {
                 if (!args) {
                     value += oplib.fn.defaults.cssUnit;
                 }
@@ -744,6 +743,7 @@ var oplib = (function() {
     };
 
     //Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
+    //TODO: inherit, auto, etc
     oplib.fn.floatCssValue = function(value, expression, elem) {
         if ( typeof value === "string") {
             if (/%/.test(value)) {
@@ -765,8 +765,12 @@ var oplib = (function() {
                             return elem.offsetLeft * (parseFloat(value) / 100);
                             break;
 
+                        //Annehmen, dass opacity 1 ist
+                        case "opacity":
+                            return 1.0 * (parseFloat(value) / 100);
+                            break;
                         default:
-                            console.log("Cant get real value of " + value);
+                            console.log("Cant get real value of " + value + " with expression: " + expression);
                     }
                 }
                 else {
@@ -836,12 +840,13 @@ var oplib = (function() {
      * options:
      *  width|height|position|origin|size|padding|margin|spacing|gap
      *  top|bottom|left|rigth|flex-?basis
+     *  opacity
      *  duration:
      *  interpolator:
      * duration:
      *  "slow"|"normal"|"fast"|number
      * interpolator:
-     *  "linear"|"fancy"
+     *  "linear"|"accelerate"|"decelerate"
      */
     oplib.fn.anim = function(options, duration, interpolator) {
         if (!options) {
