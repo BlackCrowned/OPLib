@@ -944,7 +944,6 @@ var oplib = (function() {
                 for (var j in options) {
                     options[j].current = options[j].old + (options[j].aim - options[j].old) * animationProgress;
                     var apply = oplib.fn.finalizeCssExpressions(j, options[j].current);
-                    console.log(actualProgress + "/" + animationProgress);
                     elem.style[apply[0]] = apply[1];
                 }
 
