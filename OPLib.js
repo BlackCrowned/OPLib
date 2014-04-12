@@ -836,6 +836,14 @@ var oplib = (function() {
         }
     };
 
+    //Abkürzungen für allgemeine Animationen
+    //TODO
+    oplib.fn.extend(oplib.fn, {
+        show: function(duration, interpolator) {
+
+        },
+    });
+
     /* Animiert die übereinstimmenden Elemente
      * options:
      *  width|height|position|origin|size|padding|margin|spacing|gap
