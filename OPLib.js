@@ -793,6 +793,50 @@ var oplib = (function() {
         }
     };
 
+    /* Animiert die übereinstimmenden Elemente
+     * options:
+     *  width|height|position|origin|size|padding|margin|spacing|gap
+     *  top|bottom|left|rigth|flex-?basis
+     *  duration:
+     *  interpolator:
+     * duration:
+     *  "slow"|"normal"|"fast"|number
+     * interpolator:
+     *  "linear"|"fancy"
+     */
+    oplib.fn.anim = function(options, duration, interpolator) {
+        if (!options) {
+            return this;
+        }
+        if (!duration) {
+            duration = options.duration ? options.duration : "normal";
+        }
+        if (!interpolator) {
+            interpolator = options.interpolator ? options.interpolator : "linear";
+        }
+    };
+
+    //Animiert Objekte
+    oplib.fx = function(elems, options) {
+        for (var i = 0; i < elems.length; i++) {
+            oplib.fx.queue.push({
+                elem: elems[i],
+                options: options
+            });
+        }
+    };
+
+    oplib.fn.extend(oplib.fx, {
+        start: function() {
+
+        },
+        queue: [],
+        //Animiert Objekte für Zeit t;
+        animate: function() {
+
+        },
+    });
+
     //Parses JSON Data
     oplib.fn.JSON = function(json) {
         return oplib.fn.JSON.parse(json);
@@ -1240,7 +1284,8 @@ var oplib = (function() {
             processing: function() {
                 console.log("Yeah, beat it!");
             }
-        }
+        },
+        frameTime: 5
     });
 
     //FIXME
