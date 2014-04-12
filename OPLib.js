@@ -457,7 +457,7 @@ var oplib = (function() {
 
                 if (_selector != "") {
                     //Übereinstimmende Elemente übernehmen
-                    elems.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
+                    elems = oplib.fn.array.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
                 }
             }
             //Enthält selector einen IDausdruck?
@@ -487,7 +487,7 @@ var oplib = (function() {
 
                 if (_selector != "") {
                     //Übereinstimmende Elemente übernehmen
-                    elems.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
+                    elems = oplib.fn.array.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
                 }
             }
 
@@ -743,6 +743,45 @@ var oplib = (function() {
         return [expression, value];
     };
 
+    //Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
+    oplib.fn.floatCssValue = function(value, expression, elem) {
+        if ( typeof value === "string") {
+            if (/%/.test(value)) {
+                if (!elem.style[expression]) {
+                    switch (expression) {
+                        case "width":
+                            return elem.offsetWidth * (parseFloat(value) / 100);
+                            break;
+
+                        case "height":
+                            return elem.offsetHeight * (parseFloat(value) / 100);
+                            break;
+
+                        case "top":
+                            return elem.offsetTop * (parseFloat(value) / 100);
+                            break;
+
+                        case "left":
+                            return elem.offsetLeft * (parseFloat(value) / 100);
+                            break;
+
+                        default:
+                            console.log("Cant get real value of " + value);
+                    }
+                }
+                else {
+                    return parseFloat(elem.style[expression]) * (parseFloat(value) / 100);
+                }
+            }
+            else {
+                return parseFloat(value);
+            }
+        }
+        else if ( typeof value === "number") {
+            return value;
+        }
+    };
+
     //Klont Elemente, etc...
     oplib.fn.finalizeDOMManipulation = function(fn, args) {
         this.each(this, function(fn, elems) {
@@ -809,32 +848,133 @@ var oplib = (function() {
             return this;
         }
         if (!duration) {
-            duration = options.duration ? options.duration : "normal";
+            if (options.duration) {
+                duration = options.duration;
+                delete options.duration;
+            }
+            else {
+                duration = "normal";
+            }
         }
         if (!interpolator) {
-            interpolator = options.interpolator ? options.interpolator : "linear";
+            if (options.interpolator) {
+                interpolator = options.interpolator;
+                delete options.interpolator;
+            }
+            else {
+                interpolator = "linear";
+            }
         }
+
+        oplib.fx(this, options, duration, interpolator);
+
+        return this;
     };
 
     //Animiert Objekte
-    oplib.fx = function(elems, options) {
+    oplib.fx = function(elems, options, duration, interpolator) {
         for (var i = 0; i < elems.length; i++) {
-            oplib.fx.queue.push({
-                elem: elems[i],
-                options: options
-            });
+            oplib.fx.init(elems[i], options, duration, interpolator);
         }
     };
 
     oplib.fn.extend(oplib.fx, {
-        start: function() {
+        init: function(elem, options, duration, interpolator) {
+            //Status des Elements festhalten
+            var cssSettings = {};
+            for (var i in options) {
+                cssSettings[i] = {};
+                cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
+                cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
+                cssSettings[i].aim = oplib.fn.floatCssValue(options[i], i, elem);
+            }
 
+            oplib.fx.queue.push({
+                elem: elem,
+                options: cssSettings,
+                duration: duration,
+                interpolator: interpolator,
+                start_time: oplib.TIME.getCurrentTime(),
+                actual_time: 0,
+            });
+            if (!oplib.fx.animatorRunning) {
+                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.frameTime);
+                oplib.fx.animatorRunning = true;
+            }
         },
+        end: function(i) {
+            oplib.fx.queue.splice(i, 1);
+
+            if (!oplib.fx.queue.length) {
+                clearTimeout(oplib.fx.animatorId);
+                oplib.fx.animatorRunning = false;
+            }
+            return oplib.fx.animatorId;
+        },
+        //Enthält zu animerende Elemente mit ihren Eigenschaften
         queue: [],
+        //Wird .animate() bereits ausgeführt
+        animatorRunning: false,
+        //setIntervar() ID um .animator() zu stoppen
+        animatorId: 0,
         //Animiert Objekte für Zeit t;
         animate: function() {
+            var currentTime = oplib.TIME.getCurrentTime();
+            var actualProgress;
+            var animationProgress;
 
+            var elem, options, duration, interpolator, start_time, actual_time;
+
+            var done = [];
+            
+            for (var i = 0; i < oplib.fx.queue.length; i++) {
+                elem = oplib.fx.queue[i].elem;
+                options = oplib.fx.queue[i].options;
+                duration = oplib.fx.queue[i].duration;
+                interpolator = oplib.fx.queue[i].interpolator;
+                start_time = oplib.fx.queue[i].start_time;
+                actual_time = currentTime - start_time;
+                actualProgress = actual_time / duration;
+
+                if (actualProgress > 1.0) {
+                    actualProgress = 1.0;
+                }
+                animationProgress = oplib.fx.interpolate(interpolator, actualProgress);
+
+                for (var j in options) {
+                    options[j].current = options[j].old + (options[j].aim - options[j].old) * animationProgress;
+                    var apply = oplib.fn.finalizeCssExpressions(j, options[j].current);
+                    console.log(actualProgress + "/" + animationProgress);
+                    elem.style[apply[0]] = apply[1];
+                }
+
+                if (actualProgress == 1.0) {
+                    done.push(i);
+                }
+
+            }
+
+            for (var i = 0; i < done.length; i++) {
+                oplib.fx.end(done[i]);
+            }
+
+            if (oplib.fx.animatorRunning) {
+                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.frameTime);
+            }
         },
+        //Wendet einen interpolator auf actualProgress an
+        interpolate: function(interpolator, actualProgress) {
+            interpolators = {
+                linear: actualProgress,
+                decelerate: Math.sin(actualProgress * (Math.PI / 2)),
+                accelerate: 1 - Math.sin(actualProgress * (Math.PI / 2) + (Math.PI / 2)),
+            };
+
+            if (!interpolators[interpolator]) {
+                interpolator = "linear";
+            }
+            return interpolators[interpolator];
+        }
     });
 
     //Parses JSON Data
@@ -1259,38 +1399,42 @@ var oplib = (function() {
             }
             return false;
         },
-    };
-
-    //Standart Werte für name setzen
-    oplib.fn.defaults = function(name, value) {
-        oplib.fn.defaults[name] = value;
-        ;
-        return this;
-    };
-    //Standartwerte
-    oplib.fn.extend(oplib.fn.defaults, {
-        cssUnit: "px",
-        ajaxSettings: {
-            method: "get",
-            async: true,
-            contentType: "application/x-www-form-urlencoded",
-            content: "text",
-            connected: function() {
-                console.log("Coining...");
-            },
-            received: function() {
-                console.log("This is our town, SCRUB!");
-            },
-            processing: function() {
-                console.log("Yeah, beat it!");
+        sameElements: function(arr1, arr2) {
+            //Nur ein Argument angegeben? -> Dieses Object mit Argument
+            // vergleichen
+            if (arguments.length == 1) {
+                arr2 = arguments[0];
+                arr1 = this;
             }
-        },
-        frameTime: 5
-    });
+            var newArr = [];
+            //Forschleife mit allen Elementen von arr1
+            for (var i = 0; i < arr1.length; i++) {
+                //Forschleife mit allen Elementen von arr2
+                for (var a = 0; a < arr2.length; a++) {
+                    //Sind gleiche Elemente in arr1 und arr2 vorhanden
+                    if (arr1[i] == arr2[a]) {
+                        //Ja, dem neuen Array hinzufügen
+                        newArr.push(arr1[i]);
+                    }
+                }
+            }
+            //Nur ein Argument angegeben?
+            if (arguments.length == 1) {
+                //Alle eigenen Elemente löschen
+                this.splice(0, this.length);
+                //Neue Elemente dem eigenen Array zuweisen
+                for (var i = 0; i < newArr.length; i++) {
+                    //Neue Elemente dem eigenen Array zuweisen
+                    this.push(newArr[i]);
 
-    //FIXME
-    //Object erweitern
-    oplib.fn.extend(Object.prototype, {
+                }
+            }
+            return newArr;
+        }
+    };
+
+    //Funktionen die mit Objects arbeiten
+    oplib.object = oplib.fn.object = {
         compare: function(obj1, obj2) {
             //Nur ein Argument angegeben? -> Dieses Object mit Argument
             // vergleichen
@@ -1327,42 +1471,40 @@ var oplib = (function() {
         merge: oplib.fn.merge,
         //Extend für alle Objecte freigeben
         extend: oplib.fn.extend
-    });
+    };
 
-    //Array erweitern
-    oplib.fn.extend(Array.prototype, {
-        sameElements: function(arr1, arr2) {
-            //Nur ein Argument angegeben? -> Dieses Object mit Argument
-            // vergleichen
-            if (arguments.length == 1) {
-                arr2 = arguments[0];
-                arr1 = this;
-            }
-            var newArr = [];
-            //Forschleife mit allen Elementen von arr1
-            for (var i = 0; i < arr1.length; i++) {
-                //Forschleife mit allen Elementen von arr2
-                for (var a = 0; a < arr2.length; a++) {
-                    //Sind gleiche Elemente in arr1 und arr2 vorhanden
-                    if (arr1[i] == arr2[a]) {
-                        //Ja, dem neuen Array hinzufügen
-                        newArr.push(arr1[i]);
-                    }
-                }
-            }
-            //Nur ein Argument angegeben?
-            if (arguments.length == 1) {
-                //Alle eigenen Elemente löschen
-                this.splice(0, this.length);
-                //Neue Elemente dem eigenen Array zuweisen
-                for (var i = 0; i < newArr.length; i++) {
-                    //Neue Elemente dem eigenen Array zuweisen
-                    this.push(newArr[i]);
-
-                }
-            }
-            return newArr;
+    //Funktionen für die Zeit
+    oplib.TIME = oplib.fn.TIME = {
+        getCurrentTime: function() {
+            return new Date().getTime();
         }
+    };
+
+    //Standart Werte für name setzen
+    oplib.fn.defaults = function(name, value) {
+        oplib.fn.defaults[name] = value;
+        ;
+        return this;
+    };
+    //Standartwerte
+    oplib.fn.extend(oplib.fn.defaults, {
+        cssUnit: "px",
+        ajaxSettings: {
+            method: "get",
+            async: true,
+            contentType: "application/x-www-form-urlencoded",
+            content: "text",
+            connected: function() {
+                console.log("Coining...");
+            },
+            received: function() {
+                console.log("This is our town, SCRUB!");
+            },
+            processing: function() {
+                console.log("Yeah, beat it!");
+            }
+        },
+        frameTime: 5
     });
 
     //Debugging Console - Bugfix for IE
