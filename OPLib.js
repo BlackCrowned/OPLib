@@ -866,6 +866,17 @@ var oplib = (function() {
             }
         }
 
+        //Argumente interpretieren
+        if (duration == "normal") {
+            duration = 750;
+        }
+        if (duration == "fast") {
+            duration = 500;
+        }
+        if (duration == "slow") {
+            duration = 1000;
+        }
+
         oplib.fx(this, options, duration, interpolator);
 
         return this;
@@ -926,7 +937,7 @@ var oplib = (function() {
             var elem, options, duration, interpolator, start_time, actual_time;
 
             var done = [];
-            
+
             for (var i = 0; i < oplib.fx.queue.length; i++) {
                 elem = oplib.fx.queue[i].elem;
                 options = oplib.fx.queue[i].options;
