@@ -777,6 +777,40 @@ var oplib = (function() {
                     return parseFloat(elem.style[expression]) * (parseFloat(value) / 100);
                 }
             }
+            else if (/text/.test(value)) {
+                if (!elem.style[expression]) {
+                    switch (expression) {
+                        case "width":
+                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetWidth);
+                            break;
+
+                        case "height":
+                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetHeight);
+                            break;
+
+                        case "top":
+                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetTop);
+                            break;
+
+                        case "left":
+                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetLeft);
+                            break;
+
+                        //Annehmen, dass opacity 1 ist
+                        case "opacity":
+                            return "1";
+                            break;
+                        case "display":
+                            return "";
+                            break;
+                        default:
+                            console.log("Cant get text of " + value + " with expression: " + expression);
+                    }
+                }
+                else {
+                    return oplib.fn.finalizeCssExpressions(expression, elem.style[expression]);
+                }
+            }
             else {
                 return parseFloat(value);
             }
@@ -837,11 +871,63 @@ var oplib = (function() {
     };
 
     //Abkürzungen für allgemeine Animationen
-    //TODO
+    //TODO Mehr Ablürzungen
+    //TODO Callbacks
     oplib.fn.extend(oplib.fn, {
-        show: function(duration, interpolator) {
+        hide: function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator) {
+                if (!this.oplib) {
+                    this.oplib = {};
+                }
+                if (this.oplib.hidden == "hidden") {
+                    return;
+                }
+                oplib.fx([this], {
+                    width: 0,
+                    height: 0,
+                    opacity: 0,
+                    callbacks: {
+                        start: function(elem) {
+                            elem.oplib.oldWidth = oplib.fn.floatCssValue("100%", "width", elem);
+                            elem.oplib.oldHeight = oplib.fn.floatCssValue("100%", "height", elem);
+                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("100%", "opacity", elem);
+                            elem.oplib.oldDisplay = oplib.fn.floatCssValue("text", "display", elem);
+                            elem.oplib.hidden = "hiding";
+                        },
+                        done: function(elem) {
+                            elem.style.display = "none";
+                            elem.oplib.hidden = "hidden";
+                        }
+                    }
+                }, duration, interpolator);
 
+            }, [duration, interpolator]);
         },
+        show: function(duration, interpolator) {
+            return this.each(this, function() {
+                if (!this.oplib) {
+                    this.oplib = {};
+                }
+                if (this.oplib.hidden == "shown") {
+                    return;
+                }
+                oplib.fx([this], {
+                    width: this.oplib.oldWidth,
+                    height: this.oplib.oldHeight,
+                    opacity: this.oplib.oldOpacity,
+                    callbacks: {
+                        start: function(elem) {
+                            elem.oplib.hidden = "showing";
+                            elem.style.display = elem.oplib.oldDisplay;
+                        },
+                        done: function(elem) {
+                            elem.oplib.hidden = "shown";
+                        }
+                    }
+                });
+            }, []);
+
+        }
     });
 
     /* Animiert die übereinstimmenden Elemente
@@ -860,6 +946,14 @@ var oplib = (function() {
         if (!options) {
             return this;
         }
+
+        oplib.fx(this, options, duration, interpolator);
+
+        return this;
+    };
+
+    //Animiert Objekte
+    oplib.fx = function(elems, options, duration, interpolator) {
         if (!duration) {
             if (options.duration) {
                 duration = options.duration;
@@ -890,23 +984,46 @@ var oplib = (function() {
             duration = 1000;
         }
 
-        oplib.fx(this, options, duration, interpolator);
-
-        return this;
-    };
-
-    //Animiert Objekte
-    oplib.fx = function(elems, options, duration, interpolator) {
         for (var i = 0; i < elems.length; i++) {
-            oplib.fx.init(elems[i], options, duration, interpolator);
+            //Wird das Element bereits aniemiert, dann als Callback "done" daran
+            // anhägen
+            var callbackAdded = false;
+
+            for (var j = 0; j < oplib.fx.queue.length; j++) {
+                if (oplib.fx.queue[j].elem == elems[i]) {
+                    var callbackOptions = oplib.fn.extend(options, {
+                        duration: duration,
+                        interpolator: interpolator
+                    });
+                    oplib.fx.addCallback(j, callbackOptions, "done");
+                    callbackAdded = true;
+
+                    //Callbacks "start" aufrufen
+                    oplib.fx.callback(elems[i], oplib.fx.queue[j].callbacks, "start");
+                }
+                return;
+            }
+            if (!callbackAdded) {
+                oplib.fx.init(elems[i], options, duration, interpolator);
+            }
+
         }
     };
 
     oplib.fn.extend(oplib.fx, {
         init: function(elem, options, duration, interpolator) {
-            //Status des Elements festhalten
+
+            //Optionen interpretieren
             var cssSettings = {};
+            var callbacks = {};
             for (var i in options) {
+                //Auf callbacks reagieren
+                if (i == "callbacks") {
+                    callbacks = options[i];
+                    continue;
+                }
+
+                //Status des Elements festhalten
                 cssSettings[i] = {};
                 cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
                 cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
@@ -920,14 +1037,22 @@ var oplib = (function() {
                 interpolator: interpolator,
                 start_time: oplib.TIME.getCurrentTime(),
                 actual_time: 0,
+                callbacks: callbacks,
             });
+
+            //Callbacks "start" aufrufen
+            oplib.fx.callback(elem, callbacks, "start");
+
             if (!oplib.fx.animatorRunning) {
                 oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.frameTime);
                 oplib.fx.animatorRunning = true;
             }
         },
-        end: function(i) {
+        end: function(i, elem, callbacks) {
             oplib.fx.queue.splice(i, 1);
+
+            //Callbacks "done" aufrufen
+            oplib.fx.callback(elem, callbacks, "done");
 
             if (!oplib.fx.queue.length) {
                 clearTimeout(oplib.fx.animatorId);
@@ -947,7 +1072,7 @@ var oplib = (function() {
             var actualProgress;
             var animationProgress;
 
-            var elem, options, duration, interpolator, start_time, actual_time;
+            var elem, options, duration, interpolator, start_time, actual_time, callbacks;
 
             var done = [];
 
@@ -958,12 +1083,16 @@ var oplib = (function() {
                 interpolator = oplib.fx.queue[i].interpolator;
                 start_time = oplib.fx.queue[i].start_time;
                 actual_time = currentTime - start_time;
+                callbacks = oplib.fx.queue[i].callbacks;
                 actualProgress = actual_time / duration;
 
                 if (actualProgress > 1.0) {
                     actualProgress = 1.0;
                 }
                 animationProgress = oplib.fx.interpolate(interpolator, actualProgress);
+
+                //Callbacks "update" aufrufen
+                oplib.fx.callback(elem, callbacks, "update");
 
                 for (var j in options) {
                     options[j].current = options[j].old + (options[j].aim - options[j].old) * animationProgress;
@@ -978,7 +1107,7 @@ var oplib = (function() {
             }
 
             for (var i = 0; i < done.length; i++) {
-                oplib.fx.end(done[i]);
+                oplib.fx.end(done[i] - i, oplib.fx.queue[done[i] - i].elem, oplib.fx.queue[done[i] - i].callbacks);
             }
 
             if (oplib.fx.animatorRunning) {
@@ -997,6 +1126,76 @@ var oplib = (function() {
                 interpolator = "linear";
             }
             return interpolators[interpolator];
+        },
+        //Callbackfunktion
+        callback: function(elem, callbacks, action) {
+            if (!callbacks) {
+                return callbacks;
+            }
+
+            //Falls callbacks in Array-Form angegeben wurden:
+            if (callbacks[action] && toString.call(callbacks[action]) === "[object Array]") {
+
+                for (var i in callbacks[action]) {
+                    if ( typeof callbacks[action][i] === "function") {
+                        callbacks[action][i].apply(this, [elem]);
+                        delete callbacks[action][i];
+                    }
+                    else if ( typeof callbacks[action][i] === "object") {
+                        //Zusätzliche animationen enthalten
+                        oplib.fx([elem], callbacks[action][i]);
+                        delete callbacks[action][i];
+                    }
+                }
+            }
+            else if (callbacks[action] && typeof callbacks[action] === "function") {
+                callbacks[action].apply(this, [elem]);
+                delete callbacks[action];
+            }
+            else if (callbacks[action] && typeof callbacks[action] === "object") {
+                //Zusätzliche animationen enthalten
+                oplib.fx([elem], callbacks[action]);
+                delete callbacks[action];
+            }
+
+            return callbacks;
+        },
+        //Fügt Elementen in oplib.fx.queue callbacks hinzu.
+        addCallback: function(queueId, callbacks, action) {
+            if (!callbacks) {
+                return;
+            }
+
+            if (!oplib.fx.queue[queueId].callbacks) {
+                oplib.fx.queue[queueId].callbacks = {};
+                oplib.fx.queue[queueId].callbacks[action] = [];
+            }
+
+            if (!oplib.fx.queue[queueId].callbacks[action]) {
+                oplib.fx.queue[queueId].callbacks[action] = [];
+            }
+
+            if (oplib.fx.queue[queueId].callbacks[action] && toString.call(oplib.fx.queue[queueId].callbacks[action]) === "[object Array]") {
+                if (toString.call(callbacks) === "[object Array]") {
+                    for (var i in callbacks) {
+                        oplib.fx.queue[queueId].callbacks[action].push(callbacks[i]);
+                    }
+                }
+                else {
+                    oplib.fx.queue[queueId].callbacks[action].push(callbacks);
+                }
+            }
+            else if (oplib.fx.queue[queueId].callbacks[action]) {
+                oplib.fx.queue[queueId].callbacks[action] = [oplib.fx.queue[queueId].callbacks[action]];
+                if (toString.call(callbacks) === "[object Array]") {
+                    for (var i in callbacks) {
+                        oplib.fx.queue[queueId].callbacks[action].push(callbacks[i]);
+                    }
+                }
+                else {
+                    oplib.fx.queue[queueId].callbacks[action].push(callbacks);
+                }
+            }
         }
     });
 
@@ -1439,17 +1638,6 @@ var oplib = (function() {
                         //Ja, dem neuen Array hinzufügen
                         newArr.push(arr1[i]);
                     }
-                }
-            }
-            //Nur ein Argument angegeben?
-            if (arguments.length == 1) {
-                //Alle eigenen Elemente löschen
-                this.splice(0, this.length);
-                //Neue Elemente dem eigenen Array zuweisen
-                for (var i = 0; i < newArr.length; i++) {
-                    //Neue Elemente dem eigenen Array zuweisen
-                    this.push(newArr[i]);
-
                 }
             }
             return newArr;
