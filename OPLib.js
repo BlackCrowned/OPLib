@@ -17,6 +17,8 @@ var oplib = (function() {
             }
             this.length = elems.length;
 
+            this.op = true;
+
             return this;
         },
         //Attribut setzen
@@ -83,7 +85,10 @@ var oplib = (function() {
         //Klasse hinzufügen
         addClass: function(name) {
             return this.each(this, function(name) {
-                var classAttr = OPLib(this).getAttr("class");
+                var classAttr = OPLib(this).attr("class");
+                if (!classAttr) {
+                    classAttr = "";
+                }
                 var regex = new RegExp(name);
                 //Ist die Klasse bereits gesetzt?
                 if (!regex.test(classAttr)) {
@@ -98,7 +103,10 @@ var oplib = (function() {
         //Klasse entfernen
         removeClass: function(name) {
             return this.each(this, function(name) {
-                var classAttr = OPLib(this).getAttr("class");
+                var classAttr = OPLib(this).attr("class");
+                if (!classAttr) {
+                    classAttr = "";
+                }
                 var regex = new RegExp(name);
                 //Ist die Klasse überhaupt gesetzt?
                 if (regex.test(classAttr)) {
@@ -113,11 +121,11 @@ var oplib = (function() {
         hasClass: function(name) {
             //Keine Klasse angegeben: alle Klassen zurückgeben
             if (!name) {
-                return this.getAttr("class").split(" ");
+                return this.attr("class").split(" ");
             }
             //Klasse angegeben: überprüfen, ob sie vorhanden ist
             else {
-                return this.getAttr("class").search(name) != -1 ? true : false;
+                return this.attr("class").search(name) != -1 ? true : false;
             }
         },
         //Css-Attribut hinzufügen/bearbeiten/auslesen
@@ -417,6 +425,18 @@ var oplib = (function() {
         return obj;
     };
 
+    oplib.fn.isOPLib = function(obj) {
+        if (!obj) {
+            return false;
+        }
+        if (obj.op) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+
     //Array Funktionen zugänglich machen
     oplib.fn.push = Array.prototype.push;
     oplib.fn.pop = Array.prototype.pop;
@@ -560,6 +580,11 @@ var oplib = (function() {
                 var elem = document.createElement("div");
                 elem.innerHTML = selector;
                 elems.push(elem);
+            }
+        }
+        else if ( typeof selector === "object") {
+            if (oplib.fn.isOPLib(selector)) {
+                elems = selector;
             }
         }
 
