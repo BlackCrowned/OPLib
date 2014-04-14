@@ -453,8 +453,10 @@ var oplib = (function() {
     oplib.fn.HtmlStringSingleElementRegex = /^<[\w\d\s="'`´]*>[^<>]*<\/[\w\s]*>$/;
     //Regex für HTML-Tag Selectoren
     oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
+    //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
+    oplib.fn.CreateHtmlTagRegex = /^_\w*_$/;
     //Regex für alle möglichen Selectoren
-    oplib.fn.PossibleSelectorsRegex = /[.#<]/;
+    oplib.fn.PossibleSelectorsRegex = /[.#<_]/;
 
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
@@ -574,6 +576,11 @@ var oplib = (function() {
                 for (var i = 0; i < elements.length; i++) {
                     elems.push(elements[i]);
                 }
+            }
+            //Enthält selector ein HtmlTag, das erstellt werden soll?
+            else if (oplib.fn.CreateHtmlTagRegex.test(selector)) {
+                var elem = document.createElement(selector.replace(/_/g, ""));
+                elems.push(elem);
             }
             //Wurde kein Selector erkannt?
             else {
