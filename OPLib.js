@@ -448,9 +448,9 @@ var oplib = (function() {
     //Regex für ID Selectoren
     oplib.fn.IdRegex = /#\w\d*/;
     //Regex für HTML-Strings
-    oplib.fn.HtmlStringRegex = /^<[\w\d\s="'`´]*>[\w\W]*<\/[\w\s]*>$/;
+    oplib.fn.HtmlStringRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>$/;
     //Regex für HTML-Strings, die nur ein Element enthalten
-    oplib.fn.HtmlStringSingleElementRegex = /^<[\w\d\s="'`´]*>[^<>]*<\/[\w\s]*>$/;
+    oplib.fn.HtmlStringSingleElementRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
     //Regex für HTML-Tag Selectoren
     oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
     //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
@@ -621,7 +621,7 @@ var oplib = (function() {
     //Gibt den Text aus einem HTML-String zurück
     oplib.fn.ElementSelection.text = function(htmlString) {
         //HTML-Tags entfernen
-        return htmlString.replace(/<[\/\w\s="'`´]*>/g, "");
+        return htmlString.replace(/<[\/\w\d\s=:\/\.&?"'`´]*>/g, "");
     };
 
     //Gibt die Attribute aus einem HTML-String zurück
@@ -633,7 +633,7 @@ var oplib = (function() {
         htmlString = htmlString.replace(/\w*\s/, "");
 
         //Attribute einteilen
-        matchedAttr = htmlString.match(/\w*\s*=\s*("|'|`|´)[\w\s]*("|'|`|´)/g);
+        matchedAttr = htmlString.match(/\w*\s*=\s*("|'|`|´)[\w\d\s:\/\.&?]*("|'|`|´)/g);
 
         //Keine Attribute gefunden, leeres Array zurückgeben
         if (!matchedAttr) {
@@ -644,7 +644,7 @@ var oplib = (function() {
         for (var i = 0; i < matchedAttr.length; i++) {
             attr.push({
                 name: matchedAttr[i].slice(matchedAttr[i].search(/\w*/), matchedAttr[i].search(/\s*=/)),
-                value: matchedAttr[i].slice(matchedAttr[i].search(/("|'|`|´)(\w*\s*)/) + 1, matchedAttr[i].search(/("|'|`|´)\s*$/))
+                value: matchedAttr[i].slice(matchedAttr[i].search(/("|'|`|´)[\w\s:\/\.&?]*/) + 1, matchedAttr[i].search(/("|'|`|´)\s*$/))
             });
         }
         return attr;
@@ -1307,7 +1307,7 @@ var oplib = (function() {
             if (settings.method) {
                 ajaxSettings.method = settings.method;
             }
-            if (settings.async) {
+            if (settings.async != undefined) {
                 ajaxSettings.async = settings.async;
             }
             if (settings.contentType) {
@@ -1326,7 +1326,6 @@ var oplib = (function() {
                 ajaxSettings.processing = settings.processing;
             }
         }
-
         xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
             xmlhttp = oplib.fn.AJAX.response.async(xmlhttp, fn, ajaxSettings);
