@@ -191,7 +191,7 @@ var oplib = (function() {
         //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.finalizeDOMManipulation(function(elems) {
+            return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     this.appendChild(elems[i]);
                 }
@@ -200,7 +200,7 @@ var oplib = (function() {
         //Hängt Elemente an die übereinstimmenden Elemente am Anfang an
         prepend: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.finalizeDOMManipulation(function(elems) {
+            return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     console.log( typeof this);
                     //Gibt es bereits untergeordnete Elemente?
@@ -224,10 +224,9 @@ var oplib = (function() {
         //Hängt Elemente vor die übereinstimmenden Elemente an
         before: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.finalizeDOMManipulation(function(elems) {
+            return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    console.log(elems[i]);
-                    this.insertBefore(elems[i], this);
+                    this.parentNode.insertBefore(elems[i], this);
 
                 }
             }, [elems]);
@@ -235,7 +234,7 @@ var oplib = (function() {
         //Hängt Elemente nach die übereinstimmenden Elemente an
         after: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
-            return this.finalizeDOMManipulation(function(elems) {
+            return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
                         this.nextSibling.parentNode.insertBefore(elems[i], this.nextSibling);
@@ -245,6 +244,63 @@ var oplib = (function() {
                     }
                 }
             }, [elems]);
+        },
+        //Hängt übereinstimmende Elemente an Elemente an
+        appendTo: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.finalizeDOMManipulation(elems, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    this.appendChild(elems[i]);
+                }
+            }, [this]);
+        },
+        //Hängt übereinstimmende Elemente an die Elemente am Anfang an
+        prependTo: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.finalizeDOMManipulation(elems, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    console.log( typeof this);
+                    //Gibt es bereits untergeordnete Elemente?
+                    if (this.hasChildNodes()) {
+                        //Node
+                        if (this.childNodes && this.childNodes[0] != null) {
+                            this.insertBefore(elems[i], this.childNodes[0]);
+                        }
+                        //NodeList
+                        else if (this.item && this.item(0) != null) {
+                            this.insertBefore(elems[i], this.item(0));
+                        }
+                    }
+                    //Keine untergeordneten Element ==> .appendChild möglich
+                    else {
+                        this.appendChild(elems[i]);
+                    }
+                }
+            }, [this]);
+        },
+        //Hängt übereinstimmende Elemente vor Elemente an
+        insertBefore: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.finalizeDOMManipulation(elems, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    this.parentNode.insertBefore(elems[i], this);
+
+                }
+            }, [this]);
+        },
+        //Hängt übereinstimmende Elemente nach Elemente an
+        insertAfter: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            return this.finalizeDOMManipulation(elems, function(elems) {
+                for (var i = 0; i < elems.length; i++) {
+                    if (this.nextElementSibling != null) {
+                        this.nextSibling.parentNode.insertBefore(elems[i], this.nextSibling);
+                    }
+                    else {
+                        this.parentNode.appendChild(elems[i]);
+                    }
+                }
+            }, [this]);
         },
         /*
          * Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente
@@ -821,8 +877,8 @@ var oplib = (function() {
     };
 
     //Klont Elemente, etc...
-    oplib.fn.finalizeDOMManipulation = function(fn, args) {
-        this.each(this, function(fn, elems) {
+    oplib.fn.finalizeDOMManipulation = function(obj, fn, args) {
+        this.each(obj, function(fn, elems) {
             var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
             fn.apply(this, [clones]);
         }, [fn, args[0]]);
