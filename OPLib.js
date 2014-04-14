@@ -303,8 +303,7 @@ var oplib = (function() {
         //limitedTo: Darf nur Elemente aus limitedTo enthalten
         //O: Enthält auch eigene(s) Element(e)
         find: function(options, limitedTo, O) {
-            var elems = oplib.fn.ElementSelection.find(options, limitedTo);
-
+            var elems = oplib.fn.ElementSelection.find(this, options, limitedTo);
             if (O) {
                 for (var i = 0; i < this.length; i++) {
                     delete this[i];
@@ -638,25 +637,26 @@ var oplib = (function() {
      * options: tag: Tags ["tag1 tag2 tag3"]
      * limitedTo: Auf diese Elemente beschränkt
      */
-    oplib.fn.ElementSelection.find = function(options, limitedTo) {
-        var elems = [];
+    oplib.fn.ElementSelection.find = function(elems, options, limitedTo) {
+        var selection = limitedTo;
 
         if (options.tag) {
+            selection = [];
             //Mehrere Tags angegeben?
             var tags = options.tag.split(" ");
             //Elemente durchgehen
-            for (var i = 0; i < this.length; i++) {
+            for (var i = 0; i < elems.length; i++) {
                 //Tags durchgehen
                 for (var j = 0; j < tags.length; j++) {
-                    var tmp = this[i].getElementsByTagName(tags[j]);
+                    var tmp = elems[i].getElementsByTagName(tags[j]);
                     //Elemente mit übereinstimmendem Tag durchgehen
                     for (var x = 0; x < tmp.length; x++) {
                         //Elemente müssen falls vorhanden in limitedTo vorkommen
                         if (!limitedTo || oplib.fn.array.includes(limitedTo, tmp[x])) {
                             //ELemente mit übereinstimmendem Tag dürfen nur
                             // einmal vorkommen
-                            if (!oplib.fn.array.includes(elems, tmp[x])) {
-                                elems.push(tmp[x]);
+                            if (!oplib.fn.array.includes(selection, tmp[x])) {
+                                selection.push(tmp[x]);
                             }
                         }
 
@@ -665,12 +665,12 @@ var oplib = (function() {
 
             }
             delete options.tag;
-            return oplib.fn.ElementSelection.find(options, elems);
+            return oplib.fn.ElementSelection.find(elems, options, selection);
         }
         if (options.attr) {
-
+            selection = [];
         }
-        return elems;
+        return selection;
     };
 
     //Erstellt ein DOMObject anhand eines Strings
