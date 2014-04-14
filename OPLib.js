@@ -379,7 +379,11 @@ var oplib = (function() {
             }
 
             return this;
-        }
+        },
+        //Läd eine Datei per AJAX in die übereinstimmenden Elemente
+        load: function(url, header, options) {
+            //TODO:.load()
+        },
     };
 
     //Objecte zusammenführen
@@ -456,7 +460,7 @@ var oplib = (function() {
     //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
     oplib.fn.CreateHtmlTagRegex = /^_\w*_$/;
     //Regex für alle möglichen Selectoren
-    oplib.fn.PossibleSelectorsRegex = /[.#<_]/;
+    oplib.fn.PossibleSelectorsRegex = /[.#<]/;
 
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
@@ -891,6 +895,9 @@ var oplib = (function() {
                         case "display":
                             return "";
                             break;
+                        case "overflow":
+                            return "visible";
+                            break;
                         default:
                             console.log("Cant get text of " + value + " with expression: " + expression);
                     }
@@ -996,7 +1003,7 @@ var oplib = (function() {
                 if (!this.oplib) {
                     this.oplib = {};
                 }
-                if (this.oplib.hidden == "shown") {
+                if (this.oplib.hidden == "shown" || !this.oplib.hidden) {
                     return;
                 }
                 oplib.fx([this], {
@@ -1042,7 +1049,7 @@ var oplib = (function() {
 
     //Animiert Objekte
     oplib.fx = function(elems, options, duration, interpolator) {
-        if (!duration) {
+        if (duration == undefined) {
             if (options.duration) {
                 duration = options.duration;
                 delete options.duration;
@@ -1051,7 +1058,7 @@ var oplib = (function() {
                 duration = "normal";
             }
         }
-        if (!interpolator) {
+        if (interpolator == undefined) {
             if (options.interpolator) {
                 interpolator = options.interpolator;
                 delete options.interpolator;
@@ -1059,6 +1066,13 @@ var oplib = (function() {
             else {
                 interpolator = "linear";
             }
+        }
+
+        if (options.duration != undefined) {
+            delete options.duration;
+        }
+        if (options.interpolator != undefined) {
+            delete options.interpolator;
         }
 
         //Argumente interpretieren
@@ -1131,6 +1145,10 @@ var oplib = (function() {
             //Callbacks "start" aufrufen
             oplib.fx.callback(elem, callbacks, "start");
 
+            //Overflow setzen:
+            elem.oplib.oldOverflow = oplib.fn.floatCssValue("text", "overflow", elem);
+            elem.style.overflow = "hidden";
+
             if (!oplib.fx.animatorRunning) {
                 oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.frameTime);
                 oplib.fx.animatorRunning = true;
@@ -1141,6 +1159,9 @@ var oplib = (function() {
 
             //Callbacks "done" aufrufen
             oplib.fx.callback(elem, callbacks, "done");
+
+            //Overflow zurücksetzen
+            elem.style.overflow = elem.oplib.oldOverflow;
 
             if (!oplib.fx.queue.length) {
                 clearTimeout(oplib.fx.animatorId);
