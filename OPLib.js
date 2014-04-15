@@ -383,6 +383,17 @@ var oplib = (function() {
         //Läd eine Datei per AJAX in die übereinstimmenden Elemente
         load: function(url, header, options) {
             //TODO:.load()
+            if (!options) {
+                options = {};
+            }
+            options = oplib.fn.extend(options, {
+                args: this
+            });
+            oplib.AJAX(url, function(text, readyState, status, elems) {
+                oplib.fn.each(elems, function(text) {
+                    this.innerHTML = text;
+                }, [text]);
+            }, header, options);
         },
     };
 
@@ -1315,7 +1326,12 @@ var oplib = (function() {
     oplib.fn.JSON.parse = function(json) {
         //Use native Broswser Parser
         //TODO: Own Parser
-        JSON.parse(json);
+        return JSON.parse(json);
+    };
+    oplib.fn.JSON.stringify = function(obj) {
+        //Use native Broswser Stringifier
+        //TODO: Own Stringifier
+        return JSON.stringify(obj);
     };
 
     //Handles Ajax-Calls
@@ -1346,6 +1362,9 @@ var oplib = (function() {
             if (settings.processing) {
                 ajaxSettings.processing = settings.processing;
             }
+            if (settings.args) {
+                ajaxSettings.args = settings.args;
+            }
         }
         xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
@@ -1369,6 +1388,11 @@ var oplib = (function() {
                 }
                 else {
                     for (var i = 0; i < header.length; i++) {
+                        //Objecte in JSON umwandeln um AJAX-Request möglich zu
+                        // machen
+                        if ( typeof header[i].value === "object") {
+                            header[i].value = oplib.fn.JSON.stringify(header[i].value);
+                        }
                         if (!parsedHeader) {
                             parsedHeader += ("?" + header[i].key + "=" + header[i].value);
                         }
@@ -1388,8 +1412,6 @@ var oplib = (function() {
         post: function(xmlhttp, url, fn, header, ajaxSettings) {
             var parsedHeader = "";
 
-            xmlhttp.open("post", url, ajaxSettings.async);
-            xmlhttp.setRequestHeader("Content-type", ajaxSettings.contentType);
             if (header) {
                 if ( typeof header === "string") {
                     if (header[0] == '?') {
@@ -1399,18 +1421,24 @@ var oplib = (function() {
                 }
                 else {
                     for (var i = 0; i < header.length; i++) {
+                        //Objecte in JSON umwandeln um AJAX-Request möglich zu
+                        // machen
+                        if ( typeof header[i].value === "object") {
+                            header[i].value = oplib.fn.JSON.stringify(header[i].value);
+                        }
                         if (!parsedHeader) {
                             parsedHeader = header[i].key + "=" + header[i].value;
                         }
                         else {
-                            parsedHeader += "&" + header[i].key + "=" + header[i].value;
+                            parsedHeader += ("&" + header[i].key + "=" + header[i].value);
                         }
 
                     }
                 }
 
             }
-
+            xmlhttp.open("post", url, ajaxSettings.async);
+            xmlhttp.setRequestHeader("Content-type", ajaxSettings.contentType);
             xmlhttp.send(parsedHeader);
 
             return xmlhttp;
@@ -1421,48 +1449,48 @@ var oplib = (function() {
             if (ajaxSettings.content == "text") {
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 1) {
-                        ajaxSettings.connected.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.connected.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 2) {
-                        ajaxSettings.received.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.received.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 3) {
-                        ajaxSettings.processing.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 4) {
-                        fn.apply(this, [xmlhttp.responseText, xmlhttp.readystate, xmlhttp.status]);
+                        fn.apply(this, [xmlhttp.responseText, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
                     }
                 };
             }
             else if (ajaxSettings.content == "xml") {
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 1) {
-                        ajaxSettings.connected.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.connected.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 2) {
-                        ajaxSettings.received.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.received.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 3) {
-                        ajaxSettings.processing.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 4) {
-                        fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status]);
+                        fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
                     }
                 };
             }
             else if (ajaxSettings.content == "json") {
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 1) {
-                        ajaxSettings.connected.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.connected.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 2) {
-                        ajaxSettings.received.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.received.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 3) {
-                        ajaxSettings.processing.apply(this, [xmlhttp.readyState]);
+                        ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 4) {
-                        fn.apply(this, [oplib.fn.JSON(xmlhttp.responseXML), xmlhttp.readystate, xmlhttp.status]);
+                        fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
                     }
                 };
             }
@@ -1474,13 +1502,13 @@ var oplib = (function() {
         },
         sync: function(xmlhttp, fn, ajaxSettings) {
             if (ajaxSettings.content == "text") {
-                fn.apply(this, [xmlhttp.responseText]);
+                fn.apply(this, [xmlhttp.responseText, ajaxSettings.args]);
             }
             else if (ajaxSettings.content == "xml") {
-                fn.apply(this, [xmlhttp.responseXML]);
+                fn.apply(this, [xmlhttp.responseXML, ajaxSettings.args]);
             }
             else if (ajaxSettings.content == "json") {
-                fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText)]);
+                fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText), ajaxSettings.argss]);
             }
             else {
                 console.log(ajaxSettings.content + ": is not a valid contentType");
@@ -1809,7 +1837,7 @@ var oplib = (function() {
     oplib.fn.extend(oplib.fn.defaults, {
         cssUnit: "px",
         ajaxSettings: {
-            method: "get",
+            method: "post",
             async: true,
             contentType: "application/x-www-form-urlencoded",
             content: "text",
@@ -1821,7 +1849,8 @@ var oplib = (function() {
             },
             processing: function() {
                 console.log("Yeah, beat it!");
-            }
+            },
+            args: [],
         },
         frameTime: 5
     });
