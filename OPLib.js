@@ -363,12 +363,18 @@ var oplib = (function() {
                 this.innerHTML = html;
             }, [html]);
         },
+        //Setzt .innerText für die ausgewählten Elemente
+        text: function(text) {
+            return this.each(this, function(text) {
+                this.innerText = text;
+            }, [text]);
+        },
         //Findet alle Elemente anhand den in options angegebenen Einschränkungen
         //limitedTo: Darf nur Elemente aus limitedTo enthalten
         //O: Enthält auch eigene(s) Element(e)
         find: function(options, limitedTo, O) {
             var elems = oplib.fn.ElementSelection.find(this, options, limitedTo);
-            if (O) {
+            if (!O) {
                 for (var i = 0; i < this.length; i++) {
                     delete this[i];
                 }
@@ -463,7 +469,7 @@ var oplib = (function() {
     //Regex für ID Selectoren
     oplib.fn.IdRegex = /#\w\d*/;
     //Regex für HTML-Strings
-    oplib.fn.HtmlStringRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>$/;
+    oplib.fn.HtmlStringRegex = /^\s*<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
     //Regex für HTML-Strings, die nur ein Element enthalten
     oplib.fn.HtmlStringSingleElementRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
     //Regex für HTML-Tag Selectoren
@@ -668,7 +674,7 @@ var oplib = (function() {
 
     /*
      * Findet untergeordnete Nodes für die Elemente
-     * R: Rekursive suche möglich
+     * R: Rekursive Suche möglich
      */
     oplib.fn.ElementSelection.children = function(parents, R) {
         var children = [];
@@ -682,7 +688,7 @@ var oplib = (function() {
                         //Rekursiv?
                         if (R) {
                             if (parents[i].children[j].children.length != 0) {
-                                children = (getChildren(parents[i].children[j], children, R));
+                                children = getChildren([parents[i].children[j]], children, R);
                             }
                         }
                     }
@@ -770,8 +776,27 @@ var oplib = (function() {
             delete options.tag;
             return oplib.fn.ElementSelection.find(elems, options, selection);
         }
-        if (options.attr) {
+        else if (options.attr) {
             selection = [];
+        }
+        else {
+            selection = [];
+            for (var i in options) {
+                console.log(options);
+                for (var x = 0; x < elems.length; x++) {
+                    if (elems[x][i] && elems[x][i].indexOf(options[i]) != -1) {
+                        //Elemente müssen falls vorhanden in limitedTo vorkommen
+                        if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x])) {
+                            //ELemente mit übereinstimmendem Tag dürfen nur
+                            // einmal vorkommen
+                            if (!oplib.fn.array.includes(selection, elems[x])) {
+                                selection.push(elems[x]);
+                            }
+                        }
+                    }
+                }
+                delete options[i];
+            }
         }
         return selection;
     };
