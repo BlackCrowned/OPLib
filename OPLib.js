@@ -125,7 +125,13 @@ var oplib = (function() {
             }
             //Klasse angegeben: überprüfen, ob sie vorhanden ist
             else {
-                return this.attr("class").search(name) != -1 ? true : false;
+                var classes = this.attr("class").split(" ");
+                for (var i = 0; i < classes.length; i++) {
+                    if (classes[i] == name) {
+                        return true;
+                    }
+                }
+                return false;
             }
         },
         //Css-Attribut hinzufügen/bearbeiten/auslesen
@@ -780,12 +786,36 @@ var oplib = (function() {
             delete options.attr;
             limitedTo = selection;
         }
+        if (options.className) {
+            for (var i = 0; i < elems.length; i++) {
+                if (elems[i].className) {
+                    var classes = elems[i].className.split(" ");
+                    for (var j = 0; j < classes.length; j++) {
+                        if (classes[j] == options.className) {
+                            //Elemente müssen falls vorhanden in limitedTo
+                            // vorkommen
+                            if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[i])) {
+                                //ELemente mit übereinstimmender Klasse dürfen
+                                // nur
+                                // einmal vorkommen
+                                if (!oplib.fn.array.includes(selection, elems[i])) {
+                                    selection.push(elems[i]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            delete options.className;
+            limitedTo = selection;
+        }
         for (var i in options) {
             for (var x = 0; x < elems.length; x++) {
                 if (elems[x][i] && elems[x][i].indexOf(options[i]) != -1) {
                     //Elemente müssen falls vorhanden in limitedTo vorkommen
                     if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x])) {
-                        //ELemente mit übereinstimmendem Tag dürfen nur
+                        //ELemente mit übereinstimmendem i dürfen nur
                         // einmal vorkommen
                         if (!oplib.fn.array.includes(selection, elems[x])) {
                             selection.push(elems[x]);
@@ -1180,6 +1210,9 @@ var oplib = (function() {
             oplib.fx.callback(elem, callbacks, "start");
 
             //Overflow setzen:
+            if (!elem.oplib) {
+                elem.oplib = {};
+            }
             elem.oplib.oldOverflow = oplib.fn.floatCssValue("text", "overflow", elem);
             elem.style.overflow = "hidden";
 
@@ -1609,14 +1642,21 @@ var oplib = (function() {
         //Listener dem globalen handler hinzufügen
         addEvent: function(type, fn, elem) {
             //handleAttached überprüfen
-            if (this.handleAttached[elem] == undefined) {
-                this.handleAttached[elem] = {};
+            if (this.handleAttached[type] == undefined) {
+                this.handleAttached[type] = [];
             }
-            if (this.handleAttached[elem][type] == undefined) {
-                this.handleAttached[elem][type] = true;
-                elem.addEventListener(type, oplib.fn.handler, false);
+            for (var i = 0; i < this.handleAttached[type]; i++) {
+                if (this.handleAttached[type][i]["elem"] == elem && this.handleAttached[type][i]["attached"] == true) {
+                    return oplib.fn.handler.addListener(type, fn, elem);
+                }
             }
+            this.handleAttached[type].push({
+                elem: elem,
+                attached: true
+            });
+            elem.addEventListener(type, oplib.fn.handler, false);
             return oplib.fn.handler.addListener(type, fn, elem);
+
         },
         //Listener dem globalen Handler entfernen
         removeEvent: function(type, fn, elem) {
@@ -1647,13 +1687,11 @@ var oplib = (function() {
 
         //Der HandleList einen neuen Listener hinzufügen
         addListener: function(type, listener, elem) {
-            if (this.handleList[elem] == undefined) {
-                this.handleList[elem] = {};
+            if (this.handleList[type] == undefined) {
+                this.handleList[type] = [];
             }
-            if (this.handleList[elem][type] == undefined) {
-                this.handleList[elem][type] = [];
-            }
-            return (this.handleList[elem][type].push({
+            return (this.handleList[type].push({
+                elem: elem,
                 fn: listener,
                 text: listener.toString(),
                 enabled: true
@@ -1662,27 +1700,27 @@ var oplib = (function() {
         //Disabled einen Listener durch setzen deaktivieren des enabled-flags
         removeListener: function(type, listener, elem) {
             if ( typeof listner === "number") {
-                this.handleList[elem][type][listener]["enabled"] = false;
+                this.handleList[type][listener]["enabled"] = false;
                 return 1;
             }
             else {
                 var listenerId = [];
-                for (var i = 0; i < this.handleList[elem][type].length; i++) {
-                    if (this.handleList[elem][type][i]["text"] == listener.toString()) {
+                for (var i = 0; i < this.handleList[type].length; i++) {
+                    if (this.handleList[type][i]["elem"] == elem && this.handleList[type][i]["text"] == listener.toString()) {
                         listenerId.push(i);
                     }
                 }
                 for (var i = 0; i < listenerId.length; i++) {
-                    this.handleList[elem][type][listenerId[i]]["enabled"] = false;
+                    this.handleList[type][listenerId[i]]["enabled"] = false;
                 }
                 return listenerId;
             }
         },
         //Listeners aufrufen
         dispatchListener: function(type, elem, e) {
-            for (var i = 0; i < oplib.fn.handler.handleList[elem][type].length; i++) {
-                if (oplib.fn.handler.handleList[elem][type][i]["enabled"]) {
-                    oplib.fn.handler.handleList[elem][type][i]["fn"].apply(this, [e]);
+            for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
+                if (oplib.fn.handler.handleList[type][i]["enabled"] && oplib.fn.handler.handleList[type][i]["elem"] == elem) {
+                    oplib.fn.handler.handleList[type][i]["fn"].apply(this, [e]);
                 }
             }
         }
