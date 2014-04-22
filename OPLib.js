@@ -378,6 +378,7 @@ var oplib = (function() {
                 for (var i = 0; i < this.length; i++) {
                     delete this[i];
                 }
+                this.length = 0;
             }
 
             for (var i = 0; i < elems.length; i++) {
@@ -747,10 +748,9 @@ var oplib = (function() {
      * limitedTo: Auf diese Elemente beschränkt
      */
     oplib.fn.ElementSelection.find = function(elems, options, limitedTo) {
-        var selection = limitedTo;
+        var selection = [];
 
         if (options.tag) {
-            selection = [];
             //Mehrere Tags angegeben?
             var tags = options.tag.split(" ");
             //Elemente durchgehen
@@ -774,30 +774,28 @@ var oplib = (function() {
 
             }
             delete options.tag;
-            return oplib.fn.ElementSelection.find(elems, options, selection);
+            limitedTo = selection;
         }
-        else if (options.attr) {
-            selection = [];
+        if (options.attr) {
+            delete options.attr;
+            limitedTo = selection;
         }
-        else {
-            selection = [];
-            for (var i in options) {
-                console.log(options);
-                for (var x = 0; x < elems.length; x++) {
-                    if (elems[x][i] && elems[x][i].indexOf(options[i]) != -1) {
-                        //Elemente müssen falls vorhanden in limitedTo vorkommen
-                        if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x])) {
-                            //ELemente mit übereinstimmendem Tag dürfen nur
-                            // einmal vorkommen
-                            if (!oplib.fn.array.includes(selection, elems[x])) {
-                                selection.push(elems[x]);
-                            }
+        for (var i in options) {
+            for (var x = 0; x < elems.length; x++) {
+                if (elems[x][i] && elems[x][i].indexOf(options[i]) != -1) {
+                    //Elemente müssen falls vorhanden in limitedTo vorkommen
+                    if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x])) {
+                        //ELemente mit übereinstimmendem Tag dürfen nur
+                        // einmal vorkommen
+                        if (!oplib.fn.array.includes(selection, elems[x])) {
+                            selection.push(elems[x]);
                         }
                     }
                 }
-                delete options[i];
             }
+            delete options[i];
         }
+
         return selection;
     };
 
