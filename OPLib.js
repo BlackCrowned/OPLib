@@ -901,80 +901,176 @@ var oplib = (function() {
     //Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
     //TODO: inherit, auto, etc
     oplib.fn.floatCssValue = function(value, expression, elem) {
+        //Ist das Element unsichtbar (display:none) muss der Klon davon sichtbar
+        // gemacht werden
+        var returns;
+        if (elem.style.display == "none") {
+            var cloned = true;
+            elem = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+            //Erwartet ein Array und gibt ein Array zurück
+            document.body.appendChild(elem);
+            elem.style.position = "absolute";
+            elem.style.left = "-9999px";
+            elem.style.display = "";
+        }
         if ( typeof value === "string") {
+            //Wert von Expression mal value(in Prozent)
             if (/%/.test(value)) {
                 if (!elem.style[expression]) {
                     switch (expression) {
+                        case "offsetWidth":
                         case "width":
-                            return elem.offsetWidth * (parseFloat(value) / 100);
+                            returns = elem.offsetWidth * (parseFloat(value) / 100);
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
+                        case "offsetHeight":
                         case "height":
-                            return elem.offsetHeight * (parseFloat(value) / 100);
+                            returns = elem.offsetHeight * (parseFloat(value) / 100);
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
+                        case "offsetTop":
                         case "top":
-                            return elem.offsetTop * (parseFloat(value) / 100);
+                            returns = elem.offsetTop * (parseFloat(value) / 100);
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
+                        case "offsetLeft":
                         case "left":
-                            return elem.offsetLeft * (parseFloat(value) / 100);
+                            returns = elem.offsetLeft * (parseFloat(value) / 100);
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
                         //Annehmen, dass opacity 1 ist
                         case "opacity":
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
                             return 1.0 * (parseFloat(value) / 100);
                             break;
                         default:
-                            console.log("Cant get real value of " + value + " with expression: " + expression);
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return console.log("Cant get real value of " + value + " with expression: " + expression);
                     }
                 }
                 else {
-                    return parseFloat(elem.style[expression]) * (parseFloat(value) / 100);
+                    returns = parseFloat(elem.style[expression]) * (parseFloat(value) / 100);
+                    if (cloned) {
+                        document.body.removeChild(elem);
+                    }
+                    return returns;
                 }
             }
+            //Gibt die gesuchten Werte als Text zurück;
             else if (/text/.test(value)) {
                 if (!elem.style[expression]) {
                     switch (expression) {
+                        case "offsetWidth":
                         case "width":
-                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetWidth);
+                            returns = oplib.fn.finalizeCssExpressions(expression, elem.offsetWidth)[1];
+                            //[1], da return = [expression, value]
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
+                        case "offsetHeight":
                         case "height":
-                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetHeight);
+                            returns = oplib.fn.finalizeCssExpressions(expression, elem.offsetHeight)[1];
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
+                        case "offsetTop":
                         case "top":
-                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetTop);
+                            returns = oplib.fn.finalizeCssExpressions(expression, elem.offsetTop)[1];
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
+                        case "offsetLeft":
                         case "left":
-                            return oplib.fn.finalizeCssExpressions(expression, elem.offsetLeft);
+                            returns = oplib.fn.finalizeCssExpressions(expression, elem.offsetLeft)[1];
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return returns;
                             break;
 
                         //Annehmen, dass opacity 1 ist
                         case "opacity":
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
                             return "1";
                             break;
                         case "display":
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
                             return "";
                             break;
                         case "overflow":
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
                             return "visible";
                             break;
                         default:
-                            console.log("Cant get text of " + value + " with expression: " + expression);
+                            if (cloned) {
+                                document.body.removeChild(elem);
+                            }
+                            return console.log("Cant get text of " + value + " with expression: " + expression);
                     }
                 }
                 else {
-                    return oplib.fn.finalizeCssExpressions(expression, elem.style[expression]);
+                    returns = oplib.fn.finalizeCssExpressions(expression, elem.style[expression])[1];
+                    if (cloned) {
+                        document.body.removeChild(elem);
+                    }
+                    return returns;
                 }
             }
+            //Gibt den Wert aus dem Style Attribut zurück, auch wen dieser keinen
+            // Wert besitzt.
+            else if (/real/.test(value)) {
+                returns = oplib.fn.finalizeCssExpressions(expression, elem.style[expression])[1];
+                if (cloned) {
+                    document.body.removeChild(elem);
+                }
+                return returns;
+            }
             else {
+                if (cloned) {
+                    document.body.removeChild(elem);
+                }
                 return parseFloat(value);
             }
         }
         else if ( typeof value === "number") {
+            if (cloned) {
+                document.body.removeChild(elem);
+            }
             return value;
         }
     };
@@ -1047,14 +1143,18 @@ var oplib = (function() {
                     opacity: 0,
                     callbacks: {
                         start: function(elem) {
-                            elem.oplib.oldWidth = oplib.fn.floatCssValue("100%", "width", elem);
-                            elem.oplib.oldHeight = oplib.fn.floatCssValue("100%", "height", elem);
-                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("100%", "opacity", elem);
-                            elem.oplib.oldDisplay = oplib.fn.floatCssValue("text", "display", elem);
+                            elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
+                            elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
+                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
+                            elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
+
                             elem.oplib.hidden = "hiding";
                         },
                         done: function(elem) {
                             elem.style.display = "none";
+                            elem.style.width = elem.oplib.oldWidth;
+                            elem.style.height = elem.oplib.oldHeight;
+                            elem.style.opacity = elem.oplib.oldOpacity;
                             elem.oplib.hidden = "hidden";
                         }
                     }
@@ -1070,9 +1170,13 @@ var oplib = (function() {
                 if (this.oplib.hidden == "shown" || !this.oplib.hidden) {
                     return;
                 }
+
+                console.log(oplib.fn.floatCssValue("100%", "width", this));
                 oplib.fx([this], {
-                    width: this.oplib.oldWidth,
-                    height: this.oplib.oldHeight,
+                    //width: this.oplib.oldWidth,
+                    width: oplib.fn.floatCssValue("100%", "width", this),
+                    //height: this.oplib.oldHeight,
+                    height: oplib.fn.floatCssValue("100%", "height", this),
                     opacity: this.oplib.oldOpacity,
                     callbacks: {
                         start: function(elem) {
@@ -1081,6 +1185,9 @@ var oplib = (function() {
                         },
                         done: function(elem) {
                             elem.oplib.hidden = "shown";
+                            elem.style.width = elem.oplib.oldWidth;
+                            elem.style.height = elem.oplib.oldHeight;
+                            elem.style.opacity = elem.oplib.oldOpacity;
                         }
                     }
                 });
@@ -1188,12 +1295,37 @@ var oplib = (function() {
                     callbacks = options[i];
                     continue;
                 }
-
                 //Status des Elements festhalten
-                cssSettings[i] = {};
-                cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
-                cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
-                cssSettings[i].aim = oplib.fn.floatCssValue(options[i], i, elem);
+                if (!elems.oplib) {
+                    elems.oplib = {};
+                }
+                if (options[i] == "show") {
+                    if (elems.style.display != "none") {
+                        continue;
+                    }
+                    oplib.state = "shown";
+                    cssSettings[i] = {};
+                    cssSettings[i].old = oplib.fn.floatCssValue(0);
+                    cssSettings[i].current = oplib.fn.floatCssValue(0);
+                    cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.floatCssValue("100%", i, elem));
+                }
+                else if (options[i] == "hide") {
+                    if (elems.style.display == "none") {
+                        continue;
+                    }
+                    oplib.state = "hidden";
+                    cssSettings[i] = {};
+                    cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
+                    cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
+                    cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.floatCssValue(0));
+                }
+                else {
+                    cssSettings[i] = {};
+                    cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
+                    cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
+                    cssSettings[i].aim = oplib.fn.floatCssValue(options[i]);
+                }
+
             }
 
             oplib.fx.queue.push({
