@@ -1169,8 +1169,8 @@ var oplib = (function() {
                             elem.style.opacity = elem.oplib.oldOpacity;
                         }
                     }
-                });
-            }, []);
+                }, duration, interpolator);
+            }, [duration, interpolator]);
 
         }
     });
@@ -1249,11 +1249,7 @@ var oplib = (function() {
                     });
                     oplib.fx.addCallback(j, callbackOptions, "done");
                     callbackAdded = true;
-
-                    //Callbacks "start" aufrufen
-                    oplib.fx.callback(elems[i], oplib.fx.queue[j].callbacks, "start");
                 }
-                return;
             }
             if (!callbackAdded) {
                 oplib.fx.init(elems[i], options, duration, interpolator);
@@ -1325,12 +1321,8 @@ var oplib = (function() {
                 duration: duration,
                 interpolator: interpolator,
                 start_time: oplib.TIME.getCurrentTime(),
-                actual_time: 0,
                 callbacks: callbacks,
             });
-
-            //Callbacks "start" aufrufen
-            oplib.fx.callback(elem, callbacks, "start");
 
             //Overflow setzen:
             if (!elem.oplib) {
@@ -1346,9 +1338,6 @@ var oplib = (function() {
         },
         end: function(i, elem, callbacks) {
             oplib.fx.queue.splice(i, 1);
-
-            //Callbacks "done" aufrufen
-            oplib.fx.callback(elem, callbacks, "done");
 
             //Overflow zurücksetzen
             elem.style.overflow = elem.oplib.oldOverflow;
@@ -1390,6 +1379,8 @@ var oplib = (function() {
                 }
                 animationProgress = oplib.fx.interpolate(interpolator, actualProgress);
 
+                //Callbacks "start" aufrufen
+                callbacks = oplib.fx.callback(elem, callbacks, "start");
                 //Callbacks "update" aufrufen
                 oplib.fx.callback(elem, callbacks, "update");
 
@@ -1400,8 +1391,13 @@ var oplib = (function() {
                 }
 
                 if (actualProgress == 1.0) {
+                    //Callbacks "done" aufrufen
+                    callbacks = oplib.fx.callback(elem, callbacks, "done");
                     done.push(i);
                 }
+
+                //Queue updaten
+                oplib.fx.queue[i].callbacks = callbacks;
 
             }
 
@@ -1422,7 +1418,7 @@ var oplib = (function() {
             };
 
             if (!interpolators[interpolator]) {
-                interpolator = "linear";
+                interpolator = "decelerate";
             }
             return interpolators[interpolator];
         },
