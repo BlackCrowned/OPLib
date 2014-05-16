@@ -904,8 +904,9 @@ var oplib = (function() {
         //Ist das Element unsichtbar (display:none) muss der Klon davon sichtbar
         // gemacht werden
         var returns;
+        var cloned = false;
         if (elem && elem.style.display == "none") {
-            var cloned = true;
+            cloned = true;
             elem = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
             //Erwartet ein Array und gibt ein Array zurück
             document.body.appendChild(elem);
@@ -1034,7 +1035,7 @@ var oplib = (function() {
                             if (cloned) {
                                 document.body.removeChild(elem);
                             }
-                            return "visible";
+                            return "";
                             break;
                         default:
                             if (cloned) {
@@ -1126,52 +1127,125 @@ var oplib = (function() {
     };
 
     //Abkürzungen für allgemeine Animationen
-    //TODO Mehr Ablürzungen
-    //TODO Callbacks
     oplib.fn.extend(oplib.fn, {
         hide: function(duration, interpolator, callbacks) {
-            return this.each(this, function(duration, interpolator) {
-                if (!this.oplib) {
-                    this.oplib = {};
-                }
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
                 oplib.fx([this], {
                     width: "hide",
                     height: "hide",
                     opacity: "hide",
-                    callbacks: {
-                        done: function(elem) {
-                            elem.style.display = "none";
-                            elem.style.width = elem.oplib.oldWidth;
-                            elem.style.height = elem.oplib.oldHeight;
-                            elem.style.opacity = elem.oplib.oldOpacity;
-                        }
-                    }
+                    callbacks: callbacks
                 }, duration, interpolator);
 
-            }, [duration, interpolator]);
+            }, [duration, interpolator, callbacks]);
         },
-        show: function(duration, interpolator) {
-            return this.each(this, function() {
-                if (!this.oplib) {
-                    this.oplib = {};
-                }
+        show: function(duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
                 oplib.fx([this], {
                     width: "show",
                     height: "show",
                     opacity: "show",
-                    callbacks: {
-                        start: function(elem) {
-                            elem.style.display = elem.oplib.oldDisplay;
-                        },
-                        done: function(elem) {
-                            elem.style.width = elem.oplib.oldWidth;
-                            elem.style.height = elem.oplib.oldHeight;
-                            elem.style.opacity = elem.oplib.oldOpacity;
-                        }
-                    }
+                    callbacks: callbacks
                 }, duration, interpolator);
             }, [duration, interpolator]);
 
+        },
+        slideUp: function(duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
+                oplib.fx([this], {
+                    height: "hide",
+                    callbacks: callbacks
+                }, duration, interpolator);
+
+            }, [duration, interpolator, callbacks]);
+        },
+        slideDown: function(duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
+                oplib.fx([this], {
+                    height: "show",
+                    callbacks: callbacks
+                }, duration, interpolator);
+            }, [duration, interpolator, callbacks]);
+
+        },
+        fadeOut: function(duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
+                oplib.fx([this], {
+                    opacity: "hide",
+                    callbacks: callbacks
+                }, duration, interpolator);
+
+            }, [duration, interpolator, callbacks]);
+        },
+        fadeIn: function(duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
+                oplib.fx([this], {
+                    opacity: "show",
+                    callbacks: callbacks
+                }, duration, interpolator);
+            }, [duration, interpolator, callbacks]);
+
+        },
+        fadeTo: function(to, duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(to, duration, interpolator, callbacks) {
+                oplib.fx([this], {
+                    opacity: to,
+                    callbacks: callbacks
+                }, duration, interpolator);
+            }, [to, duration, interpolator, callbacks]);
+        },
+        toggle: function(duration, interpolator, callbacks) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks) {
+                if (!this.oplib) {
+                    this.oplib = {};
+                }
+                oplib.fx([this], {
+                    width: "toggle",
+                    height: "toggle",
+                    opacity: "toggle",
+                    callbacks: callbacks
+                }, duration, interpolator);
+            }, [duration, interpolator, callbacks]);
         }
     });
 
@@ -1247,7 +1321,7 @@ var oplib = (function() {
                         duration: duration,
                         interpolator: interpolator
                     });
-                    oplib.fx.addCallback(j, callbackOptions, "done");
+                    oplib.fx.queue[j].callbacks = oplib.fx.addCallback(oplib.fx.queue[j].callbacks, callbackOptions, "done");
                     callbackAdded = true;
                 }
             }
@@ -1281,7 +1355,7 @@ var oplib = (function() {
                     if (!elem.oplib.state) {
                         elem.oplib.oldDisplay = "";
                     }
-                    oplib.state = "shown";
+                    elem.oplib.state = "shown";
                     elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
                     elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
                     elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
@@ -1290,12 +1364,13 @@ var oplib = (function() {
                     cssSettings[i].old = oplib.fn.floatCssValue(0);
                     cssSettings[i].current = oplib.fn.floatCssValue(0);
                     cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.floatCssValue("100%", i, elem));
+
                 }
                 else if (options[i] == "hide") {
                     if (elem.style.display == "none") {
                         continue;
                     }
-                    oplib.state = "hidden";
+                    elem.oplib.state = "hidden";
                     elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
                     elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
                     elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
@@ -1305,6 +1380,36 @@ var oplib = (function() {
                     cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.floatCssValue(0));
+
+                }
+                else if (options[i] == "toggle") {
+                    if (elem.style.display != "none") {
+                        elem.oplib.state = "hidden";
+                        elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
+                        elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
+                        elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
+                        elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
+
+                        cssSettings[i] = {};
+                        cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
+                        cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
+                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.floatCssValue(0));
+                    }
+                    else if (elem.style.display == "none") {
+                        if (!elem.oplib.state) {
+                            elem.oplib.oldDisplay = "";
+                        }
+                        elem.oplib.state = "shown";
+                        elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
+                        elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
+                        elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
+
+                        cssSettings[i] = {};
+                        cssSettings[i].old = oplib.fn.floatCssValue(0);
+                        cssSettings[i].current = oplib.fn.floatCssValue(0);
+                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.floatCssValue("100%", i, elem));
+                    }
+
                 }
                 else {
                     cssSettings[i] = {};
@@ -1313,6 +1418,26 @@ var oplib = (function() {
                     cssSettings[i].aim = oplib.fn.floatCssValue(options[i]);
                 }
 
+            }
+
+            //Benötigte Callbacks:
+            if (elem.oplib.state == "shown") {
+                callbacks = oplib.fx.addCallback(callbacks, function(elem) {
+                    elem.style.display = elem.oplib.oldDisplay;
+                }, "start");
+                callbacks = oplib.fx.addCallback(callbacks, function(elem) {
+                    elem.style.width = elem.oplib.oldWidth;
+                    elem.style.height = elem.oplib.oldHeight;
+                    elem.style.opacity = elem.oplib.oldOpacity;
+                }, "done");
+            }
+            else if (elem.oplib.state == "hidden") {
+                callbacks = oplib.fx.addCallback(callbacks, function(elem) {
+                    elem.style.display = "none";
+                    elem.style.width = elem.oplib.oldWidth;
+                    elem.style.height = elem.oplib.oldHeight;
+                    elem.style.opacity = elem.oplib.oldOpacity;
+                }, "done");
             }
 
             oplib.fx.queue.push({
@@ -1328,7 +1453,7 @@ var oplib = (function() {
             if (!elem.oplib) {
                 elem.oplib = {};
             }
-            elem.oplib.oldOverflow = oplib.fn.floatCssValue("text", "overflow", elem);
+            elem.oplib.oldOverflow = oplib.fn.floatCssValue("real", "overflow", elem);
             elem.style.overflow = "hidden";
 
             if (!oplib.fx.animatorRunning) {
@@ -1341,6 +1466,9 @@ var oplib = (function() {
 
             //Overflow zurücksetzen
             elem.style.overflow = elem.oplib.oldOverflow;
+
+            //Callbacks "done" aufrufen
+            callbacks = oplib.fx.callback(elem, callbacks, "done");
 
             if (!oplib.fx.queue.length) {
                 clearTimeout(oplib.fx.animatorId);
@@ -1391,8 +1519,6 @@ var oplib = (function() {
                 }
 
                 if (actualProgress == 1.0) {
-                    //Callbacks "done" aufrufen
-                    callbacks = oplib.fx.callback(elem, callbacks, "done");
                     done.push(i);
                 }
 
@@ -1427,10 +1553,11 @@ var oplib = (function() {
             if (!callbacks) {
                 return callbacks;
             }
-
+            if (!callbacks[action]) {
+                return callbacks;
+            }
             //Falls callbacks in Array-Form angegeben wurden:
             if (callbacks[action] && toString.call(callbacks[action]) === "[object Array]") {
-
                 for (var i in callbacks[action]) {
                     if ( typeof callbacks[action][i] === "function") {
                         callbacks[action][i].apply(this, [elem]);
@@ -1456,41 +1583,42 @@ var oplib = (function() {
             return callbacks;
         },
         //Fügt Elementen in oplib.fx.queue callbacks hinzu.
-        addCallback: function(queueId, callbacks, action) {
+        addCallback: function(callbacksBase, callbacks, action) {
             if (!callbacks) {
                 return;
             }
 
-            if (!oplib.fx.queue[queueId].callbacks) {
-                oplib.fx.queue[queueId].callbacks = {};
-                oplib.fx.queue[queueId].callbacks[action] = [];
+            if (!callbacksBase) {
+                callbacksBase = {};
+                callbacksBase[action] = [];
             }
 
-            if (!oplib.fx.queue[queueId].callbacks[action]) {
-                oplib.fx.queue[queueId].callbacks[action] = [];
+            if (!callbacksBase[action]) {
+                callbacksBase[action] = [];
             }
 
-            if (oplib.fx.queue[queueId].callbacks[action] && toString.call(oplib.fx.queue[queueId].callbacks[action]) === "[object Array]") {
+            if (callbacksBase[action] && toString.call(callbacksBase[action]) === "[object Array]") {
                 if (toString.call(callbacks) === "[object Array]") {
                     for (var i in callbacks) {
-                        oplib.fx.queue[queueId].callbacks[action].push(callbacks[i]);
+                        callbacksBase[action].push(callbacks[i]);
                     }
                 }
                 else {
-                    oplib.fx.queue[queueId].callbacks[action].push(callbacks);
+                    callbacksBase[action].push(callbacks);
                 }
             }
-            else if (oplib.fx.queue[queueId].callbacks[action]) {
-                oplib.fx.queue[queueId].callbacks[action] = [oplib.fx.queue[queueId].callbacks[action]];
+            else if (callbacksBase[action]) {
+                callbacksBase[action] = [callbacksBase[action]];
                 if (toString.call(callbacks) === "[object Array]") {
                     for (var i in callbacks) {
-                        oplib.fx.queue[queueId].callbacks[action].push(callbacks[i]);
+                        callbacksBase[action].push(callbacks[i]);
                     }
                 }
                 else {
-                    oplib.fx.queue[queueId].callbacks[action].push(callbacks);
+                    callbacksBase[action].push(callbacks);
                 }
             }
+            return callbacksBase;
         }
     });
 
