@@ -395,7 +395,6 @@ var oplib = (function() {
         },
         //Läd eine Datei per AJAX in die übereinstimmenden Elemente
         load: function(url, header, options) {
-            //TODO:.load()
             if (!options) {
                 options = {};
             }
@@ -899,7 +898,6 @@ var oplib = (function() {
     };
 
     //Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
-    //TODO: inherit, auto, etc
     oplib.fn.floatCssValue = function(value, expression, elem) {
         //Ist das Element unsichtbar (display:none) muss der Klon davon sichtbar
         // gemacht werden
@@ -2054,6 +2052,34 @@ var oplib = (function() {
             }
         },
     });
+
+    //Tooltips
+    //TODO: Clear Queue for Elem -- ANIMATIONS
+    //TODO: Dont fade when mouse is over the Tooltip
+    oplib.fn.Tooltip = function(selector, context) {
+        var elems = oplib.fn.ElementSelection(selector, context);
+        return this.each(elems, function(elems) {
+            oplib.fn.events.addEvent("mouseover", function(e) {
+                oplib.fx(elems, {
+                    height: "show",
+                    opacity: "show"
+                });
+            }, this);
+            oplib.fn.events.addEvent("mouseout", function(e) {
+                oplib.fx(elems, {
+                    height: "hide",
+                    opacity: "hide"
+                });
+            }, this);
+            oplib.fn.events.addEvent("mousemove", function(e) {
+                for (var i = 0; i < elems.length; i++) {
+                    elems[i].style.position = "absolute";
+                    elems[i].style.left = oplib.fn.finalizeCssExpressions("left", e.clientX + 5)[1];
+                    elems[i].style.top = oplib.fn.finalizeCssExpressions("top", e.clientY + 5)[1];
+                }
+            }, this);
+        }, [this]);
+    };
 
     //Funktionen die mit Arrays arbeiten
     oplib.array = oplib.fn.array = {
