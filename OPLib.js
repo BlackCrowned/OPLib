@@ -497,6 +497,7 @@ var oplib = (function() {
     };
 
     //Wandelt einen Selector in ein DOMObject um
+    //TODO: AJAX --- .load() intergrieren.
     oplib.fn.ElementSelection.prototype.DOMObjectFromSelector = function(selector, context) {
         var elems = [];
 
@@ -2058,27 +2059,33 @@ var oplib = (function() {
     //TODO: Dont fade when mouse is over the Tooltip
     oplib.fn.Tooltip = function(selector, context) {
         var elems = oplib.fn.ElementSelection(selector, context);
-        return this.each(elems, function(elems) {
+        return this.finalizeDOMManipulation(this, function(elems) {
+            for (var i = 0; i < elems.length; i++) {
+                this.parentNode.appendChild(elems[i]);
+            }
+            oplib.fx(elems, {
+                opacity: "hide"
+            }, 0);
             oplib.fn.events.addEvent("mouseover", function(e) {
                 oplib.fx(elems, {
                     height: "show",
                     opacity: "show"
-                });
+                }, "fast");
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
                 oplib.fx(elems, {
                     height: "hide",
                     opacity: "hide"
-                });
+                }, "fast");
             }, this);
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i].style.position = "absolute";
-                    elems[i].style.left = oplib.fn.finalizeCssExpressions("left", e.clientX + 5)[1];
-                    elems[i].style.top = oplib.fn.finalizeCssExpressions("top", e.clientY + 5)[1];
+                    elems[i].style.left = oplib.fn.finalizeCssExpressions("left", e.pageX + 5)[1];
+                    elems[i].style.top = oplib.fn.finalizeCssExpressions("top", e.pageY + 5)[1];
                 }
             }, this);
-        }, [this]);
+        }, [elems]);
     };
 
     //Funktionen die mit Arrays arbeiten
