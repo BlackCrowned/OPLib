@@ -482,6 +482,8 @@ var oplib = (function() {
     oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
     //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
     oplib.fn.CreateHtmlTagRegex = /^_\w*_$/;
+    //Regex für URL-Strings
+    oplib.fn.UrlStringRegex = /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
     //Regex für alle möglichen Selectoren
     oplib.fn.PossibleSelectorsRegex = /[.#<]/;
 
@@ -533,7 +535,15 @@ var oplib = (function() {
             if (oplib.fn.ElementSelection.isHtmlString(selector)) {
                 elems.push(oplib.fn.createDOBObeject(selector));
             }
-
+            //Enthält selector einen Url-String?
+            else if (oplib.fn.ElementSelection.isUrlString(selector)) {
+                var elem = document.createElement("div");
+                $(elem).load(selector, "", {
+                    async: false,
+                    content: "text"
+                });
+                elems.push(elem);
+            }
             //Enthält selector einen Klassenausdruck?
             else if (oplib.fn.ClassRegex.test(selector)) {
                 //Variable für .Class Selector String
@@ -629,6 +639,11 @@ var oplib = (function() {
     //Überprüft ob es sich um einen HTML-String handelt
     oplib.fn.ElementSelection.isHtmlString = function(htmlString) {
         return oplib.fn.HtmlStringRegex.test(htmlString);
+    };
+
+    //Überprüft, ob es sich um einen URL-String handelt
+    oplib.fn.ElementSelection.isUrlString = function(urlString) {
+        return oplib.fn.UrlStringRegex.test(urlString);
     };
 
     //Überprüft ob der HTML-String ein einzelnes Element enthält.
@@ -1804,13 +1819,13 @@ var oplib = (function() {
         },
         sync: function(xmlhttp, fn, ajaxSettings) {
             if (ajaxSettings.content == "text") {
-                fn.apply(this, [xmlhttp.responseText, ajaxSettings.args]);
+                fn.apply(this, [xmlhttp.responseText, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
             }
             else if (ajaxSettings.content == "xml") {
-                fn.apply(this, [xmlhttp.responseXML, ajaxSettings.args]);
+                fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
             }
             else if (ajaxSettings.content == "json") {
-                fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText), ajaxSettings.argss]);
+                fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
             }
             else {
                 console.log(ajaxSettings.content + ": is not a valid contentType");
@@ -2178,7 +2193,7 @@ var oplib = (function() {
     oplib.fn.extend(oplib.fn.defaults, {
         cssUnit: "px",
         ajaxSettings: {
-            method: "post",
+            method: "get",
             async: true,
             contentType: "application/x-www-form-urlencoded",
             content: "text",
