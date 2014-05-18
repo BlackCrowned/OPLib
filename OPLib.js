@@ -1359,6 +1359,9 @@ var oplib = (function() {
             //Optionen interpretieren
             var cssSettings = {};
             var callbacks = {};
+            var done = false;
+            var optionsCount = 0;
+            var optionsEqual = 0;
             for (var i in options) {
                 //Auf callbacks reagieren
                 if (i == "callbacks") {
@@ -1379,7 +1382,6 @@ var oplib = (function() {
                 }
                 if (options[i] == "show") {
                     if (elem.style.display == "none" || elem.oplib.state != "shown") {
-                        console.log("Showing!");
                         if (!elem.oplib.state) {
                             elem.oplib.oldDisplay = "";
                         }
@@ -1389,30 +1391,45 @@ var oplib = (function() {
                             elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
                         }
                         elem.oplib.state = "showing";
-                        
+
                         cssSettings[i] = {};
-                        cssSettings[i].old = oplib.fn.floatCssValue(0);
-                        cssSettings[i].current = oplib.fn.floatCssValue(0);
+                        //Bug fix -- Animation startet nicht wo sie aufgehört hat
+                        if (elem.oplib.state == "hidden" || elem.style.display == "none") {
+                            cssSettings[i].old = oplib.fn.floatCssValue(0);
+                        }
+                        else {
+                            cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
+                        }
+                        //Bug fix -- Animation geht nicht bis zum richtigen Ende
+                        //Fix durch Herstellung der normalen Bedingungen
+                        var tmpWidth = elem.style.width;
+                        var tmpHeight = elem.style.height;
+                        var tmpOpacity = elem.style.opacity;
+                        elem.style.width = elem.oplib.oldWidth;
+                        elem.style.height = elem.oplib.oldHeight;
+                        elem.style.opacity = elem.oplib.oldOpacity;
                         cssSettings[i].aim = oplib.fn.floatCssValue("100%", i, elem);
+                        elem.style.width = tmpWidth;
+                        elem.style.height = tmpHeight;
+                        elem.style.opacity = tmpOpacity;
                     }
 
                 }
                 else if (options[i] == "hide") {
-                    if (elem.style.display == "none" || elem.oplib.state == "hidden") {
-                        continue;
-                    }
-                    if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
+                    if (elem.style.display != "none" || elem.oplib.state != "hidden") {
+                        if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
+                            elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
+                            elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
+                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
+                            elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
+                        }
                         elem.oplib.state = "hiding";
-                        elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
-                        elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
-                        elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
-                        elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
-                    }
 
-                    cssSettings[i] = {};
-                    cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
-                    cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
-                    cssSettings[i].aim = oplib.fn.floatCssValue(0);
+                        cssSettings[i] = {};
+                        cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
+                        cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
+                        cssSettings[i].aim = oplib.fn.floatCssValue(0);
+                    }
 
                 }
                 else {
@@ -1420,6 +1437,12 @@ var oplib = (function() {
                     cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].aim = oplib.fn.floatCssValue(options[i]);
+                }
+
+                //Auf gleiche Optionen untersuchen, Keine sinnlosen Animationen
+                optionsCount++;
+                if (!cssSettings[i] || cssSettings[i].old == cssSettings[i].aim) {
+                    optionsEqual++;
                 }
 
             }
@@ -1446,6 +1469,11 @@ var oplib = (function() {
                 }, "OPdone");
             }
 
+            //Alle Optionen gleich  --> Animation ist fertig
+            if (optionsEqual / optionsCount == 1) {
+                done = true;
+            }
+
             oplib.fx.queue.push({
                 elem: elem,
                 options: cssSettings,
@@ -1453,7 +1481,7 @@ var oplib = (function() {
                 interpolator: interpolator,
                 start_time: oplib.TIME.getCurrentTime(),
                 callbacks: callbacks,
-                done: false,
+                done: done,
             });
 
             //Overflow setzen:
