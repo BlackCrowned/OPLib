@@ -1384,18 +1384,16 @@ var oplib = (function() {
                             elem.oplib.oldDisplay = "";
                         }
                         if (elem.oplib.state != "showing" && elem.oplib.state != "hiding") {
-                            elem.oplib["old" + i] = oplib.fn.floatCssValue("real", i, elem);
+                            elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
+                            elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
+                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
                         }
                         elem.oplib.state = "showing";
-
+                        
                         cssSettings[i] = {};
                         cssSettings[i].old = oplib.fn.floatCssValue(0);
                         cssSettings[i].current = oplib.fn.floatCssValue(0);
                         cssSettings[i].aim = oplib.fn.floatCssValue("100%", i, elem);
-                        
-                        callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-                            elem.style[i] = elem.oplib["old" + i];
-                        }, "OPdone");
                     }
 
                 }
@@ -1404,19 +1402,17 @@ var oplib = (function() {
                         continue;
                     }
                     if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
+                        elem.oplib.state = "hiding";
+                        elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
+                        elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
+                        elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
                         elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
-                        elem.oplib["old" + i] = oplib.fn.floatCssValue("real", i, elem);
                     }
-                    elem.oplib.state = "hiding";
 
                     cssSettings[i] = {};
                     cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].aim = oplib.fn.floatCssValue(0);
-
-                    callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-                        elem.style[i] = elem.oplib["old" + i];
-                    }, "OPdone");
 
                 }
                 else {
@@ -1434,12 +1430,18 @@ var oplib = (function() {
                     elem.style.display = elem.oplib.oldDisplay;
                 }, "OPstart");
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
+                    elem.style.width = elem.oplib.oldWidth;
+                    elem.style.height = elem.oplib.oldHeight;
+                    elem.style.opacity = elem.oplib.oldOpacity;
                     elem.oplib.state = "shown";
                 }, "OPdone");
             }
             else if (elem.oplib.state == "hiding") {
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
                     elem.style.display = "none";
+                    elem.style.width = elem.oplib.oldWidth;
+                    elem.style.height = elem.oplib.oldHeight;
+                    elem.style.opacity = elem.oplib.oldOpacity;
                     elem.oplib.state = "hidden";
                 }, "OPdone");
             }
