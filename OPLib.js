@@ -499,7 +499,6 @@ var oplib = (function() {
     };
 
     //Wandelt einen Selector in ein DOMObject um
-    //TODO: AJAX --- .load() intergrieren.
     oplib.fn.ElementSelection.prototype.DOMObjectFromSelector = function(selector, context) {
         var elems = [];
 
@@ -861,7 +860,6 @@ var oplib = (function() {
         }
         //Funktioniert auch mit mehreren Elementen
         else {
-            //TODO: .createDOMObject - mehrere Elemente
             var elem = document.createElement("div");
             elem.innerHTML = text;
             return elem;
@@ -1113,7 +1111,7 @@ var oplib = (function() {
         return this;
 
     };
-    //Klont Elemente        //FIXME - EVENTS
+    //Klont Elemente
     oplib.fn.finalizeDOMManipulation.clone = function(elems) {
         if ( typeof elems === "object") {
             var clones = [];
@@ -1702,12 +1700,10 @@ var oplib = (function() {
     };
     oplib.fn.JSON.parse = function(json) {
         //Use native Broswser Parser
-        //TODO: Own Parser
         return JSON.parse(json);
     };
     oplib.fn.JSON.stringify = function(obj) {
         //Use native Broswser Stringifier
-        //TODO: Own Stringifier
         return JSON.stringify(obj);
     };
 
@@ -2048,7 +2044,6 @@ var oplib = (function() {
     });
 
     //Führt fn aus, sobald das ausgewählte Element bereit/geladen ist
-    //DEPRECATED: .handler als handler verwenden und auf .events() zurückgreifen
     oplib.fn.ready = function(fn) {
         return this.each(this, function(fn) {
             oplib.fn.ready.addHandler(this, fn);
@@ -2130,8 +2125,6 @@ var oplib = (function() {
     });
 
     //Tooltips
-    //TODO: Clear Queue for Elem -- ANIMATIONS .stop()
-    //TODO: Dont fade when mouse is over the Tooltip
     oplib.fn.Tooltip = function(selector, context) {
         var elems = oplib.fn.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
