@@ -407,6 +407,13 @@ var oplib = (function() {
                 }, [text]);
             }, header, options);
         },
+        clone: function() {
+            var clones = oplib.fn.finalizeDOMManipulation.clone(this);
+            for (var i = 0; i < this.length; i++) {
+                this[i] = clones[i];
+            }
+            return this;
+        }
     };
 
     //Objecte zusammenführen
@@ -1117,24 +1124,14 @@ var oplib = (function() {
             var clones = [];
             for (var i = 0; i < elems.length; i++) {
                 var clone = elems[i].cloneNode(true);
-                if (elems[i].parentNode) {
-                    //elems[i].parentNode.appendChild(clone);       //Unnötig???
-                }
-                else {
-                    //document.body.appendChild(clone);
-                }
+                oplib.fn.events.copyEvents(clone, elems[i]);
                 clones.push(clone);
             }
             return clones;
         }
         else {
             var clone = elems.cloneNode(true);
-            if (elems.parentNode) {
-                //elems.parentNode.appendChild(clone);
-            }
-            else {
-                //document.body.appendChild(clone);
-            }
+            oplib.fn.events.copyEvents(clone, elems);
             return [clone];
         }
     };
@@ -1978,6 +1975,18 @@ var oplib = (function() {
         //Listener dem globalen Handler entfernen
         removeEvent: function(type, fn, elem) {
             return oplib.fn.handler.removeListener(type, fn, elem);
+        },
+        //Events kopieren
+        copyEvents: function(copyTo, copyFrom) {
+            for (var type in oplib.fn.handler.handleList) {
+                if (oplib.fn.handler.handleList[type]) {
+                    for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
+                        if (oplib.fn.handler.handleList[type][i] && oplib.fn.handler.handleList[type][i].elem == copyFrom) {
+                            oplib.fn.events.addEvent(type, oplib.fn.handler.handleList[type][i].fn, copyTo);
+                        }
+                    }
+                }
+            }
         },
         //Event ausführen
         dispatchEvent: function(e, elem) {
