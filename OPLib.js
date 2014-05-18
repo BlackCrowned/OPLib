@@ -2142,14 +2142,14 @@ var oplib = (function() {
                 opacity: "hide"
             }, 0);
             oplib.fn.events.addEvent("mouseover", function(e) {
-                oplib.fx.stop(elems[0], 1, 1);
+                oplib.fx.stop(elems[0], 1, 0);
                 oplib.fx(elems, {
                     height: "show",
                     opacity: "show"
                 }, "fast");
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
-                oplib.fx.stop(elems[0], 1, 1);
+                oplib.fx.stop(elems[0], 1, 0);
                 oplib.fx(elems, {
                     height: "hide",
                     opacity: "hide"
