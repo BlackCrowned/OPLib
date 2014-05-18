@@ -2046,13 +2046,26 @@ var oplib = (function() {
     //Führt fn aus, sobald das ausgewählte Element bereit/geladen ist
     oplib.fn.ready = function(fn) {
         return this.each(this, function(fn) {
-            oplib.fn.ready.addHandler(this, fn);
+            if (oplib.fn.ready.isReadyState[this]) {
+                //Element bereits geladen, funktion direkt ausführen
+                fn.apply();
+            }
+            //DOMContentLoaded-Event verpasst?
+            else if (oplib.fn.ready.readyState === "complete") {
+                oplib.fn.ready.isReadyState[this] = true;
+                fn.apply();
+            }
+            else {
+                oplib.fn.events.addEvent("DOMContentLoaded", oplib.fn.ready.handler, this);
+                oplib.fn.events.addEvent("load", oplib.fn.ready.handler, this);
+                oplib.fn.events.addEvent("OPready", fn, this);
+            }
         }, [fn]);
     };
     //Entfernt fn aus der Handler Liste des ausgewählten Elements.
     oplib.fn.unready = function(fn) {
         return this.each(this, function(fn) {
-            oplib.fn.ready.trashHandler(this, fn);
+            oplib.fn.events.removeEvent("OPready", fn, this);
         }, [fn]);
     };
     oplib.fn.extend(oplib.fn.ready, {
@@ -2063,11 +2076,8 @@ var oplib = (function() {
                 oplib.fn.events.removeEvent("load", oplib.fn.ready.handler, e.target);
                 return 1;
             }
+            oplib.fn.events.dispatchEvent("OPready", e.target);
 
-            //Durch handleList gehen, abhängig von e.targer
-            for (var i = 0; i < oplib.fn.ready.handleList[e.target].length; i++) {
-                oplib.fn.ready.handleList[e.target][i].fn.apply(this, [e]);
-            }
             //isReadyList[e.target] = true setzen
             oplib.fn.ready.isReadyState[e.target] = true;
 
@@ -2077,51 +2087,9 @@ var oplib = (function() {
 
             return 0;
         },
-        //Enthält funktionen, die beim readyState-Wechsel ausgeführt werden
-        // müssen
-        handleList: {},
         //Enthält, ob ein Element bereits bereit ist.
         isReadyState: {},
         //Fügt handleList[elem] die auszuführende Funktion zu, etc.
-        addHandler: function(elem, fn) {
-            if (oplib.fn.ready.isReadyState[elem]) {
-                //Element bereits geladen, funktion direkt ausführen
-                fn.apply(this);
-            }
-            //DOMContentLoaded-Event verpasst?
-            if (elem.readyState === "complete") {
-                oplib.fn.ready.isReadyState[elem] = true;
-                fn.apply(this);
-            }
-
-            if (oplib.fn.ready.handleList[elem]) {
-                oplib.fn.ready.handleList[elem].push({
-                    fn: fn,
-                    text: fn.toString()
-                });
-            }
-            else {
-                oplib.fn.events.addEvent("DOMContentLoaded", oplib.fn.ready.handler, elem);
-                oplib.fn.events.addEvent("load", oplib.fn.ready.handler, elem);
-                oplib.fn.ready.handleList[elem] = [];
-                return oplib.fn.ready.addHandler(elem, fn);
-            }
-        },
-        //Entfernt die funktion von handleList[elem], etc.
-        trashHandler: function(elem, fn) {
-            if (handleList[elem]) {
-                for (var i = 0; i < oplib.fn.ready.handleList[elem].length; i++) {
-                    if (oplib.fn.ready.handleList[elem][i].text == fn.toString())
-                        ;
-                    delete oplib.fn.ready.handleList[elem][i];
-                }
-                if (oplib.fn.ready.handleList[elem].length <= 0) {
-                    delete oplib.fn.ready.handleList[elem];
-                    oplib.fn.events.removeEvent("DOMContentLoaded", oplib.fn.ready.handler, elem);
-                    oplib.fn.events.removeEvent("load", oplib.fn.ready.handler, elem);
-                }
-            }
-        },
     });
 
     //Tooltips
