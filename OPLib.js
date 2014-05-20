@@ -2106,7 +2106,12 @@ var oplib = (function() {
         var elems = oplib.fn.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
             for (var i = 0; i < elems.length; i++) {
-                this.parentNode.appendChild(elems[i]);
+                if (this.parentNode) {
+                    this.parentNode.appendChild(elems[i]);
+                }
+                else {
+                    document.body.appendChild(elems[i]);
+                }
             }
             oplib.fx(elems, {
                 opacity: "hide"
