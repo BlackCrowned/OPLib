@@ -508,6 +508,7 @@ var oplib = (function() {
     //Wandelt einen Selector in ein DOMObject um
     oplib.fn.ElementSelection.prototype.DOMObjectFromSelector = function(selector, context) {
         var elems = [];
+        var selectors = [];
 
         //Wurde ein selector übergeben
         if (!selector) {
@@ -523,123 +524,69 @@ var oplib = (function() {
 
         }
 
+        selectors = oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
+
+        //Selectoren auswerten
+
+    };
+
+    //Parst den Selector
+    oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector = function(selector) {
+        var parsedSelectors = [];
+        //[{type, data}]
+
+        //Wurde ein selector übergeben
+        if (!selector) {
+            //Standart Selector = document.body
+            selector = document.body;
+        }
+
         //Ist selector bereits ein DOMObject?
         if ( selector instanceof Node) {
             //Element = Selector
-            elems.push(selector);
+            parsedSelectors.push({
+                type: "element",
+                data: selector
+            });
 
         }
         //Ist selector eine NodeList?
         else if ( selector instanceof NodeList) {
             for (var i = 0; i < selector.length; i++) {
-                elems.push(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(selector[i]));
+                parsedSelectors.push({
+                    type: "element",
+                    data: selector[i]
+                });
             }
         }
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
-            //Enthält selector ein HTML String
-            if (oplib.fn.ElementSelection.isHtmlString(selector)) {
-                elems.push(oplib.fn.createDOBObeject(selector));
-            }
-            //Enthält selector einen Url-String?
-            else if (oplib.fn.ElementSelection.isUrlString(selector)) {
-                var elem = document.createElement("div");
-                $(elem).load(selector, "", {
-                    async: false,
-                    content: "text"
-                });
-                elems.push(elem);
-            }
-            //Enthält selector einen Klassenausdruck?
-            else if (oplib.fn.ClassRegex.test(selector)) {
-                //Variable für .Class Selector String
-                var _selector = "";
-                //Position des Klassen Selectors
-                var startPos = selector.search(oplib.fn.ClassRegex);
-                //Klassen Selector entfernen
-                _selector = selector = selector.slice(startPos + 1, selector.length);
-                //Position der Möglichen weiteren Selectoren
-                startPos = _selector.search(oplib.fn.PossibleSelectorsRegex);
-                //Weitere Selectoren gefunden!
-                if (startPos != -1) {
-                    //weitere Selectoren sichern
-                    _selector = selector.slice(startPos, selector.length);
-                    //weitere Selectoren entfernen
-                    selector = selector.slice(0, startPos);
+            var selector_type = "";
+            var selector_start = 0;
+            var selector_end = 0;
+            //Durch selector loopen und in einzelne Selektoren unterteilen
+            for (var i = 0; i < selector.length; i++) {
+                if (selector[i] == '#') {
+                    //Vorherige Selectoren
+                    selector_end = i - 1;
+                    if (selector_start != i) {
+                        parsedSelectors.push({type: selector_type, data: selector.slice(selector_start, selector_end)});
+                    }
+                    selector_type = "ID";
+                    selector_start = i;
+                    selector_end = i;
                 }
-                //Keine weiteren Selectoren gefunden
-                else {
-                    _selector = "";
-                }
-                //Elemente die auf selector passen im Context wählen
-                for (var i = 0; i < context[0].getElementsByClassName(selector).length; i++) {
-                    elems.push(context[0].getElementsByClassName(selector)[i]);
-                }
-
-                if (_selector != "") {
-                    //Übereinstimmende Elemente übernehmen
-                    elems = oplib.fn.array.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
-                }
-            }
-            //Enthält selector einen IDausdruck?
-            else if (oplib.fn.IdRegex.test(selector)) {
-                //Variable für #ID Selector String
-                var _selector = "";
-                //Position des ID Selectors
-                var startPos = selector.search(oplib.fn.IdRegex);
-                //ID Selector entfernen
-                _selector = selector = selector.slice(startPos + 1, selector.length);
-                //Position der Möglichen weiteren Selectoren
-                startPos = _selector.search(oplib.fn.PossibleSelectorsRegex);
-                //Weitere Selectoren gefunden!
-                if (startPos != -1) {
-                    //weitere Selectoren sichern
-                    _selector = selector.slice(startPos, selector.length);
-                    //weitere Selectoren entfernen
-                    selector = selector.slice(0, startPos);
-                }
-                //Keine weiteren Selectoren gefunden
-                else {
-                    _selector = "";
-                }
-                //Elemente die auf selector passen in wählen, kann nur im
-                // gesamten document gewählt werden
-                elems.push(document.getElementById(selector));
-
-                if (_selector != "") {
-                    //Übereinstimmende Elemente übernehmen
-                    elems = oplib.fn.array.sameElements(oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(_selector));
-                }
-            }
-
-            //Enthält selector ein HtmlTag?
-            else if (oplib.fn.ElementSelection.onlyTag(selector)) {
-                var elements = oplib.fn.ElementSelection.find({
-                    tag: oplib.fn.ElementSelection.tag
-                }, oplib.fn.ElementSelection.children(context, 1));
-                for (var i = 0; i < elements.length; i++) {
-                    elems.push(elements[i]);
-                }
-            }
-            //Enthält selector ein HtmlTag, das erstellt werden soll?
-            else if (oplib.fn.CreateHtmlTagRegex.test(selector)) {
-                var elem = document.createElement(selector.replace(/_/g, ""));
-                elems.push(elem);
-            }
-            //Wurde kein Selector erkannt?
-            else {
-                var elem = document.createElement("div");
-                elem.innerHTML = selector;
-                elems.push(elem);
             }
         }
-        else if ( typeof selector === "object") {
+        
+else if ( typeof selector === "object") {
             if (oplib.fn.isOPLib(selector)) {
                 elems = selector;
             }
         }
 
         return elems;
+
     };
 
     //Überprüft ob es sich um einen HTML-String handelt
