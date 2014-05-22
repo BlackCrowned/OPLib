@@ -513,7 +513,7 @@ var oplib = (function() {
 
     //Wandelt einen Selector in ein DOMObject um
     oplib.fn.ElementSelection.DOMObjectFromSelector = function(selector, context) {
-        var elems = [document.body];
+        var elems = [];
         var selectors = [];
 
         //Wurde ein selector übergeben
@@ -527,16 +527,79 @@ var oplib = (function() {
         if (!context) {
             //Standart Context = document.body
             context = document.body;
-
         }
 
         selectors = oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
 
-        //Selectoren auswerten
-        for (var i = 0; i < selectors.length; i++) {
-
+        //Muss im context vorkommen.
+        var useable;
+        var dontCheck = false;
+        if (!context || !context.length) {
+            useable = [];
+            dontCheck = true;
+        }
+        else {
+            useable = oplib.fn.ElementSelection.children(context, 1);
         }
 
+        useable.push(context);
+        //Selectoren auswerten
+        for (var i = 0; i < selectors.length; i++) {
+            switch (selectors[i].type) {
+                case "element":
+                    if (!dontCheck && oplib.array.includes(useable, selectors[i].data)) {
+                        var matched = selectors[i].data;
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+                    else if (dontCheck) {
+                        var matched = selectors[i].data;
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+
+                    break;
+                case "id":
+                    if (!dontCheck && oplib.array.includes(useable, document.getElementById(selectors[i].data))) {
+                        var matched = document.getElementById(selectors[i].data);
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+                    else if (dontCheck) {
+                        var matched = document.getElementById(selectors[i].data);
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+                    break;
+                case "class":
+                    var matched;
+                    if (!dontCheck) {
+                        matched = useable = oplib.array.sameElements(document.getElementsByClassName(selectors[i].data), useable);
+                    }
+                    else {
+                        matched = useable = document.getElementsByClassName(selectors[i].data);
+                    }
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "url":
+                    var elem = document.createElement("div");
+                    oplib.AJAX(selectors[i].data, function(text) {
+                        elem.innerHTML = text;
+                    }, "", {
+                        async: false,
+                        content: "text",
+                    });
+                    elems.push(elem);
+                default:
+                    console.log("Couldn't analyse parsed Selectors(" + selectors[i].type + ")");
+            }
+        }
         return elems;
 
     };
@@ -588,7 +651,6 @@ var oplib = (function() {
 
                 for (var i = 0; i < selector.length; i++) {
                     selector_end = i;
-                    console.log(selector[i] + ": " + i);
                     if (oplib.fn.IdRegex.test(selector[i])) {
                         //Vorherige Selectoren
                         if (selector_start != i) {
@@ -700,6 +762,11 @@ var oplib = (function() {
      */
     oplib.fn.ElementSelection.children = function(parents, R) {
         var children = [];
+
+        //Erwartet ein Array;
+        if ( parents instanceof Node) {
+            parents = [parents];
+        }
 
         //Funktion die alle untergeordneten Nodes findet
         var getChildren = function(parents, children, R) {
