@@ -477,37 +477,43 @@ var oplib = (function() {
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
-    //Regex für Klassen Selectoren
-    oplib.fn.ClassRegex = /\.\w\d*/;
-    //Regex für ID Selectoren
-    oplib.fn.IdRegex = /#\w\d*/;
-    //Regex für HTML-Strings
-    oplib.fn.HtmlStringRegex = /^\s*<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
-    //Regex für HTML-Strings, die nur ein Element enthalten
-    oplib.fn.HtmlStringSingleElementRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
-    //Regex für HTML-Tag Selectoren
-    oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
-    //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
-    oplib.fn.CreateHtmlTagRegex = /^_\w*_$/;
-    //Regex für URL-Strings
-    oplib.fn.UrlStringRegex = /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
-    //Regex für alle möglichen Selectoren
-    oplib.fn.PossibleSelectorsRegex = /[.#<]/;
+    // //Regex für Klassen Selectoren
+    // oplib.fn.ClassRegex = /\.\w\d*/;
+    // //Regex für ID Selectoren
+    // oplib.fn.IdRegex = /#\w\d*/;
+    // //Regex für HTML-Strings
+    // oplib.fn.HtmlStringRegex =
+    // /^\s*<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
+    // //Regex für HTML-Strings, die nur ein Element enthalten
+    // oplib.fn.HtmlStringSingleElementRegex =
+    // /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
+    // //Regex für HTML-Tag Selectoren
+    // oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
+    // //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
+    // oplib.fn.CreateHtmlTagRegex = /^_\w*_$/;
+    // //Regex für URL-Strings
+    // oplib.fn.UrlStringRegex =
+    // /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+    // //Regex für alle möglichen Selectoren
+    // oplib.fn.PossibleSelectorsRegex = /[.#<]/;
+    oplib.fn.IdRegex = /#/;
+    oplib.fn.ClassRegex = /\./;
+    oplib.fn.UrlRegex = /url:/;
 
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
         var elems;
         //Context zuweisen
-        context = oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(context);
+        context = oplib.fn.ElementSelection.DOMObjectFromSelector(context);
         //Gewählte Elemente zuweisen
-        elems = oplib.fn.ElementSelection.prototype.DOMObjectFromSelector(selector, context);
+        elems = oplib.fn.ElementSelection.DOMObjectFromSelector(selector, context);
         //Ausgewählte Elemente zurückgeben
         return elems;
     };
 
     //Wandelt einen Selector in ein DOMObject um
-    oplib.fn.ElementSelection.prototype.DOMObjectFromSelector = function(selector, context) {
-        var elems = [];
+    oplib.fn.ElementSelection.DOMObjectFromSelector = function(selector, context) {
+        var elems = [document.body];
         var selectors = [];
 
         //Wurde ein selector übergeben
@@ -527,6 +533,11 @@ var oplib = (function() {
         selectors = oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
 
         //Selectoren auswerten
+        for (var i = 0; i < selectors.length; i++) {
+
+        }
+
+        return elems;
 
     };
 
@@ -561,31 +572,67 @@ var oplib = (function() {
         }
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
-            var selector_type = "";
-            var selector_start = 0;
-            var selector_end = 0;
+            //Url angegeben. Keine weiteren Selektoren erwartet
+            if (oplib.fn.UrlRegex.test(selector)) {
+                selector = selector.replace(oplib.fn.UrlRegex, "");
+                parsedSelectors.push({
+                    type: "url",
+                    data: selector
+                });
+            }
             //Durch selector loopen und in einzelne Selektoren unterteilen
-            for (var i = 0; i < selector.length; i++) {
-                if (selector[i] == '#') {
-                    //Vorherige Selectoren
-                    selector_end = i - 1;
-                    if (selector_start != i) {
-                        parsedSelectors.push({type: selector_type, data: selector.slice(selector_start, selector_end)});
-                    }
-                    selector_type = "ID";
-                    selector_start = i;
+            else {
+                var selector_type = "";
+                var selector_start = 0;
+                var selector_end = -1;
+
+                for (var i = 0; i < selector.length; i++) {
                     selector_end = i;
+                    console.log(selector[i] + ": " + i);
+                    if (oplib.fn.IdRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        if (selector_start != i) {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "id";
+                        selector_start = i + 1;
+                    }
+                    if (oplib.fn.ClassRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        if (selector_start != i) {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "class";
+                        selector_start = i + 1;
+                    }
+                }
+                //Übrige Selektoren verarbeiten
+                selector_end++;
+                if (selector_start != selector_end) {
+                    parsedSelectors.push({
+                        type: selector_type,
+                        data: selector.slice(selector_start, selector_end)
+                    });
                 }
             }
+
         }
-        
-else if ( typeof selector === "object") {
+        else if ( typeof selector === "object") {
             if (oplib.fn.isOPLib(selector)) {
-                elems = selector;
+                parsedSelectors.push({
+                    type: "OPLib",
+                    data: selectors
+                });
             }
         }
 
-        return elems;
+        return parsedSelectors;
 
     };
 
