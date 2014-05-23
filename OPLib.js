@@ -931,6 +931,11 @@ var oplib = (function() {
         return document.getElementsByClassName(className);
     };
 
+    //Findet Elemente mit dem angebenen Tag
+    oplib.fn.ElementSelection.find.tag = function(tag) {
+        return document.getElementsByTagName(tag);
+    };
+
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //Funktioniert nur wenn der String ein einzelnes HTML-Element enthält
