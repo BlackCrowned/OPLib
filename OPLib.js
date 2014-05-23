@@ -477,30 +477,18 @@ var oplib = (function() {
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
-    // //Regex für Klassen Selectoren
-    // oplib.fn.ClassRegex = /\.\w\d*/;
-    // //Regex für ID Selectoren
-    // oplib.fn.IdRegex = /#\w\d*/;
-    // //Regex für HTML-Strings
-    // oplib.fn.HtmlStringRegex =
-    // /^\s*<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
-    // //Regex für HTML-Strings, die nur ein Element enthalten
-    // oplib.fn.HtmlStringSingleElementRegex =
-    // /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
-    // //Regex für HTML-Tag Selectoren
-    // oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
-    // //Regex für HTML-Tag Selectoren, um ein Tag neu zu erstellen
-    // oplib.fn.CreateHtmlTagRegex = /^_\w*_$/;
-    // //Regex für URL-Strings
-    // oplib.fn.UrlStringRegex =
-    // /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
-    // //Regex für alle möglichen Selectoren
-    // oplib.fn.PossibleSelectorsRegex = /[.#<]/;
+    //ID - Regex
     oplib.fn.IdRegex = /#/;
+    //Klassen - Regex
     oplib.fn.ClassRegex = /\./;
+    //Url - Regex
     oplib.fn.UrlRegex = /url:/;
+    //Html - Regex
     oplib.fn.HtmlRegex = /^\s*<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
+    //Html - Single Element - Regex
     oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
+    //Html - Tag - Regex
+    oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
 
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
