@@ -536,9 +536,11 @@ var oplib = (function() {
         }
         else {
             useable = oplib.fn.ElementSelection.children(context, 1);
+            for (var i = 0; i < context.length; i++) {
+                useable.push(context[i]);
+            }
         }
 
-        useable.push(context);
         //Selectoren auswerten
         for (var i = 0; i < selectors.length; i++) {
             switch (selectors[i].type) {
@@ -555,6 +557,9 @@ var oplib = (function() {
                         useable.push(matched);
                         elems.push(matched);
                     }
+
+                    break;
+                case "universal":
 
                     break;
                 case "id":
@@ -582,6 +587,80 @@ var oplib = (function() {
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
                     }
+                    break;
+                case "attribute":
+                    var matched = [];
+                    if (selectors[i].data.equals) {
+                        switch (selectors[i].data.prefix) {
+                            //Kein Prefix
+                            case "":
+                                for (var j = 0; j < useable.length; j++) {
+                                    if (useable[j].getAttribute(selectors[i].data.name) == selectors[i].data.value) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "~":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var attr = useable[j].getAttribute(selectors[i].data.name);
+                                    attr = attr ? attr.split(" ") : [];
+                                    for (var x = 0; x < attr.length; x++) {
+                                        if (attr[x] == selectors[i].data.value) {
+                                            matched.push(useable[j]);
+                                            elems.push(useable[j]);
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "|":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "^":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "$":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value) + "$");
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "*":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value));
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else {
+                        for (var j = 0; j < useable.length; j++) {
+                            if (useable[j].getAttribute(selectors[i].data.name)) {
+                                matched.push(useable[j]);
+                                elems.push(useable[j]);
+                            }
+                        }
+                    }
+                    useable = matched;
                     break;
                 case "url":
                     var elem = document.createElement("div");
@@ -2379,6 +2458,13 @@ var oplib = (function() {
         //Extend für alle Objecte freigeben
         extend: oplib.fn.extend
     };
+    
+    //Funktionen die mit RegExp arbeiten
+    oplib.regexp = oplib.fn.regexp = {
+        quote: function(str) {
+            return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+        }
+    }
 
     //Funktionen für die Zeit
     oplib.TIME = oplib.fn.TIME = {
