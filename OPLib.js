@@ -477,6 +477,8 @@ var oplib = (function() {
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
+    //Universal - Regex
+    oplib.fn.UniversalRegex = /\*/;
     //ID - Regex
     oplib.fn.IdRegex = /#/;
     //Klassen - Regex
@@ -658,9 +660,20 @@ var oplib = (function() {
 
                 for (var i = 0; i < selector.length; i++) {
                     selector_end = i;
+                    if (oplib.fn.UniversalRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        if (selector_type != "") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "universal";
+                        selector_start = i + 1;
+                    }
                     if (oplib.fn.IdRegex.test(selector[i])) {
                         //Vorherige Selectoren
-                        if (selector_start != i) {
+                        if (selector_type != "") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
@@ -671,7 +684,7 @@ var oplib = (function() {
                     }
                     if (oplib.fn.ClassRegex.test(selector[i])) {
                         //Vorherige Selectoren
-                        if (selector_start != i) {
+                        if (selector_type != "") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
@@ -714,7 +727,7 @@ var oplib = (function() {
     oplib.fn.ElementSelection.isUrl = function(url) {
         return oplib.fn.UrlRegex.test(url);
     };
-    
+
     //Namespace oplib.fn.ElementSelection.html festlegen
     oplib.fn.ElementSelection.html = {};
 
