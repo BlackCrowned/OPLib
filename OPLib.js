@@ -560,7 +560,10 @@ var oplib = (function() {
 
                     break;
                 case "universal":
-
+                    var matched = useable;
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
                     break;
                 case "id":
                     if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data))) {
@@ -686,6 +689,13 @@ var oplib = (function() {
                     console.log(selectors[i]);
             }
         }
+
+        //Elemente müssen in useable vorkommen
+        elems = oplib.array.sameElements(elems, useable);
+        
+        //Elemente dürfen nur einmal vorkommen
+        elems = oplib.array.unique(elems);
+
         return elems;
 
     };
@@ -843,7 +853,7 @@ var oplib = (function() {
                 }
                 //Übrige Selektoren verarbeiten
                 selector_end++;
-                if (selector_start != selector_end && selector_type != "") {
+                if (selector_type != "") {
                     parsedSelectors.push({
                         type: selector_type,
                         data: selector.slice(selector_start, selector_end)
@@ -2416,7 +2426,16 @@ var oplib = (function() {
                 }
             }
             return newArr;
-        }
+        },
+        unique: function(arr) {
+            var new_arr = [];
+            for (var i = 0; i < arr.length; i++) {
+                if (new_arr.indexOf(arr[i]) == -1) {
+                    new_arr.push(arr[i]);
+                }
+            }
+            return new_arr;  
+        },
     };
 
     //Funktionen die mit Objects arbeiten
@@ -2458,7 +2477,7 @@ var oplib = (function() {
         //Extend für alle Objecte freigeben
         extend: oplib.fn.extend
     };
-    
+
     //Funktionen die mit RegExp arbeiten
     oplib.regexp = oplib.fn.regexp = {
         quote: function(str) {
