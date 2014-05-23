@@ -491,6 +491,10 @@ var oplib = (function() {
     oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
     //Html - Tag - Regex
     oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
+    //Attribut - Start - Regex
+    oplib.fn.AttributeStartRegex = /\[/;
+    //Attribut - End - Regex
+    oplib.fn.AttributeEndRegex = /\]/;
 
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
@@ -599,7 +603,8 @@ var oplib = (function() {
                     }
                     break;
                 default:
-                    console.log("Couldn't analyse parsed Selectors(" + selectors[i].type + ")");
+                    console.log("Couldn't analyze parsed Selector:");
+                    console.log(selectors[i]);
             }
         }
         return elems;
@@ -692,6 +697,69 @@ var oplib = (function() {
                         }
                         selector_type = "class";
                         selector_start = i + 1;
+                    }
+                    if (oplib.fn.AttributeStartRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        if (selector_type != "") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "attribute";
+                        selector_start = i + 1;
+                        var name = "";
+                        var prefix = "";
+                        var equals = false;
+                        var value = "";
+                        var type = "name";
+                        while (!oplib.fn.AttributeEndRegex.test(selector[i])) {
+                            i++;
+                            selector_end = i;
+                            //Prefix ~, |, ^. $, *
+                            if (/(~|\||\^|\$|\*)/.test(selector[i])) {
+                                //Attribut Name
+                                if (selector_type == "attribute") {
+                                    name = selector.slice(selector_start, selector_end);
+                                }
+                                selector_type = "";
+                                prefix = selector[i];
+                                type = "value";
+                            }
+                            //Gleich
+                            if (/=/.test(selector[i])) {
+                                //Attribut Name
+                                if (selector_type == "attribute") {
+                                    name = selector.slice(selector_start, selector_end);
+                                }
+                                selector_type = "attribute";
+                                selector_start = i + 1;
+                                equals = true;
+                                type = "value";
+                            }
+                        }
+                        //Attribut Name
+                        if (selector_type == "attribute" && type == "name") {
+                            name = selector.slice(selector_start, selector_end);
+                        }
+                        //Attribut Wert
+                        else if (selector_type == "attribute" && type == "value") {
+                            value = selector.slice(selector_start, selector_end);
+                        }
+                        //Selektor verarbeiten
+                        selector_end++;
+                        if (selector_start != selector_end && selector_type == "attribute") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: {
+                                    name: name,
+                                    prefix: prefix,
+                                    equals: equals,
+                                    value: value
+                                }
+                            });
+                        }
+                        selector_type = "";
                     }
                 }
                 //Übrige Selektoren verarbeiten
