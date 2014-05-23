@@ -499,6 +499,8 @@ var oplib = (function() {
     oplib.fn.IdRegex = /#/;
     oplib.fn.ClassRegex = /\./;
     oplib.fn.UrlRegex = /url:/;
+    oplib.fn.HtmlRegex = /^\s*<[\w\d\s=:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
+    oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
 
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
@@ -596,6 +598,16 @@ var oplib = (function() {
                         content: "text",
                     });
                     elems.push(elem);
+                    break;
+                case "html":
+                    var matched = oplib.fn.createDOMObject(selectors[i].data);
+                    elems.push(matched);
+                    break;
+                case "OPLib":
+                    for (var j = 0; j < selectors[i].data.length; j++) {
+                        elems.push(selectors[i].data[j]);
+                    }
+                    break;
                 default:
                     console.log("Couldn't analyse parsed Selectors(" + selectors[i].type + ")");
             }
@@ -643,6 +655,13 @@ var oplib = (function() {
                     data: selector
                 });
             }
+            //Html angegeben, keine weiteren Selektoren erwartet
+            else if (oplib.fn.HtmlRegex.test(selector)) {
+                parsedSelectors.push({
+                    type: "html",
+                    data: selector
+                });
+            }
             //Durch selector loopen und in einzelne Selektoren unterteilen
             else {
                 var selector_type = "";
@@ -676,7 +695,7 @@ var oplib = (function() {
                 }
                 //Übrige Selektoren verarbeiten
                 selector_end++;
-                if (selector_start != selector_end) {
+                if (selector_start != selector_end && selector_type != "") {
                     parsedSelectors.push({
                         type: selector_type,
                         data: selector.slice(selector_start, selector_end)
@@ -698,19 +717,19 @@ var oplib = (function() {
 
     };
 
-    //Überprüft ob es sich um einen HTML-String handelt
-    oplib.fn.ElementSelection.isHtmlString = function(htmlString) {
-        return oplib.fn.HtmlStringRegex.test(htmlString);
+    //Überprüft ob es sich um HTML handelt
+    oplib.fn.ElementSelection.isHtml = function(html) {
+        return oplib.fn.HtmlRegex.test(html);
     };
 
-    //Überprüft, ob es sich um einen URL-String handelt
-    oplib.fn.ElementSelection.isUrlString = function(urlString) {
-        return oplib.fn.UrlStringRegex.test(urlString);
+    //Überprüft, ob es sich um eine URL handelt
+    oplib.fn.ElementSelection.isUrl = function(url) {
+        return oplib.fn.UrlRegex.test(url);
     };
 
     //Überprüft ob der HTML-String ein einzelnes Element enthält.
     oplib.fn.ElementSelection.singleElement = function(htmlString) {
-        return oplib.fn.HtmlStringSingleElementRegex.test(htmlString);
+        return oplib.fn.HtmlSingleElementRegex.test(htmlString);
     };
 
     //Überprüft ob der HTML-String nur aus einem Tag besteht <tag>
@@ -912,7 +931,7 @@ var oplib = (function() {
     };
 
     //Erstellt ein DOMObject anhand eines Strings
-    oplib.fn.createDOBObeject = function(text) {
+    oplib.fn.createDOMObject = function(text) {
         //Funktioniert nur wenn der String ein einzelnes HTML-Element enthält
         if (oplib.fn.ElementSelection.singleElement(text)) {
             //Tag
