@@ -564,14 +564,14 @@ var oplib = (function() {
 
                     break;
                 case "id":
-                    if (!dontCheck && oplib.array.includes(useable, document.getElementById(selectors[i].data))) {
-                        var matched = document.getElementById(selectors[i].data);
+                    if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data))) {
+                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
                         useable = [];
                         useable.push(matched);
                         elems.push(matched);
                     }
                     else if (dontCheck) {
-                        var matched = document.getElementById(selectors[i].data);
+                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
                         useable = [];
                         useable.push(matched);
                         elems.push(matched);
@@ -580,10 +580,10 @@ var oplib = (function() {
                 case "class":
                     var matched;
                     if (!dontCheck) {
-                        matched = useable = oplib.array.sameElements(document.getElementsByClassName(selectors[i].data), useable);
+                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.className(selectors[i].data), useable);
                     }
                     else {
-                        matched = useable = document.getElementsByClassName(selectors[i].data);
+                        matched = useable = oplib.fn.ElementSelection.find.className(selectors[i].data);
                     }
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
@@ -648,7 +648,7 @@ var oplib = (function() {
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
             //Url angegeben. Keine weiteren Selektoren erwartet
-            if (oplib.fn.UrlRegex.test(selector)) {
+            if (oplib.fn.ElementSelection.isUrl(selector)) {
                 selector = selector.replace(oplib.fn.UrlRegex, "");
                 parsedSelectors.push({
                     type: "url",
@@ -656,7 +656,7 @@ var oplib = (function() {
                 });
             }
             //Html angegeben, keine weiteren Selektoren erwartet
-            else if (oplib.fn.HtmlRegex.test(selector)) {
+            else if (oplib.fn.ElementSelection.isHtml(selector)) {
                 parsedSelectors.push({
                     type: "html",
                     data: selector
@@ -722,34 +722,37 @@ var oplib = (function() {
         return oplib.fn.HtmlRegex.test(html);
     };
 
-    //Überprüft, ob es sich um eine URL handelt
+    //Überprüft ob es sich um eine URL handelt
     oplib.fn.ElementSelection.isUrl = function(url) {
         return oplib.fn.UrlRegex.test(url);
     };
+    
+    //Namespace oplib.fn.ElementSelection.html festlegen
+    oplib.fn.ElementSelection.html = {};
 
     //Überprüft ob der HTML-String ein einzelnes Element enthält.
-    oplib.fn.ElementSelection.singleElement = function(htmlString) {
+    oplib.fn.ElementSelection.html.singleElement = function(htmlString) {
         return oplib.fn.HtmlSingleElementRegex.test(htmlString);
     };
 
     //Überprüft ob der HTML-String nur aus einem Tag besteht <tag>
-    oplib.fn.ElementSelection.onlyTag = function(htmlString) {
+    oplib.fn.ElementSelection.html.onlyTag = function(htmlString) {
         return oplib.fn.HtmlTagRegex.test(htmlString);
     };
 
     //Gibt das Tag aus einem HTML-String zurück
-    oplib.fn.ElementSelection.tag = function(htmlString) {
+    oplib.fn.ElementSelection.html.tag = function(htmlString) {
         return htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/(>|\s+)/));
     };
 
     //Gibt den Text aus einem HTML-String zurück
-    oplib.fn.ElementSelection.text = function(htmlString) {
+    oplib.fn.ElementSelection.html.text = function(htmlString) {
         //HTML-Tags entfernen
         return htmlString.replace(/<[\/\w\d\s=:\/\.&?"'`´]*>/g, "");
     };
 
     //Gibt die Attribute aus einem HTML-String zurück
-    oplib.fn.ElementSelection.attr = function(htmlString) {
+    oplib.fn.ElementSelection.html.attr = function(htmlString) {
         //Attribute in einem Array speichern [{name, value}]
         var attr = [];
         htmlString = htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/>/)).trim();
@@ -930,16 +933,26 @@ var oplib = (function() {
         return selection;
     };
 
+    //Findet das Element mit dem angebenen ID
+    oplib.fn.ElementSelection.find.id = function(id) {
+        return document.getElementById(id);
+    };
+
+    //Findet die Elemente mit den angebenen Klassennamen
+    oplib.fn.ElementSelection.find.className = function(className) {
+        return document.getElementsByClassName(className);
+    };
+
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //Funktioniert nur wenn der String ein einzelnes HTML-Element enthält
-        if (oplib.fn.ElementSelection.singleElement(text)) {
+        if (oplib.fn.ElementSelection.html.singleElement(text)) {
             //Tag
-            var elem = document.createElement(oplib.fn.ElementSelection.tag(text));
+            var elem = document.createElement(oplib.fn.ElementSelection.html.tag(text));
             //Text
-            elem.innerHTML = oplib.fn.ElementSelection.text(text);
+            elem.innerHTML = oplib.fn.ElementSelection.html.text(text);
             //Attribute
-            var attr = oplib.fn.ElementSelection.attr(text);
+            var attr = oplib.fn.ElementSelection.html.attr(text);
             for (var i = 0; i < attr.length; i++) {
                 elem.setAttribute(attr[i].name, attr[i].value);
             }
