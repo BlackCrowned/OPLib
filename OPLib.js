@@ -673,14 +673,20 @@ var oplib = (function() {
                         async: false,
                         content: "text",
                     });
+                    useable = [];
+                    useable.push(elem);
                     elems.push(elem);
                     break;
                 case "html":
                     var matched = oplib.fn.createDOMObject(selectors[i].data);
+                    useable = [];
+                    useable.push(matched);
                     elems.push(matched);
                     break;
                 case "OPLib":
+                    useable = [];
                     for (var j = 0; j < selectors[i].data.length; j++) {
+                        useable.push(selectors[i].data[j]);
                         elems.push(selectors[i].data[j]);
                     }
                     break;
@@ -692,7 +698,7 @@ var oplib = (function() {
 
         //Elemente müssen in useable vorkommen
         elems = oplib.array.sameElements(elems, useable);
-        
+
         //Elemente dürfen nur einmal vorkommen
         elems = oplib.array.unique(elems);
 
@@ -2434,7 +2440,7 @@ var oplib = (function() {
                     new_arr.push(arr[i]);
                 }
             }
-            return new_arr;  
+            return new_arr;
         },
     };
 
