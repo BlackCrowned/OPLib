@@ -477,6 +477,8 @@ var oplib = (function() {
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
+    //EscapeChar - Regex
+    oplib.fn.EscapeCharRegex = /\\/;    
     //Universal - Regex
     oplib.fn.UniversalRegex = /\*/;
     //ID - Regex
@@ -760,6 +762,12 @@ var oplib = (function() {
 
                 for (var i = 0; i < selector.length; i++) {
                     selector_end = i;
+                    if (oplib.fn.EscapeCharRegex.test(selector[i])) {
+                        //Remove escape char
+                        selector = oplib.string.splice(selector, i, 1);
+                        //Skip escaped char
+                        continue;
+                    }
                     if (oplib.fn.UniversalRegex.test(selector[i])) {
                         //Vorherige Selectoren
                         if (selector_type != "") {
@@ -2443,6 +2451,18 @@ var oplib = (function() {
             return new_arr;
         },
     };
+    
+    oplib.string = oplib.fn.string = {
+        splice: function(str, index, count, insert) {
+            if (!count) {
+                count = 1;
+            }
+            if (!insert) {
+                insert = "";
+            }
+            return str.slice(0, index) + insert + str.slice(index + count);
+        },
+    };
 
     //Funktionen die mit Objects arbeiten
     oplib.object = oplib.fn.object = {
@@ -2489,7 +2509,7 @@ var oplib = (function() {
         quote: function(str) {
             return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
         }
-    }
+    };
 
     //Funktionen für die Zeit
     oplib.TIME = oplib.fn.TIME = {
