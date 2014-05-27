@@ -478,7 +478,11 @@ var oplib = (function() {
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
     //EscapeChar - Regex
-    oplib.fn.EscapeCharRegex = /\\/;    
+    oplib.fn.EscapeCharRegex = /\\/;
+    //Space - Regex
+    oplib.fn.SpaceRegex = /\s/;
+    //Text - Regex
+    oplib.fn.TextRegex = /\w/;
     //Universal - Regex
     oplib.fn.UniversalRegex = /\*/;
     //ID - Regex
@@ -767,6 +771,25 @@ var oplib = (function() {
                         selector = oplib.string.splice(selector, i, 1);
                         //Skip escaped char
                         continue;
+                    }
+                    //Keine keine mehrfachen Leerzeichen
+                    if (oplib.fn.SpaceRegex.test(selector[i]) && !oplib.fn.SpaceRegex.test(selector[i + 1])) {
+                        //Vorherige Selectoren
+                        if (selector_type != "no selector") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "tag";
+                        selector_start = i + 1;
+                    }
+                    if (oplib.fn.TextRegex.test(selector[i])) {
+                        //Es darf kein anderer Selektor ausgewählt sein
+                        if (selector_type == "no selector") {
+                            selector_type = "tag";
+                            selector_start = i;
+                        }
                     }
                     if (oplib.fn.UniversalRegex.test(selector[i])) {
                         //Vorherige Selectoren
@@ -2451,7 +2474,7 @@ var oplib = (function() {
             return new_arr;
         },
     };
-    
+
     oplib.string = oplib.fn.string = {
         splice: function(str, index, count, insert) {
             if (!count) {
