@@ -479,8 +479,6 @@ var oplib = (function() {
     oplib.fn.Init.prototype = oplib.fn;
     //EscapeChar - Regex
     oplib.fn.EscapeCharRegex = /\\/;
-    //Space - Regex
-    oplib.fn.SpaceRegex = /\s/;
     //Text - Regex
     oplib.fn.TextRegex = /\w/;
     //Universal - Regex
@@ -489,6 +487,14 @@ var oplib = (function() {
     oplib.fn.IdRegex = /#/;
     //Klassen - Regex
     oplib.fn.ClassRegex = /\./;
+    //Child - Regex
+    oplib.fn.ChildRegex = />/;
+    //Descendant - Regex
+    oplib.fn.DescendantRegex = /\s/;
+    //Neighbour - Regex
+    oplib.fn.NeighbourRegex = /\+/;
+    //Sibling - Regex
+    oplib.fn.SiblingRegex = /~/;
     //Url - Regex
     oplib.fn.UrlRegex = /url:/;
     //Html - Regex
@@ -784,21 +790,20 @@ var oplib = (function() {
                         //Skip escaped char
                         continue;
                     }
-                    //Keine keine mehrfachen Leerzeichen -- Lehrzeichen am Ende ignorieren
-                    if (oplib.fn.SpaceRegex.test(selector[i]) && !(oplib.fn.SpaceRegex.test(selector[i + 1]) || selector[i + 1] == undefined)) {
-                        //Vorherige Selectoren
-                        if (selector_type != "no selector") {
+                    if (oplib.fn.TextRegex.test(selector[i])) {
+                        //Es darf kein anderer Selektor ausgewählt sein
+                        //bzw. nur Kombinationsselektoren
+                        if (selector_type == "no selector") {
+                            selector_type = "tag";
+                            selector_start = i;
+                        }
+                        //Nach Kombinationsselektoren Kombinationsselektoren auch
+                        // parsen
+                        if (selector_type == "children" || selector_type == "descendants" || selector_type == "neighbours" || selector_type == "siblings") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
                             });
-                        }
-                        selector_type = "tag";
-                        selector_start = i + 1;
-                    }
-                    if (oplib.fn.TextRegex.test(selector[i])) {
-                        //Es darf kein anderer Selektor ausgewählt sein
-                        if (selector_type == "no selector") {
                             selector_type = "tag";
                             selector_start = i;
                         }
@@ -899,6 +904,66 @@ var oplib = (function() {
                         }
                         selector_type = "no selector";
                     }
+                    //Keine keine mehrfachen Leerzeichen
+                    //Lehrzeichen am Ende ignorieren
+                    //Vor kombinationsselektoren ignorieren
+                    if (oplib.fn.DescendantRegex.test(selector[i]) && !(oplib.fn.DescendantRegex.test(selector[i + 1]) || oplib.fn.ChildRegex.test(selector[i + 1]) || oplib.fn.NeighbourRegex.test(selector[i + 1]) || oplib.fn.SiblingRegex.test(selector[i + 1]) || selector[i + 1] == undefined)) {
+                        //Nach kombinationsselektoren ignorieren
+                        if (selector_type != "children" && selector_type != "descendants" && selector_type != "neighbours" && selector_type != "siblings") {
+                            //Vorherige Selectoren
+                            if (selector_type != "no selector") {
+                                parsedSelectors.push({
+                                    type: selector_type,
+                                    data: selector.slice(selector_start, selector_end)
+                                });
+                            }
+                            //Leerzeichen entfernen
+                            selector = oplib.string.splice(selector, i--, 1);
+                            selector_type = "descendants";
+                            selector_start = i + 1;
+                        }
+                        else {
+                            //Zu viele Leerzeichen entfernen
+                            selector = oplib.string.splice(selector, i--, 1);
+                        }
+
+                    }
+                    if (oplib.fn.ChildRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        //FIXME: Keine Leerzeichen in Selektor data beinhalten
+                        if (selector_type != "no selector") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "children";
+                        selector_start = i;
+                    }
+                    if (oplib.fn.NeighbourRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        //FIXME: Keine Leerzeichen in Selektor data beinhalten
+                        if (selector_type != "no selector") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "neighbours";
+                        selector_start = i;
+                    }
+                    if (oplib.fn.SiblingRegex.test(selector[i])) {
+                        //Vorherige Selectoren
+                        //FIXME: Keine Leerzeichen in Selektor data beinhalten
+                        if (selector_type != "no selector") {
+                            parsedSelectors.push({
+                                type: selector_type,
+                                data: selector.slice(selector_start, selector_end)
+                            });
+                        }
+                        selector_type = "siblings";
+                        selector_start = i;
+                    }
                 }
                 //Übrige Selektoren verarbeiten
                 selector_end++;
@@ -908,6 +973,7 @@ var oplib = (function() {
                         data: selector.slice(selector_start, selector_end)
                     });
                 }
+                console.log(parsedSelectors);
             }
 
         }
