@@ -784,8 +784,8 @@ var oplib = (function() {
                         //Skip escaped char
                         continue;
                     }
-                    //Keine keine mehrfachen Leerzeichen
-                    if (oplib.fn.SpaceRegex.test(selector[i]) && !oplib.fn.SpaceRegex.test(selector[i + 1])) {
+                    //Keine keine mehrfachen Leerzeichen -- Lehrzeichen am Ende ignorieren
+                    if (oplib.fn.SpaceRegex.test(selector[i]) && !(oplib.fn.SpaceRegex.test(selector[i + 1]) || selector[i + 1] == undefined)) {
                         //Vorherige Selectoren
                         if (selector_type != "no selector") {
                             parsedSelectors.push({
