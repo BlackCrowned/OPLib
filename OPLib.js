@@ -571,6 +571,18 @@ var oplib = (function() {
                         elems.push(matched[j]);
                     }
                     break;
+                case "tag":
+                    var matched;
+                    if (!dontCheck) {
+                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.tag(selectors[i].data), useable);
+                    }
+                    else {
+                        matched = useable = oplib.fn.ElementSelection.find.tag(selectors[i].data);
+                    }
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
                 case "id":
                     if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data))) {
                         var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
