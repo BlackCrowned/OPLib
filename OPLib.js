@@ -756,7 +756,7 @@ var oplib = (function() {
             }
             //Durch selector loopen und in einzelne Selektoren unterteilen
             else {
-                var selector_type = "";
+                var selector_type = "no selector";
                 var selector_start = 0;
                 var selector_end = -1;
 
@@ -770,7 +770,7 @@ var oplib = (function() {
                     }
                     if (oplib.fn.UniversalRegex.test(selector[i])) {
                         //Vorherige Selectoren
-                        if (selector_type != "") {
+                        if (selector_type != "no selector") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
@@ -781,7 +781,7 @@ var oplib = (function() {
                     }
                     if (oplib.fn.IdRegex.test(selector[i])) {
                         //Vorherige Selectoren
-                        if (selector_type != "") {
+                        if (selector_type != "no selector") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
@@ -792,7 +792,7 @@ var oplib = (function() {
                     }
                     if (oplib.fn.ClassRegex.test(selector[i])) {
                         //Vorherige Selectoren
-                        if (selector_type != "") {
+                        if (selector_type != "no selector") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
@@ -803,7 +803,7 @@ var oplib = (function() {
                     }
                     if (oplib.fn.AttributeStartRegex.test(selector[i])) {
                         //Vorherige Selectoren
-                        if (selector_type != "") {
+                        if (selector_type != "no selector") {
                             parsedSelectors.push({
                                 type: selector_type,
                                 data: selector.slice(selector_start, selector_end)
@@ -825,7 +825,7 @@ var oplib = (function() {
                                 if (selector_type == "attribute") {
                                     name = selector.slice(selector_start, selector_end);
                                 }
-                                selector_type = "";
+                                selector_type = "no selector";
                                 prefix = selector[i];
                                 type = "value";
                             }
@@ -862,12 +862,12 @@ var oplib = (function() {
                                 }
                             });
                         }
-                        selector_type = "";
+                        selector_type = "no selector";
                     }
                 }
                 //Übrige Selektoren verarbeiten
                 selector_end++;
-                if (selector_type != "") {
+                if (selector_type != "no selector") {
                     parsedSelectors.push({
                         type: selector_type,
                         data: selector.slice(selector_start, selector_end)
