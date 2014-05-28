@@ -363,6 +363,27 @@ var oplib = (function() {
             }
             return this;
         },
+        /* Fügt dem Object die Geschwister/Nachbarnodes der übereinstimmenden
+         * Elemente hinzu
+         * N: Nur Nachbaren auswählen
+         * O: Enthält auch eigene(s) Element(e)
+         */
+        siblings: function(N, O) {
+            var Siblings = oplib.fn.ElementSelection.siblings(this, N);
+
+            //OPLib soll nur siblings enthalten - Vorherige ELemente löschen
+            if (!O) {
+                for (var x = 0; x < this.length; x++) {
+                    delete this[x];
+                }
+                this.length = 0;
+            }
+            //Siblings in OPLib speichern
+            for (var i = 0; i < Siblings.length; i++) {
+                this.push(Siblings[i]);
+            }
+            return this;
+        },
         //Setzt .innerHTML für die ausgewählten Elemente
         inner: function(html) {
             return this.each(this, function() {
@@ -557,7 +578,7 @@ var oplib = (function() {
         for (var i = 0; i < selectors.length; i++) {
             switch (selectors[i].type) {
                 case "element":
-                    if (!dontCheck && oplib.array.includes(useable, selectors[i].data)) {
+                    if (!dontCheck && oplib.array.includes(useable, selectors[i].data) != -1) {
                         var matched = selectors[i].data;
                         useable = [];
                         useable.push(matched);
@@ -590,7 +611,7 @@ var oplib = (function() {
                     }
                     break;
                 case "id":
-                    if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data))) {
+                    if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data)) != -1) {
                         var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
                         useable = [];
                         useable.push(matched);
@@ -688,6 +709,30 @@ var oplib = (function() {
                         }
                     }
                     useable = matched;
+                    break;
+                case "descendants":
+                    var matched = useable = oplib.fn.ElementSelection.children(useable, 1);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "children":
+                    var matched = useable = oplib.fn.ElementSelection.children(useable, 0);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "neighbours":
+                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 1);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "siblings":
+                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 0);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
                     break;
                 case "url":
                     var elem = document.createElement("div");
@@ -905,9 +950,10 @@ var oplib = (function() {
                         selector_type = "no selector";
                     }
                     if (oplib.fn.DescendantRegex.test(selector[i])) {
-                        //Lehrzeichen am Ende ignorieren
-                        if (selector[i + 1] != undefined) {
-                            //Vor kombinationsselektoren ignorieren + Keine mehrfachen Leerzeichen
+                        //Lehrzeichen am Ende/Anfang ignorieren
+                        if (selector[i + 1] != undefined && selector[i - 1] != undefined) {
+                            //Vor kombinationsselektoren ignorieren + Keine
+                            // mehrfachen Leerzeichen
                             if (!(oplib.fn.DescendantRegex.test(selector[i + 1]) || oplib.fn.ChildRegex.test(selector[i + 1]) || oplib.fn.NeighbourRegex.test(selector[i + 1]) || oplib.fn.SiblingRegex.test(selector[i + 1]))) {
                                 //Nach kombinationsselektoren ignorieren
                                 if (selector_type != "children" && selector_type != "descendants" && selector_type != "neighbours" && selector_type != "siblings") {
@@ -1080,7 +1126,7 @@ var oplib = (function() {
         var getChildren = function(parents, children, R) {
             for (var i = 0; i < parents.length; i++) {
                 for (var j = 0; j < parents[i].children.length; j++) {
-                    if (!oplib.fn.array.includes(children, parents[i].children[j])) {
+                    if (oplib.fn.array.includes(children, parents[i].children[j]) == -1) {
                         children.push(parents[i].children[j]);
                         //Rekursiv?
                         if (R) {
@@ -1108,6 +1154,11 @@ var oplib = (function() {
         var Parents = [];
         var topLimit;
 
+        //Erwartet ein Array
+        if ( children instanceof Node) {
+            children = [children];
+        }
+
         if (rekursionLimit && rekursionLimit.parentNode) {
             topLimit = rekursionLimit.parentNode;
         }
@@ -1121,7 +1172,7 @@ var oplib = (function() {
                 //topLimit ist die höchste Ebene, falls rekursiv gesucht wird
                 if (!(!children[i].parentNode || (children[i].parentNode == topLimit && R))) {
                     //Keine doppelten parentNodes.
-                    if (!oplib.fn.array.includes(parents, children[i].parentNode)) {
+                    if (oplib.fn.array.includes(parents, children[i].parentNode) == -1) {
                         //parentNode gefunden
                         parents.push(children[i].parentNode);
                         //Rekursive Suche??
@@ -1137,6 +1188,41 @@ var oplib = (function() {
         };
         //Ergebnis der Suche
         return getParents(children, Parents, R);
+    };
+
+    /* Findet gleichgeordnete Nodes für die Elemente
+     * N: Nur Nachbaren einschließen
+     */
+    oplib.fn.ElementSelection.siblings = function(elems, N) {
+        //Erwartet ein Array
+        if ( elems instanceof Node) {
+            elems = [elems];
+        }
+        //Alle Siblings gefordert
+        if (!N) {
+            var parents = oplib.fn.ElementSelection.parents(elems);
+            var siblings = oplib.fn.ElementSelection.children(parents, 0);
+            for (var i = 0; i < elems.length; i++) {
+                if (oplib.array.includes(siblings, elems[i]) != -1) {
+                    siblings.splice(oplib.array.includes(siblings, elems[i]), 1);
+                }
+            }
+            return siblings;
+        }
+        //Nur Nachbaren gefordert
+        else {
+            var neighbours = [];
+            for (var i = 0; i < elems.length; i++) {
+                if (elems[i].nextElementSibling != null) {
+                    neighbours.push(elems[i].nextElementSibling);
+                }
+                if (elems[i].previousElementSibling != null) {
+                    neighbours.push(elems[i].previousElementSibling);
+                }
+            }
+            return neighbours;
+        }
+
     };
 
     /* Findet entsprechende Elemente
@@ -1157,10 +1243,10 @@ var oplib = (function() {
                     //Elemente mit übereinstimmendem Tag durchgehen
                     for (var x = 0; x < tmp.length; x++) {
                         //Elemente müssen falls vorhanden in limitedTo vorkommen
-                        if (!limitedTo || oplib.fn.array.includes(limitedTo, tmp[x])) {
+                        if (!limitedTo || oplib.fn.array.includes(limitedTo, tmp[x]) != -1) {
                             //ELemente mit übereinstimmendem Tag dürfen nur
                             // einmal vorkommen
-                            if (!oplib.fn.array.includes(selection, tmp[x])) {
+                            if (oplib.fn.array.includes(selection, tmp[x]) == -1) {
                                 selection.push(tmp[x]);
                             }
                         }
@@ -1184,11 +1270,11 @@ var oplib = (function() {
                         if (classes[j] == options.className) {
                             //Elemente müssen falls vorhanden in limitedTo
                             // vorkommen
-                            if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[i])) {
+                            if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[i]) != -1) {
                                 //ELemente mit übereinstimmender Klasse dürfen
                                 // nur
                                 // einmal vorkommen
-                                if (!oplib.fn.array.includes(selection, elems[i])) {
+                                if (oplib.fn.array.includes(selection, elems[i]) == -1) {
                                     selection.push(elems[i]);
                                 }
                             }
@@ -1204,10 +1290,10 @@ var oplib = (function() {
             for (var x = 0; x < elems.length; x++) {
                 if (elems[x][i] && elems[x][i].indexOf(options[i]) != -1) {
                     //Elemente müssen falls vorhanden in limitedTo vorkommen
-                    if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x])) {
+                    if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x]) != -1) {
                         //ELemente mit übereinstimmendem i dürfen nur
                         // einmal vorkommen
-                        if (!oplib.fn.array.includes(selection, elems[x])) {
+                        if (oplib.fn.array.includes(selection, elems[x]) == -1) {
                             selection.push(elems[x]);
                         }
                     }
@@ -2529,10 +2615,10 @@ var oplib = (function() {
         includes: function(arr, elem) {
             for (var i = 0; i < arr.length; i++) {
                 if (arr[i] == elem) {
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return -1;
         },
         sameElements: function(arr1, arr2) {
             //Nur ein Argument angegeben? -> Dieses Object mit Argument
