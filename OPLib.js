@@ -399,8 +399,8 @@ var oplib = (function() {
         //Findet alle Elemente anhand den in options angegebenen Einschränkungen
         //limitedTo: Darf nur Elemente aus limitedTo enthalten
         //O: Enthält auch eigene(s) Element(e)
-        find: function(options, limitedTo, O) {
-            var elems = oplib.fn.ElementSelection.find(this, options, limitedTo);
+        find: function(selector, O) {
+            var elems = oplib.fn.ElementSelection.find(this, selector);
             if (!O) {
                 for (var i = 0; i < this.length; i++) {
                     delete this[i];
@@ -542,7 +542,6 @@ var oplib = (function() {
 
     //Wandelt einen Selector in ein DOMObject um
     oplib.fn.ElementSelection.DOMObjectFromSelector = function(selector, context) {
-        var elems = [];
         var selectors = [];
 
         //Wurde ein selector übergeben
@@ -560,218 +559,7 @@ var oplib = (function() {
 
         selectors = oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
 
-        //Muss im context vorkommen.
-        var useable;
-        var dontCheck = false;
-        if (!context || !context.length) {
-            useable = [];
-            dontCheck = true;
-        }
-        else {
-            useable = oplib.fn.ElementSelection.children(context, 1);
-            for (var i = 0; i < context.length; i++) {
-                useable.push(context[i]);
-            }
-        }
-
-        //Selectoren auswerten
-        for (var i = 0; i < selectors.length; i++) {
-            switch (selectors[i].type) {
-                case "element":
-                    if (!dontCheck && oplib.array.includes(useable, selectors[i].data) != -1) {
-                        var matched = selectors[i].data;
-                        useable = [];
-                        useable.push(matched);
-                        elems.push(matched);
-                    }
-                    else if (dontCheck) {
-                        var matched = selectors[i].data;
-                        useable = [];
-                        useable.push(matched);
-                        elems.push(matched);
-                    }
-
-                    break;
-                case "universal":
-                    var matched = useable;
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "tag":
-                    var matched;
-                    if (!dontCheck) {
-                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.tag(selectors[i].data), useable);
-                    }
-                    else {
-                        matched = useable = oplib.fn.ElementSelection.find.tag(selectors[i].data);
-                    }
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "id":
-                    if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data)) != -1) {
-                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
-                        useable = [];
-                        useable.push(matched);
-                        elems.push(matched);
-                    }
-                    else if (dontCheck) {
-                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
-                        useable = [];
-                        useable.push(matched);
-                        elems.push(matched);
-                    }
-                    break;
-                case "class":
-                    var matched;
-                    if (!dontCheck) {
-                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.className(selectors[i].data), useable);
-                    }
-                    else {
-                        matched = useable = oplib.fn.ElementSelection.find.className(selectors[i].data);
-                    }
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "attribute":
-                    var matched = [];
-                    if (selectors[i].data.equals) {
-                        switch (selectors[i].data.prefix) {
-                            //Kein Prefix
-                            case "":
-                                for (var j = 0; j < useable.length; j++) {
-                                    if (useable[j].getAttribute(selectors[i].data.name) == selectors[i].data.value) {
-                                        matched.push(useable[j]);
-                                        elems.push(useable[j]);
-                                    }
-                                }
-                                break;
-                            case "~":
-                                for (var j = 0; j < useable.length; j++) {
-                                    var attr = useable[j].getAttribute(selectors[i].data.name);
-                                    attr = attr ? attr.split(" ") : [];
-                                    for (var x = 0; x < attr.length; x++) {
-                                        if (attr[x] == selectors[i].data.value) {
-                                            matched.push(useable[j]);
-                                            elems.push(useable[j]);
-                                            break;
-                                        }
-                                    }
-                                }
-                                break;
-                            case "|":
-                                for (var j = 0; j < useable.length; j++) {
-                                    var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
-                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-                                        matched.push(useable[j]);
-                                        elems.push(useable[j]);
-                                    }
-                                }
-                                break;
-                            case "^":
-                                for (var j = 0; j < useable.length; j++) {
-                                    var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
-                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-                                        matched.push(useable[j]);
-                                        elems.push(useable[j]);
-                                    }
-                                }
-                                break;
-                            case "$":
-                                for (var j = 0; j < useable.length; j++) {
-                                    var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value) + "$");
-                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-                                        matched.push(useable[j]);
-                                        elems.push(useable[j]);
-                                    }
-                                }
-                                break;
-                            case "*":
-                                for (var j = 0; j < useable.length; j++) {
-                                    var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value));
-                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-                                        matched.push(useable[j]);
-                                        elems.push(useable[j]);
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                    else {
-                        for (var j = 0; j < useable.length; j++) {
-                            if (useable[j].getAttribute(selectors[i].data.name)) {
-                                matched.push(useable[j]);
-                                elems.push(useable[j]);
-                            }
-                        }
-                    }
-                    useable = matched;
-                    break;
-                case "descendants":
-                    var matched = useable = oplib.fn.ElementSelection.children(useable, 1);
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "children":
-                    var matched = useable = oplib.fn.ElementSelection.children(useable, 0);
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "neighbours":
-                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 1);
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "siblings":
-                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 0);
-                    for (var j = 0; j < matched.length; j++) {
-                        elems.push(matched[j]);
-                    }
-                    break;
-                case "url":
-                    var elem = document.createElement("div");
-                    oplib.AJAX(selectors[i].data, function(text) {
-                        elem.innerHTML = text;
-                    }, "", {
-                        async: false,
-                        content: "text",
-                    });
-                    useable = [];
-                    useable.push(elem);
-                    elems.push(elem);
-                    break;
-                case "html":
-                    var matched = oplib.fn.createDOMObject(selectors[i].data);
-                    useable = [];
-                    useable.push(matched);
-                    elems.push(matched);
-                    break;
-                case "OPLib":
-                    useable = [];
-                    for (var j = 0; j < selectors[i].data.length; j++) {
-                        useable.push(selectors[i].data[j]);
-                        elems.push(selectors[i].data[j]);
-                    }
-                    break;
-                default:
-                    console.log("Couldn't analyze parsed Selector:");
-                    console.log(selectors[i]);
-            }
-        }
-
-        //Elemente müssen in useable vorkommen
-        elems = oplib.array.sameElements(elems, useable);
-
-        //Elemente dürfen nur einmal vorkommen
-        elems = oplib.array.unique(elems);
-
-        return elems;
+        return oplib.fn.ElementSelection.DOMObjectFromParsedSelector(selectors, context);
 
     };
 
@@ -1040,13 +828,230 @@ var oplib = (function() {
             if (oplib.fn.isOPLib(selector)) {
                 parsedSelectors.push({
                     type: "OPLib",
-                    data: selectors
+                    data: selector
                 });
             }
         }
 
         return parsedSelectors;
 
+    };
+
+    //Wandelt geparste Selektoren in DOMObjecte um
+    oplib.fn.ElementSelection.DOMObjectFromParsedSelector = function(selectors, context) {
+        //Muss im context vorkommen.
+        var elems = [];
+        var useable;
+        var dontCheck = false;
+        if (!context || !context.length) {
+            useable = [];
+            dontCheck = true;
+        }
+        else {
+            useable = oplib.fn.ElementSelection.children(context, 1);
+            for (var i = 0; i < context.length; i++) {
+                useable.push(context[i]);
+            }
+        }
+
+        //Selectoren auswerten
+        for (var i = 0; i < selectors.length; i++) {
+            switch (selectors[i].type) {
+                case "element":
+                    if (!dontCheck && oplib.array.includes(useable, selectors[i].data) != -1) {
+                        var matched = selectors[i].data;
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+                    else if (dontCheck) {
+                        var matched = selectors[i].data;
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+
+                    break;
+                case "universal":
+                    var matched = useable;
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "tag":
+                    var matched;
+                    if (!dontCheck) {
+                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.tag(selectors[i].data), useable);
+                    }
+                    else {
+                        matched = useable = oplib.fn.ElementSelection.find.tag(selectors[i].data);
+                    }
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "id":
+                    if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data)) != -1) {
+                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+                    else if (dontCheck) {
+                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
+                        useable = [];
+                        useable.push(matched);
+                        elems.push(matched);
+                    }
+                    break;
+                case "class":
+                    var matched;
+                    if (!dontCheck) {
+                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.className(selectors[i].data), useable);
+                    }
+                    else {
+                        matched = useable = oplib.fn.ElementSelection.find.className(selectors[i].data);
+                    }
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "attribute":
+                    var matched = [];
+                    if (selectors[i].data.equals) {
+                        switch (selectors[i].data.prefix) {
+                            //Kein Prefix
+                            case "":
+                                for (var j = 0; j < useable.length; j++) {
+                                    if (useable[j].getAttribute(selectors[i].data.name) == selectors[i].data.value) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "~":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var attr = useable[j].getAttribute(selectors[i].data.name);
+                                    attr = attr ? attr.split(" ") : [];
+                                    for (var x = 0; x < attr.length; x++) {
+                                        if (attr[x] == selectors[i].data.value) {
+                                            matched.push(useable[j]);
+                                            elems.push(useable[j]);
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "|":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "^":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "$":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value) + "$");
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                            case "*":
+                                for (var j = 0; j < useable.length; j++) {
+                                    var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value));
+                                    if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+                                        matched.push(useable[j]);
+                                        elems.push(useable[j]);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else {
+                        for (var j = 0; j < useable.length; j++) {
+                            if (useable[j].getAttribute(selectors[i].data.name)) {
+                                matched.push(useable[j]);
+                                elems.push(useable[j]);
+                            }
+                        }
+                    }
+                    useable = matched;
+                    break;
+                case "descendants":
+                    var matched = useable = oplib.fn.ElementSelection.children(useable, 1);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "children":
+                    var matched = useable = oplib.fn.ElementSelection.children(useable, 0);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "neighbours":
+                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 1);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "siblings":
+                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 0);
+                    for (var j = 0; j < matched.length; j++) {
+                        elems.push(matched[j]);
+                    }
+                    break;
+                case "url":
+                    var elem = document.createElement("div");
+                    oplib.AJAX(selectors[i].data, function(text) {
+                        elem.innerHTML = text;
+                    }, "", {
+                        async: false,
+                        content: "text",
+                    });
+                    useable = [];
+                    useable.push(elem);
+                    elems.push(elem);
+                    break;
+                case "html":
+                    var matched = oplib.fn.createDOMObject(selectors[i].data);
+                    useable = [];
+                    useable.push(matched);
+                    elems.push(matched);
+                    break;
+                case "OPLib":
+                    useable = [];
+                    for (var j = 0; j < selectors[i].data.length; j++) {
+                        useable.push(selectors[i].data[j]);
+                        elems.push(selectors[i].data[j]);
+                    }
+                    break;
+                default:
+                    console.log("Couldn't analyze parsed Selector:");
+                    console.log(selectors[i]);
+            }
+        }
+
+        //Elemente müssen in useable vorkommen
+        elems = oplib.array.sameElements(elems, useable);
+
+        //Elemente dürfen nur einmal vorkommen
+        elems = oplib.array.unique(elems);
+
+        return elems;
     };
 
     //Überprüft ob es sich um HTML handelt
@@ -1226,83 +1231,10 @@ var oplib = (function() {
     };
 
     /* Findet entsprechende Elemente
-     * options: tag: Tags ["tag1 tag2 tag3"]
-     * limitedTo: Auf diese Elemente beschränkt
+     * selector: Selectors
      */
-    oplib.fn.ElementSelection.find = function(elems, options, limitedTo) {
-        var selection = [];
-
-        if (options.tag) {
-            //Mehrere Tags angegeben?
-            var tags = options.tag.split(" ");
-            //Elemente durchgehen
-            for (var i = 0; i < elems.length; i++) {
-                //Tags durchgehen
-                for (var j = 0; j < tags.length; j++) {
-                    var tmp = elems[i].getElementsByTagName(tags[j]);
-                    //Elemente mit übereinstimmendem Tag durchgehen
-                    for (var x = 0; x < tmp.length; x++) {
-                        //Elemente müssen falls vorhanden in limitedTo vorkommen
-                        if (!limitedTo || oplib.fn.array.includes(limitedTo, tmp[x]) != -1) {
-                            //ELemente mit übereinstimmendem Tag dürfen nur
-                            // einmal vorkommen
-                            if (oplib.fn.array.includes(selection, tmp[x]) == -1) {
-                                selection.push(tmp[x]);
-                            }
-                        }
-
-                    }
-                }
-
-            }
-            delete options.tag;
-            limitedTo = selection;
-        }
-        if (options.attr) {
-            delete options.attr;
-            limitedTo = selection;
-        }
-        if (options.className) {
-            for (var i = 0; i < elems.length; i++) {
-                if (elems[i].className) {
-                    var classes = elems[i].className.split(" ");
-                    for (var j = 0; j < classes.length; j++) {
-                        if (classes[j] == options.className) {
-                            //Elemente müssen falls vorhanden in limitedTo
-                            // vorkommen
-                            if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[i]) != -1) {
-                                //ELemente mit übereinstimmender Klasse dürfen
-                                // nur
-                                // einmal vorkommen
-                                if (oplib.fn.array.includes(selection, elems[i]) == -1) {
-                                    selection.push(elems[i]);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-            delete options.className;
-            limitedTo = selection;
-        }
-        for (var i in options) {
-            for (var x = 0; x < elems.length; x++) {
-                if (elems[x][i] && elems[x][i].indexOf(options[i]) != -1) {
-                    //Elemente müssen falls vorhanden in limitedTo vorkommen
-                    if (!limitedTo || oplib.fn.array.includes(limitedTo, elems[x]) != -1) {
-                        //ELemente mit übereinstimmendem i dürfen nur
-                        // einmal vorkommen
-                        if (oplib.fn.array.includes(selection, elems[x]) == -1) {
-                            selection.push(elems[x]);
-                        }
-                    }
-                }
-            }
-            delete options[i];
-        }
-
-        return selection;
+    oplib.fn.ElementSelection.find = function(elems, selector) {
+        return oplib.fn.ElementSelection(selector, elems);
     };
 
     //Findet das Element mit dem angebenen ID
