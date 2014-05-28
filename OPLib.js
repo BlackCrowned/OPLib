@@ -904,29 +904,43 @@ var oplib = (function() {
                         }
                         selector_type = "no selector";
                     }
-                    //Keine keine mehrfachen Leerzeichen
-                    //Lehrzeichen am Ende ignorieren
-                    //Vor kombinationsselektoren ignorieren
-                    if (oplib.fn.DescendantRegex.test(selector[i]) && !(oplib.fn.DescendantRegex.test(selector[i + 1]) || oplib.fn.ChildRegex.test(selector[i + 1]) || oplib.fn.NeighbourRegex.test(selector[i + 1]) || oplib.fn.SiblingRegex.test(selector[i + 1]) || selector[i + 1] == undefined)) {
-                        //Nach kombinationsselektoren ignorieren
-                        if (selector_type != "children" && selector_type != "descendants" && selector_type != "neighbours" && selector_type != "siblings") {
-                            //Vorherige Selectoren
-                            if (selector_type != "no selector") {
-                                parsedSelectors.push({
-                                    type: selector_type,
-                                    data: selector.slice(selector_start, selector_end)
-                                });
+                    if (oplib.fn.DescendantRegex.test(selector[i])) {
+                        //Lehrzeichen am Ende ignorieren
+                        if (selector[i + 1] != undefined) {
+                            //Vor kombinationsselektoren ignorieren + Keine mehrfachen Leerzeichen
+                            if (!(oplib.fn.DescendantRegex.test(selector[i + 1]) || oplib.fn.ChildRegex.test(selector[i + 1]) || oplib.fn.NeighbourRegex.test(selector[i + 1]) || oplib.fn.SiblingRegex.test(selector[i + 1]))) {
+                                //Nach kombinationsselektoren ignorieren
+                                if (selector_type != "children" && selector_type != "descendants" && selector_type != "neighbours" && selector_type != "siblings") {
+                                    //Vorherige Selectoren
+                                    if (selector_type != "no selector") {
+                                        parsedSelectors.push({
+                                            type: selector_type,
+                                            data: selector.slice(selector_start, selector_end)
+                                        });
+                                    }
+                                    //Leerzeichen entfernen
+                                    selector = oplib.string.splice(selector, i--, 1);
+                                    selector_type = "descendants";
+                                    selector_start = i + 1;
+                                    continue;
+                                }
+                                else {
+                                    //Zu viele Leerzeichen entfernen
+                                    selector = oplib.string.splice(selector, i--, 1);
+                                    continue;
+                                }
                             }
-                            //Leerzeichen entfernen
-                            selector = oplib.string.splice(selector, i--, 1);
-                            selector_type = "descendants";
-                            selector_start = i + 1;
+                            else {
+                                //Zu viele Leerzeichen entfernen
+                                selector = oplib.string.splice(selector, i--, 1);
+                                continue;
+                            }
                         }
                         else {
                             //Zu viele Leerzeichen entfernen
                             selector = oplib.string.splice(selector, i--, 1);
+                            continue;
                         }
-
                     }
                     if (oplib.fn.ChildRegex.test(selector[i])) {
                         //Vorherige Selectoren
@@ -973,7 +987,6 @@ var oplib = (function() {
                         data: selector.slice(selector_start, selector_end)
                     });
                 }
-                console.log(parsedSelectors);
             }
 
         }
