@@ -2159,17 +2159,17 @@ var oplib = (function() {
                     parsedHeader = header;
                 }
                 else {
-                    for (var i = 0; i < header.length; i++) {
+                    for (var i in header) {
                         //Objecte in JSON umwandeln um AJAX-Request möglich zu
                         // machen
-                        if ( typeof header[i].value === "object") {
-                            header[i].value = oplib.fn.JSON.stringify(header[i].value);
+                        if ( typeof header[i] === "object") {
+                            header[i] = oplib.fn.JSON.stringify(header[i]);
                         }
                         if (!parsedHeader) {
-                            parsedHeader += ("?" + header[i].key + "=" + header[i].value);
+                            parsedHeader += ("?" + i + "=" + header[i]);
                         }
                         else {
-                            parsedHeader += ("&" + header[i].key + "=" + header[i].value);
+                            parsedHeader += ("&" + i + "=" + header[i]);
                         }
                     }
                 }
@@ -2192,17 +2192,17 @@ var oplib = (function() {
                     parsedHeader = header;
                 }
                 else {
-                    for (var i = 0; i < header.length; i++) {
+                    for (var i in header) {
                         //Objecte in JSON umwandeln um AJAX-Request möglich zu
                         // machen
-                        if ( typeof header[i].value === "object") {
-                            header[i].value = oplib.fn.JSON.stringify(header[i].value);
+                        if ( typeof header[i] === "object") {
+                            header[i] = oplib.fn.JSON.stringify(header[i]);
                         }
                         if (!parsedHeader) {
-                            parsedHeader = header[i].key + "=" + header[i].value;
+                            parsedHeader = i + "=" + header[i];
                         }
                         else {
-                            parsedHeader += ("&" + header[i].key + "=" + header[i].value);
+                            parsedHeader += ("&" + i + "=" + header[i]);
                         }
 
                     }
