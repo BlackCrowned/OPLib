@@ -2665,13 +2665,10 @@ var oplib = (function() {
             contentType: "application/x-www-form-urlencoded",
             content: "text",
             connected: function() {
-                console.log("Coining...");
             },
             received: function() {
-                console.log("This is our town, SCRUB!");
             },
             processing: function() {
-                console.log("Yeah, beat it!");
             },
             args: [],
         },
