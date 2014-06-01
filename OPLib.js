@@ -251,7 +251,7 @@ var oplib = (function() {
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
-                        this.nextSibling.parentNode.insertBefore(elems[i], this.nextSibling);
+                        this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
                     }
                     else {
                         this.parentNode.appendChild(elems[i]);
@@ -308,7 +308,7 @@ var oplib = (function() {
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
-                        this.nextSibling.parentNode.insertBefore(elems[i], this.nextSibling);
+                        this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
                     }
                     else {
                         this.parentNode.appendChild(elems[i]);
