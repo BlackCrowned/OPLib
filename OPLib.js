@@ -428,10 +428,24 @@ var oplib = (function() {
                 }, [text]);
             }, header, options);
         },
+        //Gibt Clones der ausgewählten Element zurück
         clone: function() {
             var clones = oplib.fn.finalizeDOMManipulation.clone(this);
             for (var i = 0; i < this.length; i++) {
                 this[i] = clones[i];
+            }
+            return this;
+        },
+        //Ersetzt die ausgewähöten Elemente mit einem neuen Element
+        replace: function(selector, context) {
+            var elems = oplib.fn.ElementSelection(selector, context);
+            var replaced = oplib.fn.ElementSelection.replace(elems, this);
+            for (var i = 0; i < this.length; i++) {
+                delete this[i];
+                this.length = 0;
+            }
+            for (var i = 0; i < replaced.length; i++) {
+                this.push(replaced[i]);
             }
             return this;
         }
@@ -1228,6 +1242,31 @@ var oplib = (function() {
             return neighbours;
         }
 
+    };
+
+    //Tauscht Elemente mit anderen Elementen aus
+    oplib.fn.ElementSelection.replace = function(newElems, oldElems) {
+        //Erwartet ein Array
+        if ( oldElems instanceof Node) {
+            oldElems = [oldElems];
+        }
+        if ( newElems instanceof Node) {
+            newElems = [newElems];
+        }
+        for (var i = 0; i < oldElems.length; i++) {
+            for (var j = 0; j < newElems.length; j++) {
+                //Benötigt .parentNode
+                if (!oldElems[i].parentNode) {
+                    document.body.appendChild(oldElems[i]);
+                    oldElems[i] = oldElems[i].parentNode.replaceChild(newElems[j], oldElems[i]);
+                    document.body.removeChild(oldElems[i]);
+                }
+                else {
+                    oldElems[i] = oldElems[i].parentNode.replaceChild(newElems[j], oldElems[i]);
+                }
+            }
+        }
+        return oldElems;
     };
 
     /* Findet entsprechende Elemente
