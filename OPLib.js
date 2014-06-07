@@ -2144,6 +2144,19 @@ var oplib = (function() {
         //Use native Broswser Stringifier
         return JSON.stringify(obj);
     };
+    
+    //Parses DOM
+    oplib.fn.DOM = function(dom, mimetype) {
+        return oplib.fn.DOM.parse(dom, mimetype);
+    };
+    oplib.fn.DOM.parse = function(dom, mimetype) {
+        if (!mimetype) {
+            //XML annehmen
+            mimetype = "text/xml";
+        }
+        var parser = new DOMParser();
+        return parser.parseFromString(dom, mimetype);  
+    };
 
     //Handles Ajax-Calls
     oplib.fn.AJAX = function(url, fn, header, settings) {
