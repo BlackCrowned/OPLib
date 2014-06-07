@@ -1265,12 +1265,9 @@ var oplib = (function() {
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //HTML als XML Parsen
-        var dom = oplib.fn.DOM(text, "text/xml");
-        var nodes = dom.children;
+        var dom = oplib.fn.DOM(text, "text/html");
+        var nodes = dom.getElementsByTagName("body")[0].children;
         var elems = [];
-        
-        //Funktioniert nur wenn der String ein einzelnes HTML-Element enthält
-        if (oplib.fn.ElementSelection.html.singleElement(text)) {
         for (var i = 0; i < nodes.length; i++) {
             var elem = document.createElement(nodes[i].tagName);
             var attributes = nodes[i].attributes;
@@ -1278,12 +1275,6 @@ var oplib = (function() {
                 elem.setAttribute(attributes[j].name, attributes[j].value);
             }
             elem.innerHTML = nodes[i].innerHTML;
-            elems.push(elem);
-        }
-        }
-        else {
-            var elem = document.createElement("div");
-            elem.innerHTML = text;
             elems.push(elem);
         }
         return elems;
