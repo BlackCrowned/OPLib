@@ -1041,10 +1041,19 @@ var oplib = (function() {
                     elems.push(elem);
                     break;
                 case "html":
-                    var matched = oplib.fn.createDOMObject(selectors[i].data);
+                    var dom = oplib.fn.createDOMObject(selectors[i].data);
+
                     useable = [];
-                    useable.push(matched);
-                    elems.push(matched);
+
+                    for (var j = 0; j < dom.length; j++) {
+                        elems.push(dom[j]);
+                        useable.push(dom[j]);
+                    }
+
+                    // var matched = oplib.fn.createDOMObject(selectors[i].data);
+                    // useable = [];
+                    // useable.push(matched);
+                    // elems.push(matched);
                     break;
                 case "OPLib":
                     useable = [];
@@ -1089,44 +1098,6 @@ var oplib = (function() {
     //Überprüft ob der HTML-String nur aus einem Tag besteht <tag>
     oplib.fn.ElementSelection.html.onlyTag = function(htmlString) {
         return oplib.fn.HtmlTagRegex.test(htmlString);
-    };
-
-    //Gibt das Tag aus einem HTML-String zurück
-    oplib.fn.ElementSelection.html.tag = function(htmlString) {
-        return htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/(>|\s+)/));
-    };
-
-    //Gibt den Text aus einem HTML-String zurück
-    oplib.fn.ElementSelection.html.text = function(htmlString) {
-        //HTML-Tags entfernen
-        return htmlString.replace(/<[\/\w\d\s=:\/\.&?"'`´]*>/g, "");
-    };
-
-    //Gibt die Attribute aus einem HTML-String zurück
-    oplib.fn.ElementSelection.html.attr = function(htmlString) {
-        //Attribute in einem Array speichern [{name, value}]
-        var attr = [];
-        htmlString = htmlString.slice(htmlString.search(/</) + 1, htmlString.search(/>/)).trim();
-        //Tag entfernen
-        htmlString = htmlString.replace(/\w*\s/, "");
-
-        //Attribute einteilen
-        matchedAttr = htmlString.match(/\w*\s*=\s*("|'|`|´)[\w\d\s:\/\.&?]*("|'|`|´)/g);
-
-        //Keine Attribute gefunden, leeres Array zurückgeben
-        if (!matchedAttr) {
-            return attr;
-        }
-
-        //Durch gefundene Attribute gehen, und attr[] zuweisen
-        for (var i = 0; i < matchedAttr.length; i++) {
-            attr.push({
-                name: matchedAttr[i].slice(matchedAttr[i].search(/\w*/), matchedAttr[i].search(/\s*=/)),
-                value: matchedAttr[i].slice(matchedAttr[i].search(/("|'|`|´)[\w\s:\/\.&?]*/) + 1, matchedAttr[i].search(/("|'|`|´)\s*$/))
-            });
-        }
-        return attr;
-
     };
 
     /*
@@ -1293,25 +1264,29 @@ var oplib = (function() {
 
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
+        //HTML als XML Parsen
+        var dom = oplib.fn.DOM(text, "text/xml");
+        var nodes = dom.children;
+        var elems = [];
+        
         //Funktioniert nur wenn der String ein einzelnes HTML-Element enthält
         if (oplib.fn.ElementSelection.html.singleElement(text)) {
-            //Tag
-            var elem = document.createElement(oplib.fn.ElementSelection.html.tag(text));
-            //Text
-            elem.innerHTML = oplib.fn.ElementSelection.html.text(text);
-            //Attribute
-            var attr = oplib.fn.ElementSelection.html.attr(text);
-            for (var i = 0; i < attr.length; i++) {
-                elem.setAttribute(attr[i].name, attr[i].value);
+        for (var i = 0; i < nodes.length; i++) {
+            var elem = document.createElement(nodes[i].tagName);
+            var attributes = nodes[i].attributes;
+            for (var j = 0; j < attributes.length; j++) {
+                elem.setAttribute(attributes[j].name, attributes[j].value);
             }
-            return elem;
+            elem.innerHTML = nodes[i].innerHTML;
+            elems.push(elem);
         }
-        //Funktioniert auch mit mehreren Elementen
+        }
         else {
             var elem = document.createElement("div");
             elem.innerHTML = text;
-            return elem;
+            elems.push(elem);
         }
+        return elems;
 
     };
 
@@ -2144,7 +2119,7 @@ var oplib = (function() {
         //Use native Broswser Stringifier
         return JSON.stringify(obj);
     };
-    
+
     //Parses DOM
     oplib.fn.DOM = function(dom, mimetype) {
         return oplib.fn.DOM.parse(dom, mimetype);
@@ -2155,7 +2130,7 @@ var oplib = (function() {
             mimetype = "text/xml";
         }
         var parser = new DOMParser();
-        return parser.parseFromString(dom, mimetype);  
+        return parser.parseFromString(dom, mimetype);
     };
 
     //Handles Ajax-Calls
