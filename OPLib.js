@@ -888,6 +888,7 @@ var oplib = (function() {
                         useable = [];
                         useable.push(matched);
                         elems.push(matched);
+                        dontCheck = false;
                     }
 
                     break;
@@ -904,6 +905,7 @@ var oplib = (function() {
                     }
                     else {
                         matched = useable = oplib.fn.ElementSelection.find.tag(selectors[i].data);
+                        dontCheck = false;
                     }
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
@@ -921,6 +923,7 @@ var oplib = (function() {
                         useable = [];
                         useable.push(matched);
                         elems.push(matched);
+                        dontCheck = false;
                     }
                     break;
                 case "class":
@@ -930,6 +933,7 @@ var oplib = (function() {
                     }
                     else {
                         matched = useable = oplib.fn.ElementSelection.find.className(selectors[i].data);
+                        dontCheck = false;
                     }
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
@@ -1946,7 +1950,7 @@ var oplib = (function() {
                         }
                         if (oplib.fx.queue[i].callbacks.done && toString.call(oplib.fx.queue[i].callbacks.done === "[Object array]")) {
                             for (var j = 0; j < oplib.fx.queue[i].callbacks.done.length; j++) {
-                                if ( typeof oplib.fx.queue[i].callbacks.done[i] === "object") {
+                                if ( typeof oplib.fx.queue[i].callbacks.done[j] === "object") {
                                     oplib.fx.queue[i].callbacks.done[j].splice(j--, 1);
                                 }
                             }
