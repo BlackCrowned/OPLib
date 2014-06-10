@@ -19,6 +19,9 @@ var oplib = (function() {
 
             this.op = true;
 
+            this.selector = selector;
+            this.context = context;
+
             return this;
         },
         //Attribut setzen
@@ -314,7 +317,7 @@ var oplib = (function() {
                         elems[i] = this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
                     }
                     else {
-                       elems[i] = this.parentNode.appendChild(elems[i]);
+                        elems[i] = this.parentNode.appendChild(elems[i]);
                     }
                 }
                 return elems;
@@ -550,8 +553,11 @@ var oplib = (function() {
     //Selectiert die Entsprechenden Elemente
     oplib.fn.ElementSelection = function(selector, context) {
         var elems;
-        //Context zuweisen
-        context = oplib.fn.ElementSelection.DOMObjectFromSelector(context);
+        //Context zuweisen //FIX #27 - Wenn kein Context angegeben sind alle
+        // Elemente auswählbar
+        if (context) {
+            context = oplib.fn.ElementSelection.DOMObjectFromSelector(context);
+        }
         //Gewählte Elemente zuweisen
         elems = oplib.fn.ElementSelection.DOMObjectFromSelector(selector, context);
         //Ausgewählte Elemente zurückgeben
@@ -569,11 +575,8 @@ var oplib = (function() {
 
         }
 
-        //Wurde ein context übergeben
-        if (!context) {
-            //Standart Context = document.body
-            context = document.body;
-        }
+        //Wurde ein context übergeben //FIX #27 - Wenn kein Context angegeben
+        // sind alle Elemente auswählbar
 
         selectors = oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
 
@@ -850,9 +853,7 @@ var oplib = (function() {
                 });
             }
         }
-
         return parsedSelectors;
-
     };
 
     //Wandelt geparste Selektoren in DOMObjecte um
@@ -1282,7 +1283,6 @@ var oplib = (function() {
             elems.push(elem);
         }
         return elems;
-
     };
 
     //Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor")
@@ -1530,7 +1530,8 @@ var oplib = (function() {
         //Alte Elemente entfernen und durch neue ersetzen
         this.length = 0;
         for (var i = 0; i < returns.length; i++) {
-            //Falls returns[i] ein Array (.appendTo,...) ist, das Array durchgehen
+            //Falls returns[i] ein Array (.appendTo,...) ist, das Array
+            // durchgehen
             if (toString.call(returns[i]) === "[object Array]") {
                 for (var j = 0; j < returns[i].length; j++) {
                     this.push(returns[i][j]);
@@ -2576,7 +2577,7 @@ var oplib = (function() {
                     elems[i].style.top = oplib.fn.finalizeCssExpressions("top", e.pageY + 5)[1];
                 }
             }, this);
-            
+
             return this;
         }, [elems]);
     };
