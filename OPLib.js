@@ -209,6 +209,7 @@ var oplib = (function() {
                 for (var i = 0; i < elems.length; i++) {
                     this.appendChild(elems[i]);
                 }
+                return this;
             }, [elems]);
         },
         //Hängt Elemente an die übereinstimmenden Elemente am Anfang an
@@ -216,7 +217,6 @@ var oplib = (function() {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    console.log( typeof this);
                     //Gibt es bereits untergeordnete Elemente?
                     if (this.hasChildNodes()) {
                         //Node
@@ -233,6 +233,7 @@ var oplib = (function() {
                         this.appendChild(elems[i]);
                     }
                 }
+                return this;
             }, [elems]);
         },
         //Hängt Elemente vor die übereinstimmenden Elemente an
@@ -241,8 +242,8 @@ var oplib = (function() {
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     this.parentNode.insertBefore(elems[i], this);
-
                 }
+                return this;
             }, [elems]);
         },
         //Hängt Elemente nach die übereinstimmenden Elemente an
@@ -257,6 +258,7 @@ var oplib = (function() {
                         this.parentNode.appendChild(elems[i]);
                     }
                 }
+                return this;
             }, [elems]);
         },
         //Hängt übereinstimmende Elemente an Elemente an
@@ -264,8 +266,9 @@ var oplib = (function() {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    this.appendChild(elems[i]);
+                    elems[i] = this.appendChild(elems[i]);
                 }
+                return elems;
             }, [this]);
         },
         //Hängt übereinstimmende Elemente an die Elemente am Anfang an
@@ -273,23 +276,23 @@ var oplib = (function() {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    console.log( typeof this);
                     //Gibt es bereits untergeordnete Elemente?
                     if (this.hasChildNodes()) {
                         //Node
                         if (this.childNodes && this.childNodes[0] != null) {
-                            this.insertBefore(elems[i], this.childNodes[0]);
+                            elems[i] = this.insertBefore(elems[i], this.childNodes[0]);
                         }
                         //NodeList
                         else if (this.item && this.item(0) != null) {
-                            this.insertBefore(elems[i], this.item(0));
+                            elems[i] = this.insertBefore(elems[i], this.item(0));
                         }
                     }
                     //Keine untergeordneten Element ==> .appendChild möglich
                     else {
-                        this.appendChild(elems[i]);
+                        elems[i] = this.appendChild(elems[i]);
                     }
                 }
+                return elems;
             }, [this]);
         },
         //Hängt übereinstimmende Elemente vor Elemente an
@@ -297,9 +300,9 @@ var oplib = (function() {
             var elems = oplib.fn.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
-                    this.parentNode.insertBefore(elems[i], this);
-
+                    elems[i] = this.parentNode.insertBefore(elems[i], this);
                 }
+                return elems;
             }, [this]);
         },
         //Hängt übereinstimmende Elemente nach Elemente an
@@ -308,12 +311,13 @@ var oplib = (function() {
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
-                        this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
+                        elems[i] = this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
                     }
                     else {
-                        this.parentNode.appendChild(elems[i]);
+                       elems[i] = this.parentNode.appendChild(elems[i]);
                     }
                 }
+                return elems;
             }, [this]);
         },
         /*
@@ -1505,9 +1509,10 @@ var oplib = (function() {
 
     //Klont Elemente, etc...
     oplib.fn.finalizeDOMManipulation = function(obj, fn, args) {
+        var returns = [];
         this.each(obj, function(fn, elems) {
             var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
-            fn.apply(this, [clones]);
+            returns.push(fn.apply(this, [clones]));
         }, [fn, args[0]]);
 
         //Element löschen
@@ -1521,6 +1526,20 @@ var oplib = (function() {
                 document.body.removeChild(this);
             }
         }, []);
+
+        //Alte Elemente entfernen und durch neue ersetzen
+        this.length = 0;
+        for (var i = 0; i < returns.length; i++) {
+            //Falls returns[i] ein Array (.appendTo,...) ist, das Array durchgehen
+            if (toString.call(returns[i]) === "[object Array]") {
+                for (var j = 0; j < returns[i].length; j++) {
+                    this.push(returns[i][j]);
+                }
+            }
+            else {
+                this.push(returns[i]);
+            }
+        }
 
         return this;
 
@@ -2557,6 +2576,8 @@ var oplib = (function() {
                     elems[i].style.top = oplib.fn.finalizeCssExpressions("top", e.pageY + 5)[1];
                 }
             }, this);
+            
+            return this;
         }, [elems]);
     };
 
