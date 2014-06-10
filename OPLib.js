@@ -537,9 +537,9 @@ var oplib = (function() {
     //Url - Regex
     oplib.fn.UrlRegex = /url:/;
     //Html - Regex
-    oplib.fn.HtmlRegex = /^\s*<[\w\d\s=\-;:\/\.&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
+    oplib.fn.HtmlRegex = /^\s*<[\w\d\s=\-;:\/\.%&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
     //Html - Single Element - Regex
-    oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=\-;:\/\.&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
+    oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=\-;:\/\.%&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
     //Html - Tag - Regex
     oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
     //Attribut - Start - Regex
