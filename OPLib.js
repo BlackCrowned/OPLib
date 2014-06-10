@@ -392,7 +392,7 @@ var oplib = (function() {
             return this;
         },
         //Setzt .innerHTML für die ausgewählten Elemente
-        inner: function(html) {
+        html: function(html) {
             return this.each(this, function() {
                 this.innerHTML = html;
             }, [html]);
