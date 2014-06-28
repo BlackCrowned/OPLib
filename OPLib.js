@@ -2581,8 +2581,18 @@ var oplib = (function() {
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i].style.position = "absolute";
-                    elems[i].style.left = oplib.fn.finalizeCssExpressions("left", e.pageX + 5)[1];
-                    elems[i].style.top = oplib.fn.finalizeCssExpressions("top", e.pageY + 5)[1];
+                    var width = oplib.fn.floatCssValue("100%", "width", elems[i]);
+                    var height = oplib.fn.floatCssValue("100%", "height", elems[i]);
+                    var left = e.pageX + 5;
+                    var top = e.pageY + 5;
+                    if (left  + width >= window.innerWidth) {
+                        left = e.pageX - 5 - width;
+                    }
+                    if (top + height >= window.innerHeight) {
+                        top = e.pageY - 5 - height;
+                    }
+                    elems[i].style.left = oplib.fn.finalizeCssExpressions("left", left)[1];
+                    elems[i].style.top = oplib.fn.finalizeCssExpressions("top", top)[1];
                 }
             }, this);
 
