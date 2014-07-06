@@ -1863,6 +1863,9 @@ var oplib = (function() {
                     cssSettings[i].old = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].current = oplib.fn.floatCssValue("100%", i, elem);
                     cssSettings[i].aim = oplib.fn.floatCssValue(options[i]);
+                    //Make sure to apply all style changes afterwards #30
+                    elem.oplib.aim = {};
+                    elem.oplib.aim[i] = cssSettings[i].aim;
                 }
 
                 //Auf gleiche Optionen untersuchen, Keine sinnlosen Animationen
@@ -1894,6 +1897,12 @@ var oplib = (function() {
                     elem.oplib.state = "hidden";
                 }, "OPdone");
             }
+            //Make sure to apply all changes afterwards #30
+            callbacls = oplib.fx.addCallback(callbacks, function(elem) {
+                for (var i in elem.oplib.aim) {
+                    elem.style[i] = elem.oplib.aim[i];
+                }
+            }, "OPdone");
 
             //Alle Optionen gleich  --> Animation ist fertig
             if (optionsEqual / optionsCount == 1) {
