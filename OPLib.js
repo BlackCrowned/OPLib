@@ -2500,6 +2500,17 @@ var oplib = (function() {
             for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
                 if (oplib.fn.handler.handleList[type][i]["enabled"] && oplib.fn.handler.handleList[type][i]["elem"] == elem) {
                     oplib.fn.handler.handleList[type][i]["fn"].apply(this, [e]);
+                    if (!elem.oplib) {
+                        elem.oplib = {};
+                    }
+                    if (!elem.oplib.events) {
+                        elem.oplib.events = {};
+                    }
+                    if (!elem.oplib.events.queue) {
+                        elem.oplib.events.queue = [];
+                    }
+                    elem.oplib.events.queue.push(type);
+                    elem.oplib.events.lastEvent = type;
                 }
             }
         }
@@ -2649,6 +2660,9 @@ var oplib = (function() {
             }
             return new_arr;
         },
+        peek: function(arr) {
+            return arr[arr.length - 1];
+        }
     };
 
     oplib.string = oplib.fn.string = {
