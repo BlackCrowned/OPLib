@@ -1258,6 +1258,45 @@ var oplib = (function() {
         }
         return oldElems;
     };
+    
+    //Überprüft ob das Element gehovert ist
+    oplib.fn.ElementSelection.isHover = function(elems) {
+        //Globaler Handler schon gesetzt?
+        if (!oplib.modules.isHover) {
+            oplib.fn.events.addEvent("mouseover", function(e) {
+                if (!e.target.oplib) {
+                    e.target.oplib = {};
+                }
+                if (!e.target.oplib.events) {
+                    e.target.oplib.events = {};
+                }
+                e.target.oplib.events.isHover = true;
+            });
+            oplib.fn.events.addEvent("mouseout", function(e) {
+                if (!e.target.oplib) {
+                    e.target.oplib = {};
+                }
+                if (!e.target.oplib.events) {
+                    e.target.oplib.events = {};
+                }
+                e.target.oplib.events.isHover = false;
+            });
+        }
+        
+        if (elems instanceof Node) {
+            return elems.oplib.events.isHover;
+        }
+        else {
+            var matched = [];
+            for (var i = 0; i < elems.length; i++) {
+                if (elems[i].oplib.events.isHover) {
+                    matched.push(elems[i]);
+                }
+            }
+            return matched;
+        }
+        
+    };
 
     /* Findet entsprechende Elemente
      * selector: Selectors
@@ -2765,6 +2804,11 @@ var oplib = (function() {
         },
         frameTime: 5
     });
+    
+    //Module, die nicht sofort initialisiert werden
+    oplib.modules = {
+        isHover: false,
+    };
 
     //Debugging Console - Bugfix for IE
     if (!window.console) {
