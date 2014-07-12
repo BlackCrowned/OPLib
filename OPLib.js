@@ -852,6 +852,12 @@ var oplib = (function() {
                     data: selector
                 });
             }
+            if (selector === window) {
+                parsedSelectors.push({
+                    type: "window",
+                    data: selector
+                });
+            }
         }
         return parsedSelectors;
     };
@@ -1070,6 +1076,10 @@ var oplib = (function() {
                         useable.push(selectors[i].data[j]);
                         elems.push(selectors[i].data[j]);
                     }
+                    break;
+                case "window":
+                    useable = [selectors[i].data];
+                    elems = [selectors[i].data];
                     break;
                 default:
                     console.log("Couldn't analyze parsed Selector:");
@@ -2605,7 +2615,7 @@ var oplib = (function() {
                     var height = oplib.fn.floatCssValue("100%", "height", elems[i]);
                     var left = e.pageX + 5;
                     var top = e.pageY + 5;
-                    if (left  + width >= window.innerWidth) {
+                    if (left + width >= window.innerWidth) {
                         left = e.pageX - 5 - width;
                     }
                     if (top + height >= window.innerHeight) {
