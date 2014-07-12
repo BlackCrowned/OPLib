@@ -2508,7 +2508,7 @@ var oplib = (function() {
         //Listeners aufrufen
         dispatchListener: function(type, elem, e) {
             for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
-                if (oplib.fn.handler.handleList[type][i]["enabled"] && oplib.fn.handler.handleList[type][i]["elem"] == elem) {
+                if (oplib.fn.handler.handleList[type][i]["enabled"] && (oplib.fn.handler.handleList[type][i]["elem"] == elem || oplib.fn.handler.handleList[type][i]["elem"] == window)) {
                     oplib.fn.handler.handleList[type][i]["fn"].apply(this, [e]);
                     if (!elem.oplib) {
                         elem.oplib = {};
