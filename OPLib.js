@@ -400,7 +400,7 @@ var oplib = (function() {
         //Setzt .innerText für die ausgewählten Elemente
         text: function(text) {
             return this.each(this, function(text) {
-                this.innerText = text;
+                this.textContent = text;
             }, [text]);
         },
         //Findet alle Elemente anhand den in options angegebenen Einschränkungen
