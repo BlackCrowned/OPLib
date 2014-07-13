@@ -2324,6 +2324,7 @@ var oplib = (function() {
                 ajaxSettings.args = settings.args;
             }
         }
+        
         xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
             xmlhttp = oplib.fn.AJAX.response.async(xmlhttp, fn, ajaxSettings);
@@ -2911,7 +2912,7 @@ var oplib = (function() {
         frameTime: 5,
         tooltipSettings: {
             showDelay: 0,
-            hideDelay: 250,
+            hideDelay: 100,
         },
     });
 
