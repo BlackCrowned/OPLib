@@ -2239,35 +2239,20 @@ var oplib = (function() {
     //Handles Ajax-Calls
     oplib.fn.AJAX = function(url, fn, header, settings) {
         var xmlhttp = new XMLHttpRequest();
-        var ajaxSettings = oplib.fn.defaults.ajaxSettings;
 
-        //Other settings than default?
-        if (settings) {
-            if (settings.method) {
-                ajaxSettings.method = settings.method;
-            }
-            if (settings.async != undefined) {
-                ajaxSettings.async = settings.async;
-            }
-            if (settings.contentType) {
-                ajaxSettings.contentType = settings.contentType;
-            }
-            if (settings.content) {
-                ajaxSettings.content = settings.content;
-            }
-            if (settings.connected) {
-                ajaxSettings.connected = settings.connected;
-            }
-            if (settings.received) {
-                ajaxSettings.received = settings.received;
-            }
-            if (settings.processing) {
-                ajaxSettings.processing = settings.processing;
-            }
-            if (settings.args) {
-                ajaxSettings.args = settings.args;
-            }
+        if (!settings) {
+            settings = {};
         }
+        ajaxSettings = {};
+        ajaxSettings.method = settings.method || oplib.fn.defaults.ajaxSettings;
+        ajaxSettings.async = settings.async || oplib.fn.defaults.async;
+        ajaxSettings.contentType = settings.contentType || oplib.fn.defaults.contentType;
+        ajaxSettings.content = settings.content || oplib.fn.defaults.content;
+        ajaxSettings.connected = settings.connected || oplib.fn.defaults.connected;
+        ajaxSettings.received = settings.received || oplib.fn.defaults.received;
+        ajaxSettings.processing = settings.processing || oplib.fn.defaults.processing;
+        ajaxSettings.args = settings.args || oplib.fn.defaults.args;
+
         xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
             xmlhttp = oplib.fn.AJAX.response.async(xmlhttp, fn, ajaxSettings);
