@@ -2039,7 +2039,7 @@ var oplib = (function() {
                         if (oplib.fx.queue[i].callbacks.done && toString.call(oplib.fx.queue[i].callbacks.done === "[Object array]")) {
                             for (var j = 0; j < oplib.fx.queue[i].callbacks.done.length; j++) {
                                 if ( typeof oplib.fx.queue[i].callbacks.done[j] === "object") {
-                                    oplib.fx.queue[i].callbacks.done[j].splice(j--, 1);
+                                    oplib.fx.queue[i].callbacks.done.splice(j--, 1);
                                 }
                             }
                         }
