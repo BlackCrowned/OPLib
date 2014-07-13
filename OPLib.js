@@ -2244,7 +2244,7 @@ var oplib = (function() {
             settings = {};
         }
         ajaxSettings = {};
-        ajaxSettings.method = settings.method || oplib.fn.defaults.ajaxSettings;
+        ajaxSettings.method = settings.method || oplib.fn.defaults.ajaxSettings.method;
         ajaxSettings.async = settings.async || oplib.fn.defaults.async;
         ajaxSettings.contentType = settings.contentType || oplib.fn.defaults.contentType;
         ajaxSettings.content = settings.content || oplib.fn.defaults.content;
