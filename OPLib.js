@@ -1134,6 +1134,9 @@ var oplib = (function() {
         //Funktion die alle untergeordneten Nodes findet
         var getChildren = function(parents, children, R) {
             for (var i = 0; i < parents.length; i++) {
+                if (!parents[i].children) {
+                    continue;
+                }
                 for (var j = 0; j < parents[i].children.length; j++) {
                     if (oplib.fn.array.includes(children, parents[i].children[j]) == -1) {
                         children.push(parents[i].children[j]);
@@ -1258,44 +1261,71 @@ var oplib = (function() {
         }
         return oldElems;
     };
-    
+
     //Überprüft ob das Element gehovert ist
     oplib.fn.ElementSelection.isHover = function(elems) {
         //Globaler Handler schon gesetzt?
         if (!oplib.modules.isHover) {
             oplib.fn.events.addEvent("mouseover", function(e) {
-                if (!e.target.oplib) {
-                    e.target.oplib = {};
+                var elem = e.target;
+                while (elem) {
+                    if (!elem.oplib) {
+                        elem.oplib = {};
+                    }
+                    if (!elem.oplib.events) {
+                        elem.oplib.events = {};
+                    }
+
+                    elem.oplib.events.isHover = true;
+                    elem = elem.parentNode;
                 }
-                if (!e.target.oplib.events) {
-                    e.target.oplib.events = {};
-                }
-                e.target.oplib.events.isHover = true;
-            });
+            }, window);
             oplib.fn.events.addEvent("mouseout", function(e) {
-                if (!e.target.oplib) {
-                    e.target.oplib = {};
+                var elem = e.target;
+                while (elem) {
+                    if (!elem.oplib) {
+                        elem.oplib = {};
+                    }
+                    if (!elem.oplib.events) {
+                        elem.oplib.events = {};
+                    }
+
+                    elem.oplib.events.isHover = false;
+                    elem = elem.parentNode;
                 }
-                if (!e.target.oplib.events) {
-                    e.target.oplib.events = {};
-                }
-                e.target.oplib.events.isHover = false;
-            });
+            }, window);
         }
-        
-        if (elems instanceof Node) {
-            return elems.oplib.events.isHover;
+
+        if ( elems instanceof Node) {
+            if (!elems.oplib) {
+                elems.oplib = {};
+            }
+            if (!elems.oplib.events) {
+                elems.oplib.events = {};
+            }
+            if (elems.oplib.events.isHover) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else {
             var matched = [];
             for (var i = 0; i < elems.length; i++) {
+                if (!elems[i].oplib) {
+                    elems[i].oplib = {};
+                }
+                if (!elems[i].oplib.events) {
+                    elems[i].oplib.events = {};
+                }
                 if (elems[i].oplib.events.isHover) {
                     matched.push(elems[i]);
                 }
             }
             return matched;
         }
-        
+
     };
 
     /* Findet entsprechende Elemente
@@ -2503,6 +2533,7 @@ var oplib = (function() {
     oplib.fn.handler = function(e) {
         elem = e.target;
         type = e.type;
+        
         //Entsprechenden Listener ausführen
         return oplib.fn.handler.dispatchListener(type, elem, e);
 
@@ -2547,8 +2578,11 @@ var oplib = (function() {
         //Listeners aufrufen
         dispatchListener: function(type, elem, e) {
             for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
-                if (oplib.fn.handler.handleList[type][i]["enabled"] && (oplib.fn.handler.handleList[type][i]["elem"] == elem || oplib.fn.handler.handleList[type][i]["elem"] == window)) {
-                    oplib.fn.handler.handleList[type][i]["fn"].apply(this, [e]);
+                var enabled = oplib.fn.handler.handleList[type][i]["enabled"];
+                var elementMatch = oplib.fn.handler.handleList[type][i]["elem"] == e.currentTarget;
+                var windowMatch = oplib.fn.handler.handleList[type][i]["elem"] == window;
+                if (enabled && (elementMatch || windowMatch)) {
+                    oplib.fn.handler.handleList[type][i]["fn"].apply(e.currentTarget, [e]);
                     if (!elem.oplib) {
                         elem.oplib = {};
                     }
@@ -2562,6 +2596,7 @@ var oplib = (function() {
                     elem.oplib.events.lastEvent = type;
                 }
             }
+            
         }
     });
 
@@ -2615,37 +2650,52 @@ var oplib = (function() {
     });
 
     //Tooltips
-    oplib.fn.Tooltip = function(selector, context) {
+    oplib.fn.Tooltip = function(selector, context, options) {
+        if (!options) {
+            options = {};
+        }
+        options.showDelay = options.showDelay || oplib.fn.defaults.tooltipSettings.showDelay;
+        options.hideDelay = options.hideDelay || oplib.fn.defaults.tooltipSettings.hideDelay;
         var elems = oplib.fn.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
             for (var i = 0; i < elems.length; i++) {
                 if (this.parentNode) {
-                    this.parentNode.appendChild(elems[i]);
+                    elems[i] = this.parentNode.appendChild(elems[i]);
                 }
                 else {
-                    document.body.appendChild(elems[i]);
+                    elems[i] = document.body.appendChild(elems[i]);
                 }
             }
             oplib.fx(elems, {
                 opacity: "hide"
             }, 0);
             oplib.fn.events.addEvent("mouseover", function(e) {
-                for (var i = 0; i < elems.length; i++) {
-                    oplib.fx.stop(elems[i], 1, 0);
-                }
-                oplib.fx(elems, {
-                    height: "show",
-                    opacity: "show"
-                }, "fast");
+                setTimeout(function() {
+                    for (var i = 0; i < elems.length; i++) {
+                        oplib.fx.stop(elems[i], 1, 0);
+                    }
+                    oplib.fx(elems, {
+                        height: "show",
+                        opacity: "show"
+                    }, "fast");
+                }, options.showDelay);
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
-                for (var i = 0; i < elems.length; i++) {
-                    oplib.fx.stop(elems[i], 1, 0);
-                }
-                oplib.fx(elems, {
-                    height: "hide",
-                    opacity: "hide"
-                }, "fast");
+                function hideTooltips(elems, options) {
+                    if (oplib.fn.ElementSelection.isHover(elems).length == 0) {
+                        for (var i = 0; i < elems.length; i++) {
+                            oplib.fx.stop(elems[i], 1, 0);
+                        }
+                        oplib.fx(elems, {
+                            height: "hide",
+                            opacity: "hide"
+                        }, "fast");
+                    }
+                    else {
+                        setTimeout(hideTooltips, options.hideDelay, elems, options);
+                    }
+                };
+                setTimeout(hideTooltips, options.hideDelay, elems, options);
             }, this);
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
@@ -2802,9 +2852,13 @@ var oplib = (function() {
             },
             args: [],
         },
-        frameTime: 5
+        frameTime: 5,
+        tooltipSettings: {
+            showDelay: 0,
+            hideDelay: 250,
+        },
     });
-    
+
     //Module, die nicht sofort initialisiert werden
     oplib.modules = {
         isHover: false,
