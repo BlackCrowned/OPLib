@@ -2301,13 +2301,15 @@ var oplib = (function() {
         }
         ajaxSettings = {};
         ajaxSettings.method = settings.method || oplib.fn.defaults.ajaxSettings.method;
-        ajaxSettings.async = settings.async || oplib.fn.defaults.async;
-        ajaxSettings.contentType = settings.contentType || oplib.fn.defaults.contentType;
-        ajaxSettings.content = settings.content || oplib.fn.defaults.content;
-        ajaxSettings.connected = settings.connected || oplib.fn.defaults.connected;
-        ajaxSettings.received = settings.received || oplib.fn.defaults.received;
-        ajaxSettings.processing = settings.processing || oplib.fn.defaults.processing;
-        ajaxSettings.args = settings.args || oplib.fn.defaults.args;
+        ajaxSettings.async = settings.async || oplib.fn.defaults.ajaxSettings.async;
+        ajaxSettings.contentType = settings.contentType || oplib.fn.defaults.ajaxSettings.contentType;
+        ajaxSettings.content = settings.content || oplib.fn.defaults.ajaxSettings.content;
+        ajaxSettings.connected = settings.connected || oplib.fn.defaults.ajaxSettings.connected;
+        ajaxSettings.received = settings.received || oplib.fn.defaults.ajaxSettings.received;
+        ajaxSettings.processing = settings.processing || oplib.fn.defaults.ajaxSettings.processing;
+        ajaxSettings.args = settings.args || oplib.fn.defaults.ajaxSettings.args;
+
+        console.log(ajaxSettings);
 
         xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
