@@ -486,6 +486,7 @@ var oplib = (function() {
         return obj;
     };
 
+    //Überprüft ob es sich um ein OPObject Handelt
     oplib.fn.isOPLib = function(obj) {
         if (!obj) {
             return false;
@@ -497,10 +498,23 @@ var oplib = (function() {
             return false;
         }
     };
+    
+    //Erstellt ein Array aus dem OPObject
+    oplib.fn.makeArray = function(obj) {
+        return this.merge([], oplib);
+    };
 
     //Array Funktionen zugänglich machen
-    oplib.fn.push = Array.prototype.push;
+    oplib.fn.concat = Array.prototype.concat;
+    oplib.fn.join = Array.prototype.join;
     oplib.fn.pop = Array.prototype.pop;
+    oplib.fn.push = Array.prototype.push;
+    oplib.fn.reverse = Array.prototype.reverse;
+    oplib.fn.shift = Array.prototype.shift;
+    oplib.fn.slice = Array.prototype.slice;
+    oplib.fn.splice = Array.prototype.splice;
+    oplib.fn.sort = Array.prototype.sort;
+    oplib.fn.unshift = Array.prototype.unshift;
 
     //oplib.fn.Init besitzt den gleichen Prototyp wie oplib
     oplib.fn.Init.prototype = oplib.fn;
