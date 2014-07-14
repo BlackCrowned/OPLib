@@ -335,14 +335,10 @@ var oplib = (function() {
             //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
             //löschen
             if (!O) {
-                for (var x = 0; x < this.length; x++) {
-                    delete this[x];
-                }
                 this.length = 0;
             }
             //OPlib hinzufügen
             for (var i = 0; i < children.length; i++) {
-
                 this.push(children[i]);
             }
             return this;
@@ -359,9 +355,6 @@ var oplib = (function() {
             //OPLib soll nur parentNodes enthalten - Vorherige ELemente
             //löschen
             if (!O) {
-                for (var x = 0; x < this.length; x++) {
-                    delete this[x];
-                }
                 this.length = 0;
             }
             //Parents in OPLib speichern
@@ -380,9 +373,6 @@ var oplib = (function() {
 
             //OPLib soll nur siblings enthalten - Vorherige ELemente löschen
             if (!O) {
-                for (var x = 0; x < this.length; x++) {
-                    delete this[x];
-                }
                 this.length = 0;
             }
             //Siblings in OPLib speichern
@@ -409,16 +399,12 @@ var oplib = (function() {
         find: function(selector, O) {
             var elems = oplib.fn.ElementSelection.find(this, selector);
             if (!O) {
-                for (var i = 0; i < this.length; i++) {
-                    delete this[i];
-                }
                 this.length = 0;
             }
 
             for (var i = 0; i < elems.length; i++) {
                 this.push(elems[i]);
             }
-
             return this;
         },
         //Läd eine Datei per AJAX in die übereinstimmenden Elemente
@@ -447,10 +433,9 @@ var oplib = (function() {
         replace: function(selector, context) {
             var elems = oplib.fn.ElementSelection(selector, context);
             var replaced = oplib.fn.ElementSelection.replace(elems, this);
-            for (var i = 0; i < this.length; i++) {
-                delete this[i];
-                this.length = 0;
-            }
+
+            this.length = 0;
+
             for (var i = 0; i < replaced.length; i++) {
                 this.push(replaced[i]);
             }
@@ -2324,7 +2309,7 @@ var oplib = (function() {
                 ajaxSettings.args = settings.args;
             }
         }
-        
+
         xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
             xmlhttp = oplib.fn.AJAX.response.async(xmlhttp, fn, ajaxSettings);
