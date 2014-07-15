@@ -2221,7 +2221,9 @@ var oplib = (function() {
             interpolators = {
                 linear: actualProgress,
                 decelerate: Math.sin(actualProgress * (Math.PI / 2)),
-                accelerate: 1 - Math.sin(actualProgress * (Math.PI / 2) + (Math.PI / 2)),
+                accelerate: 1 - Math.cos(actualProgress * (Math.PI / 2)),
+                //acceleratedecelerate: Math.sin(actualProgress*actualProgress * (Math.PI / 2)),
+                acceleratedecelerate: Math.sin(actualProgress*(Math.PI / 2)) * Math.sin(actualProgress*(Math.PI / 2)),
             };
 
             if (!interpolators[interpolator]) {
@@ -2935,7 +2937,7 @@ var oplib = (function() {
         cssUnit: "px",
         animationSettings: {
             duration: "normal",
-            interpolator: "decelerate",
+            interpolator: "acceleratedecelerate",
             scope: window,
             slow: 1000,
             normal:750,
