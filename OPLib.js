@@ -1726,6 +1726,8 @@ var oplib = (function() {
                     width: "show",
                     height: "show",
                     opacity: "show",
+                    margin: "show",
+                    padding: "show",
                     callbacks: callbacks
                 }, duration, interpolator, scope);
             }, [duration, interpolator, callbacks, scope || this]);
@@ -1968,11 +1970,11 @@ var oplib = (function() {
                             elem.oplib.oldDisplay = "";
                         }
                         if (elem.oplib.state != "showing" && elem.oplib.state != "hiding") {
-                            elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
-                            elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
-                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
-                            elem.oplib.oldMargin = oplib.fn.floatCssValue("real", "margin", elem);
-                            elem.oplib.oldPadding = oplib.fn.floatCssValue("real", "padding", elem);
+                            elem.oplib.oldWidth = oplib.fn.ElementSelection.getComputedStyle("width", elem);
+                            elem.oplib.oldHeight = oplib.fn.ElementSelection.getComputedStyle("height", elem);
+                            elem.oplib.oldOpacity = oplib.fn.ElementSelection.getComputedStyle("opacity", elem);
+                            elem.oplib.oldMargin = oplib.fn.ElementSelection.getComputedStyle("margin", elem);
+                            elem.oplib.oldPadding = oplib.fn.ElementSelection.getComputedStyle("padding", elem);
                         }
                         elem.oplib.state = "showing";
 
@@ -1982,7 +1984,7 @@ var oplib = (function() {
                             cssSettings[i].old = oplib.fn.floatCssValue(0);
                         }
                         else {
-                            cssSettings[i].old = oplib.fn.floatCssValue("d100%", i, elem);
+                            cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                         }
                         //Bug fix -- Animation geht nicht bis zum richtigen Ende
                         //Fix durch Herstellung der normalen Bedingungen
@@ -1997,7 +1999,7 @@ var oplib = (function() {
                         elem.style.opacity = elem.oplib.oldOpacity;
                         elem.style.margin = elem.oplib.oldMargin;
                         elem.style.padding = elem.oplib.oldPadding;
-                        cssSettings[i].aim = oplib.fn.floatCssValue("d100%", i, elem);
+                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                         elem.style.width = tmpWidth;
                         elem.style.height = tmpHeight;
                         elem.style.opacity = tmpOpacity;
@@ -2009,27 +2011,27 @@ var oplib = (function() {
                 else if (options[i] == "hide") {
                     if (elem.style.display != "none" || elem.oplib.state != "hidden") {
                         if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
-                            elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
-                            elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
-                            elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
-                            elem.oplib.oldMargin = oplib.fn.floatCssValue("real", "margin", elem);
-                            elem.oplib.oldPadding = oplib.fn.floatCssValue("real", "padding", elem);
-                            elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
+                            elem.oplib.oldWidth = oplib.fn.ElementSelection.getComputedStyle("width", elem);
+                            elem.oplib.oldHeight = oplib.fn.ElementSelection.getComputedStyle("height", elem);
+                            elem.oplib.oldOpacity = oplib.fn.ElementSelection.getComputedStyle("opacity", elem);
+                            elem.oplib.oldMargin = oplib.fn.ElementSelection.getComputedStyle("margin", elem);
+                            elem.oplib.oldPadding = oplib.fn.ElementSelection.getComputedStyle("padding", elem);
+                            elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem);
                         }
                         elem.oplib.state = "hiding";
 
                         cssSettings[i] = {};
-                        cssSettings[i].old = oplib.fn.floatCssValue("d100%", i, elem);
-                        cssSettings[i].current = oplib.fn.floatCssValue("d100%", i, elem);
+                        cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
+                        cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                         cssSettings[i].aim = oplib.fn.floatCssValue(0);
                     }
 
                 }
                 else {
                     cssSettings[i] = {};
-                    cssSettings[i].old = oplib.fn.floatCssValue("d100%", i, elem);
-                    cssSettings[i].oldUnit = oplib.fn.getCssUnit(oplib.fn.floatCssValue("real", i, elem));
-                    cssSettings[i].current = oplib.fn.floatCssValue("d100%", i, elem);
+                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
+                    cssSettings[i].oldUnit = oplib.fn.getCssUnit(oplib.fn.ElementSelection.getComputedStyle(i, elem));
+                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                     cssSettings[i].aim = oplib.fn.floatCssValue(options[i], i, elem);
                     cssSettings[i].unit = oplib.fn.getCssUnit(options[i]);
 
@@ -2111,7 +2113,7 @@ var oplib = (function() {
             if (!elem.oplib) {
                 elem.oplib = {};
             }
-            elem.oplib.oldOverflow = oplib.fn.floatCssValue("real", "overflow", elem);
+            elem.oplib.oldOverflow = oplib.fn.ElementSelection.getComputedStyle("overflow", elem);
             elem.style.overflow = "hidden";
 
             if (!oplib.fx.animatorRunning) {
