@@ -2016,11 +2016,11 @@ var oplib = (function() {
                             elem.oplib.oldDisplay = "";
                         }
                         if (elem.oplib.state != "showing" && elem.oplib.state != "hiding") {
-                            elem.oplib.oldWidth = oplib.fn.ElementSelection.getComputedStyle("width", elem);
-                            elem.oplib.oldHeight = oplib.fn.ElementSelection.getComputedStyle("height", elem);
-                            elem.oplib.oldOpacity = oplib.fn.ElementSelection.getComputedStyle("opacity", elem);
-                            elem.oplib.oldMargin = oplib.fn.ElementSelection.getComputedStyle("margin", elem);
-                            elem.oplib.oldPadding = oplib.fn.ElementSelection.getComputedStyle("padding", elem);
+                            elem.oplib.oldWidth = elem.style.width;
+                            elem.oplib.oldHeight = elem.style.height;
+                            elem.oplib.oldOpacity = elem.style.opacity;
+                            elem.oplib.oldMargin = elem.style.margin;
+                            elem.oplib.oldPadding = elem.style.padding;
                         }
                         elem.oplib.state = "showing";
 
@@ -2042,12 +2042,12 @@ var oplib = (function() {
                 else if (options[i] == "hide") {
                     if (elem.style.display != "none" || elem.oplib.state != "hidden") {
                         if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
-                            elem.oplib.oldWidth = oplib.fn.ElementSelection.getComputedStyle("width", elem);
-                            elem.oplib.oldHeight = oplib.fn.ElementSelection.getComputedStyle("height", elem);
-                            elem.oplib.oldOpacity = oplib.fn.ElementSelection.getComputedStyle("opacity", elem);
-                            elem.oplib.oldMargin = oplib.fn.ElementSelection.getComputedStyle("margin", elem);
-                            elem.oplib.oldPadding = oplib.fn.ElementSelection.getComputedStyle("padding", elem);
-                            elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem);
+                            elem.oplib.oldWidth = elem.style.width;
+                            elem.oplib.oldHeight = elem.style.height;
+                            elem.oplib.oldOpacity = elem.style.opacity;
+                            elem.oplib.oldMargin = elem.style.margin;
+                            elem.oplib.oldPadding = elem.style.padding;
+                            elem.oplib.oldDisplay = elem.style.display;
                         }
                         elem.oplib.state = "hiding";
 
