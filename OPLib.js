@@ -1854,7 +1854,7 @@ var oplib = (function() {
                 delete options.duration;
             }
             else {
-                duration = "normal";
+                duration = oplib.fn.defaults.animationSettings.duration;
             }
         }
         if (!interpolator) {
@@ -1863,7 +1863,7 @@ var oplib = (function() {
                 delete options.interpolator;
             }
             else {
-                interpolator = "decelerate";
+                interpolator = oplib.fn.defaults.animationSettings.interpolator;
             }
         }
         if (!scope) {
@@ -1875,7 +1875,7 @@ var oplib = (function() {
                 scope = elems;
             }
             else {
-                scope = window;
+                scope = oplib.fn.defaults.animationSettings.scope;
             }
         }
 
@@ -1888,17 +1888,16 @@ var oplib = (function() {
         if (options.scope != undefined) {
             delete options.scope;
         }
-        
 
         //Argumente interpretieren
         if (duration == "normal") {
-            duration = 750;
+            duration = oplib.fn.defaults.animationSettings.normal;
         }
         if (duration == "fast") {
-            duration = 500;
+            duration = oplib.fn.defaults.animationSettings.fast;
         }
         if (duration == "slow") {
-            duration = 1000;
+            duration = oplib.fn.defaults.animationSettings.slow;
         }
 
         for (var i = 0; i < elems.length; i++) {
@@ -2934,6 +2933,14 @@ var oplib = (function() {
     //Standartwerte
     oplib.fn.extend(oplib.fn.defaults, {
         cssUnit: "px",
+        animationSettings: {
+            duration: "normal",
+            interpolator: "decelerate",
+            scope: window,
+            slow: 1000,
+            normal:750,
+            fast: 500,
+        },
         ajaxSettings: {
             method: "get",
             async: true,
