@@ -2225,7 +2225,7 @@ var oplib = (function() {
             };
 
             if (!interpolators[interpolator]) {
-                interpolator = "decelerate";
+                interpolator = oplib.fn.defaults.animationSettings.interpolator;
             }
             return interpolators[interpolator];
         },
