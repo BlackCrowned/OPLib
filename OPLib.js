@@ -440,7 +440,17 @@ var oplib = (function() {
                 this.push(replaced[i]);
             }
             return this;
-        }
+        },
+        //Gibt an ob die Elemente gehovert sind
+        isHover: function(selector, context) {
+            return oplib.fn.ElementSelection.isHover(this);
+        },
+        getComputedStyle: function(expression) {
+            return oplib.fn.ElementSelection.getComputedStyle(expression, this);
+        },
+        getDefaultComputedStyle: function(expression) {
+            return oplib.fn.ElementSelection.getDefaultComputedStyle(expression, this);
+        },
     };
 
     //Objecte zusammenführen
@@ -498,7 +508,7 @@ var oplib = (function() {
             return false;
         }
     };
-    
+
     //Erstellt ein Array aus dem OPObject
     oplib.fn.makeArray = function(obj) {
         return this.merge([], oplib);
@@ -1349,6 +1359,29 @@ var oplib = (function() {
         return document.getElementsByTagName(tag);
     };
 
+    oplib.fn.ElementSelection.getComputedStyle = function(expression, elem) {
+        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+        var value;
+        clone.style.display = "";
+        clone.style.visibility = "hidden";
+        document.body.appendChild(clone);
+        value = window.getComputedStyle(clone)[expression];
+        document.body.removeChild(clone);
+        return value;
+    };
+
+    oplib.fn.ElementSelection.getDefaultComputedStyle = function(expression, elem) {
+        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+        var value;
+        clone.style.cssText = "";
+        clone.style.display = "";
+        clone.style.visibility = "hidden";
+        document.body.appendChild(clone);
+        value = window.getComputedStyle(clone)[expression];
+        document.body.removeChild(clone);
+        return value;
+    };
+
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //HTML als XML Parsen
@@ -1409,29 +1442,6 @@ var oplib = (function() {
             }
         }
         return [expression, value];
-    };
-
-    oplib.fn.getComputedStyle = function(expression, elem) {
-        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
-        var value;
-        clone.style.display = "";
-        clone.style.visibility = "hidden";
-        document.body.appendChild(clone);
-        value = window.getComputedStyle(clone)[expression];
-        document.body.removeChild(clone);
-        return value;
-    };
-
-    oplib.fn.getDefaultComputedStyle = function(expression, elem) {
-        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
-        var value;
-        clone.style.cssText = "";
-        clone.style.display = "";
-        clone.style.visibility = "hidden";
-        document.body.appendChild(clone);
-        value = window.getComputedStyle(clone)[expression];
-        document.body.removeChild(clone);
-        return value;
     };
 
     //Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
@@ -1591,7 +1601,7 @@ var oplib = (function() {
             //Gibt den Wert aus dem Style Attribut zurück, auch wen dieser keinen
             // Wert besitzt.
             else if (/\d*%/.test(value)) {
-                returns = parseFloat(oplib.fn.getDefaultComputedStyle(expression, elem)) * (parseFloat(value) / 100);
+                returns = parseFloat(oplib.fn.ElementSelection.getDefaultComputedStyle(expression, elem)) * (parseFloat(value) / 100);
                 if (cloned) {
                     document.body.removeChild(elem);
                 }
@@ -1868,10 +1878,10 @@ var oplib = (function() {
             scope = elems;
         }
         //Kein Scope angegeben
-        else if (!scope){
+        else if (!scope) {
             scope = window;
         }
-        
+
         //Argumente interpretieren
         if (duration == "normal") {
             duration = 750;
@@ -1893,7 +1903,7 @@ var oplib = (function() {
                     //Keine vorhandene Einstellungen überschreiben
                     var callbackOptions = options;
                     if (!options.duration) {
-                       callbackOptions.duration = duration;
+                        callbackOptions.duration = duration;
                     }
                     if (!options.interpolator) {
                         callbackOptions.interpolator = interpolator;
@@ -2169,7 +2179,7 @@ var oplib = (function() {
                 callbacks = oplib.fx.queue[i].callbacks;
                 scope = oplib.fx.queue[i].scope;
                 actualProgress = actual_time / duration;
-                
+
                 if (actualProgress > 1.0) {
                     actualProgress = 1.0;
                 }
