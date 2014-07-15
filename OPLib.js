@@ -2111,6 +2111,11 @@ var oplib = (function() {
             if (elem.oplib.state == "showing") {
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
                     elem.style.display = elem.oplib.oldDisplay;
+                    elem.style.width = elem.oplib.oldWidth;
+                    elem.style.height = elem.oplib.oldHeight;
+                    elem.style.opacity = elem.oplib.oldOpacity;
+                    elem.style.margin = elem.oplib.oldMargin;
+                    elem.style.padding = elem.oplib.oldPadding;
                 }, "OPstart");
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
                     elem.style.width = elem.oplib.oldWidth;
@@ -2122,6 +2127,14 @@ var oplib = (function() {
                 }, "OPdone");
             }
             else if (elem.oplib.state == "hiding") {
+                callbacks = oplib.fx.addCallback(callbacks, function(elem) {
+                    elem.style.display = elem.oplib.oldDisplay;
+                    elem.style.width = elem.oplib.oldWidth;
+                    elem.style.height = elem.oplib.oldHeight;
+                    elem.style.opacity = elem.oplib.oldOpacity;
+                    elem.style.margin = elem.oplib.oldMargin;
+                    elem.style.padding = elem.oplib.oldPadding;
+                }, "OPstart");
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
                     elem.style.display = "none";
                     elem.style.width = elem.oplib.oldWidth;
