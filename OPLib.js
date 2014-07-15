@@ -1742,6 +1742,10 @@ var oplib = (function() {
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "hide",
+                    marginTop: "hide",
+                    paddingTop: "hide",
+                    marginBottom: "hide",
+                    paddingBottom: "hide",
                     callbacks: callbacks
                 }, duration, interpolator, scope);
 
@@ -1756,6 +1760,46 @@ var oplib = (function() {
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "show",
+                    marginTop: "show",
+                    paddingTop: "show",
+                    marginBottom: "show",
+                    paddingBottom: "show",
+                    callbacks: callbacks
+                }, duration, interpolator, scope);
+            }, [duration, interpolator, callbacks, scope || this]);
+
+        },
+        slideLeft: function(duration, interpolator, callbacks, scope) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
+                oplib.fx([this], {
+                    width: "hide",
+                    marginRight: "hide",
+                    paddingRight: "hide",
+                    marginLeft: "hide",
+                    paddingLeft: "hide",
+                    callbacks: callbacks
+                }, duration, interpolator, scope);
+
+            }, [duration, interpolator, callbacks, scope || this]);
+        },
+        slideRight: function(duration, interpolator, callbacks, scope) {
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
+                oplib.fx([this], {
+                    width: "show",
+                    marginRight: "show",
+                    paddingRight: "show",
+                    marginLeft: "show",
+                    paddingLeft: "show",
                     callbacks: callbacks
                 }, duration, interpolator, scope);
             }, [duration, interpolator, callbacks, scope || this]);
@@ -1816,6 +1860,8 @@ var oplib = (function() {
                     width: "toggle",
                     height: "toggle",
                     opacity: "toggle",
+                    margin: "toggle",
+                    padding: "toggle",
                     callbacks: callbacks
                 }, duration, interpolator, scope);
             }, [duration, interpolator, callbacks, scope || this]);
@@ -1981,7 +2027,7 @@ var oplib = (function() {
                         cssSettings[i] = {};
                         //Bug fix -- Animation startet nicht wo sie aufgehört hat
                         if (elem.oplib.state == "hidden" || elem.style.display == "none") {
-                            cssSettings[i].old = oplib.fn.floatCssValue(0);
+                            cssSettings[i].old = 0;
                         }
                         else {
                             cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
@@ -2023,7 +2069,7 @@ var oplib = (function() {
                         cssSettings[i] = {};
                         cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                         cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
-                        cssSettings[i].aim = oplib.fn.floatCssValue(0);
+                        cssSettings[i].aim = 0;
                     }
 
                 }
@@ -2036,14 +2082,14 @@ var oplib = (function() {
                     cssSettings[i].unit = oplib.fn.getCssUnit(options[i]);
 
                     if (cssSettings[i].oldUnit == "%") {
-                        cssSettings[i].old = cssSettings[i].old * oplib.fn.floatCssValue("100%", i, elem) / 100;
-                        cssSettings[i].current = cssSettings[i].current * oplib.fn.floatCssValue("100%", i, elem) / 100;
+                        cssSettings[i].old = cssSettings[i].old * oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) / 100;
+                        cssSettings[i].current = cssSettings[i].current * oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) / 100;
                     }
 
                     if (cssSettings[i].unit == "%") {
-                        cssSettings[i].old = cssSettings[i].old / oplib.fn.floatCssValue("100%", i, elem) * 100;
-                        cssSettings[i].current = cssSettings[i].current / oplib.fn.floatCssValue("100%", i, elem) * 100;
-                        cssSettings[i].aim = cssSettings[i].aim / oplib.fn.floatCssValue("100%", i, elem) * 100;
+                        cssSettings[i].old = cssSettings[i].old / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) * 100;
+                        cssSettings[i].current = cssSettings[i].current / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) * 100;
+                        cssSettings[i].aim = cssSettings[i].aim / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) * 100;
                     }
 
                     //Make sure to apply all style changes afterwards #30
@@ -2241,8 +2287,9 @@ var oplib = (function() {
                 linear: actualProgress,
                 decelerate: Math.sin(actualProgress * (Math.PI / 2)),
                 accelerate: 1 - Math.cos(actualProgress * (Math.PI / 2)),
-                //acceleratedecelerate: Math.sin(actualProgress*actualProgress * (Math.PI / 2)),
-                acceleratedecelerate: Math.sin(actualProgress*(Math.PI / 2)) * Math.sin(actualProgress*(Math.PI / 2)),
+                //acceleratedecelerate: Math.sin(actualProgress*actualProgress *
+                // (Math.PI / 2)),
+                acceleratedecelerate: Math.sin(actualProgress * (Math.PI / 2)) * Math.sin(actualProgress * (Math.PI / 2)),
             };
 
             if (!interpolators[interpolator]) {
@@ -2959,7 +3006,7 @@ var oplib = (function() {
             interpolator: "acceleratedecelerate",
             scope: window,
             slow: 1000,
-            normal:750,
+            normal: 750,
             fast: 500,
         },
         ajaxSettings: {
