@@ -1708,6 +1708,8 @@ var oplib = (function() {
                     width: "hide",
                     height: "hide",
                     opacity: "hide",
+                    margin: "hide",
+                    padding: "hide",
                     callbacks: callbacks
                 }, duration, interpolator, scope);
 
@@ -1969,6 +1971,8 @@ var oplib = (function() {
                             elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
                             elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
                             elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
+                            elem.oplib.oldMargin = oplib.fn.floatCssValue("real", "margin", elem);
+                            elem.oplib.oldPadding = oplib.fn.floatCssValue("real", "padding", elem);
                         }
                         elem.oplib.state = "showing";
 
@@ -1982,16 +1986,23 @@ var oplib = (function() {
                         }
                         //Bug fix -- Animation geht nicht bis zum richtigen Ende
                         //Fix durch Herstellung der normalen Bedingungen
+                        //TODO Teste getDefaultComputedStyle
                         var tmpWidth = elem.style.width;
                         var tmpHeight = elem.style.height;
                         var tmpOpacity = elem.style.opacity;
+                        var tmpMargin = elem.style.margin;
+                        var tmpPadding = elem.style.padding;
                         elem.style.width = elem.oplib.oldWidth;
                         elem.style.height = elem.oplib.oldHeight;
                         elem.style.opacity = elem.oplib.oldOpacity;
+                        elem.style.margin = elem.oplib.oldMargin;
+                        elem.style.padding = elem.oplib.oldPadding;
                         cssSettings[i].aim = oplib.fn.floatCssValue("d100%", i, elem);
                         elem.style.width = tmpWidth;
                         elem.style.height = tmpHeight;
                         elem.style.opacity = tmpOpacity;
+                        elem.style.margin = tmpMargin;
+                        elem.style.padding = tmpPadding;
                     }
 
                 }
@@ -2001,6 +2012,8 @@ var oplib = (function() {
                             elem.oplib.oldWidth = oplib.fn.floatCssValue("real", "width", elem);
                             elem.oplib.oldHeight = oplib.fn.floatCssValue("real", "height", elem);
                             elem.oplib.oldOpacity = oplib.fn.floatCssValue("real", "opacity", elem);
+                            elem.oplib.oldMargin = oplib.fn.floatCssValue("real", "margin", elem);
+                            elem.oplib.oldPadding = oplib.fn.floatCssValue("real", "padding", elem);
                             elem.oplib.oldDisplay = oplib.fn.floatCssValue("real", "display", elem);
                         }
                         elem.oplib.state = "hiding";
@@ -2055,6 +2068,8 @@ var oplib = (function() {
                     elem.style.width = elem.oplib.oldWidth;
                     elem.style.height = elem.oplib.oldHeight;
                     elem.style.opacity = elem.oplib.oldOpacity;
+                    elem.style.margin = elem.oplib.oldMargin;
+                    elem.style.padding = elem.oplib.oldPadding;
                     elem.oplib.state = "shown";
                 }, "OPdone");
             }
@@ -2064,6 +2079,8 @@ var oplib = (function() {
                     elem.style.width = elem.oplib.oldWidth;
                     elem.style.height = elem.oplib.oldHeight;
                     elem.style.opacity = elem.oplib.oldOpacity;
+                    elem.style.margin = elem.oplib.oldMargin;
+                    elem.style.padding = elem.oplib.oldPadding;
                     elem.oplib.state = "hidden";
                 }, "OPdone");
             }
