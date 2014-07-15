@@ -1857,13 +1857,25 @@ var oplib = (function() {
                 duration = "normal";
             }
         }
-        if (interpolator == undefined) {
+        if (!interpolator) {
             if (options.interpolator) {
                 interpolator = options.interpolator;
                 delete options.interpolator;
             }
             else {
                 interpolator = "decelerate";
+            }
+        }
+        if (!scope) {
+            if (options.scope) {
+                scope = options.scope;
+                delete options.scope;
+            }
+            else if (oplib.fn.isOPLib(elems)) {
+                scope = elems;
+            }
+            else {
+                scope = window;
             }
         }
 
@@ -1873,14 +1885,10 @@ var oplib = (function() {
         if (options.interpolator != undefined) {
             delete options.interpolator;
         }
-        //OPLib als Scope setzen
-        if (oplib.fn.isOPLib(elems)) {
-            scope = elems;
+        if (options.scope != undefined) {
+            delete options.scope;
         }
-        //Kein Scope angegeben
-        else if (!scope) {
-            scope = window;
-        }
+        
 
         //Argumente interpretieren
         if (duration == "normal") {
@@ -1900,17 +1908,11 @@ var oplib = (function() {
 
             for (var j = 0; j < oplib.fx.queue.length; j++) {
                 if (oplib.fx.queue[j].elem == elems[i]) {
-                    //Keine vorhandene Einstellungen überschreiben
-                    var callbackOptions = options;
-                    if (!options.duration) {
-                        callbackOptions.duration = duration;
-                    }
-                    if (!options.interpolator) {
-                        callbackOptions.interpolator = interpolator;
-                    }
-                    if (!options.scope) {
-                        callbackOptions.scope = scope;
-                    }
+                    var callbackOptions = oplib.fn.extend(options, {
+                        duration: duration,
+                        interpolator: interpolator,
+                        scope: scope,
+                    });
                     oplib.fx.queue[j].callbacks = oplib.fx.addCallback(oplib.fx.queue[j].callbacks, callbackOptions, "done");
                     callbackAdded = true;
                 }
