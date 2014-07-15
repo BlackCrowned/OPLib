@@ -1687,114 +1687,114 @@ var oplib = (function() {
 
     //Abkürzungen für allgemeine Animationen
     oplib.fn.extend(oplib.fn, {
-        hide: function(duration, interpolator, callbacks) {
+        hide: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "hide",
                     height: "hide",
                     opacity: "hide",
                     callbacks: callbacks
-                }, duration, interpolator);
+                }, duration, interpolator, scope);
 
-            }, [duration, interpolator, callbacks]);
+            }, [duration, interpolator, callbacks, scope || this]);
         },
-        show: function(duration, interpolator, callbacks) {
+        show: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "show",
                     height: "show",
                     opacity: "show",
                     callbacks: callbacks
-                }, duration, interpolator);
-            }, [duration, interpolator]);
+                }, duration, interpolator, scope);
+            }, [duration, interpolator, callbacks, scope || this]);
 
         },
-        slideUp: function(duration, interpolator, callbacks) {
+        slideUp: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "hide",
                     callbacks: callbacks
-                }, duration, interpolator);
+                }, duration, interpolator, scope);
 
-            }, [duration, interpolator, callbacks]);
+            }, [duration, interpolator, callbacks, scope || this]);
         },
-        slideDown: function(duration, interpolator, callbacks) {
+        slideDown: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "show",
                     callbacks: callbacks
-                }, duration, interpolator);
-            }, [duration, interpolator, callbacks]);
+                }, duration, interpolator, scope);
+            }, [duration, interpolator, callbacks, scope || this]);
 
         },
-        fadeOut: function(duration, interpolator, callbacks) {
+        fadeOut: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "hide",
                     callbacks: callbacks
-                }, duration, interpolator);
+                }, duration, interpolator, scope);
 
-            }, [duration, interpolator, callbacks]);
+            }, [duration, interpolator, callbacks, scope || this]);
         },
-        fadeIn: function(duration, interpolator, callbacks) {
+        fadeIn: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "show",
                     callbacks: callbacks
-                }, duration, interpolator);
-            }, [duration, interpolator, callbacks]);
+                }, duration, interpolator, scope);
+            }, [duration, interpolator, callbacks, scope || this]);
 
         },
-        fadeTo: function(to, duration, interpolator, callbacks) {
+        fadeTo: function(to, duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(to, duration, interpolator, callbacks) {
+            return this.each(this, function(to, duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: to,
                     callbacks: callbacks
-                }, duration, interpolator);
-            }, [to, duration, interpolator, callbacks]);
+                }, duration, interpolator, scope);
+            }, [to, duration, interpolator, callbacks, scope || this]);
         },
-        toggle: function(duration, interpolator, callbacks) {
+        toggle: function(duration, interpolator, callbacks, scope) {
             if ( typeof callbacks === "function") {
                 callbacks = {
                     done: callbacks
                 };
             }
-            return this.each(this, function(duration, interpolator, callbacks) {
+            return this.each(this, function(duration, interpolator, callbacks, scope) {
                 if (!this.oplib) {
                     this.oplib = {};
                 }
@@ -1803,8 +1803,8 @@ var oplib = (function() {
                     height: "toggle",
                     opacity: "toggle",
                     callbacks: callbacks
-                }, duration, interpolator);
-            }, [duration, interpolator, callbacks]);
+                }, duration, interpolator, scope);
+            }, [duration, interpolator, callbacks, scope || this]);
         }
     });
 
@@ -1820,12 +1820,12 @@ var oplib = (function() {
      * interpolator:
      *  "linear"|"accelerate"|"decelerate"
      */
-    oplib.fn.anim = function(options, duration, interpolator) {
+    oplib.fn.anim = function(options, duration, interpolator, scope) {
         if (!options) {
             return this;
         }
 
-        oplib.fx(this, options, duration, interpolator);
+        oplib.fx(this, options, duration, interpolator, scope);
 
         return this;
     };
@@ -1837,7 +1837,7 @@ var oplib = (function() {
     };
 
     //Animiert Objekte
-    oplib.fx = function(elems, options, duration, interpolator) {
+    oplib.fx = function(elems, options, duration, interpolator, scope) {
         if (duration == undefined) {
             if (options.duration) {
                 duration = options.duration;
@@ -1863,7 +1863,15 @@ var oplib = (function() {
         if (options.interpolator != undefined) {
             delete options.interpolator;
         }
-
+        //OPLib als Scope setzen
+        if (oplib.fn.isOPLib(elems)) {
+            scope = elems;
+        }
+        //Kein Scope angegeben
+        else if (!scope){
+            scope = window;
+        }
+        
         //Argumente interpretieren
         if (duration == "normal") {
             duration = 750;
@@ -1882,23 +1890,30 @@ var oplib = (function() {
 
             for (var j = 0; j < oplib.fx.queue.length; j++) {
                 if (oplib.fx.queue[j].elem == elems[i]) {
-                    var callbackOptions = oplib.fn.extend(options, {
-                        duration: duration,
-                        interpolator: interpolator,
-                    });
+                    //Keine vorhandene Einstellungen überschreiben
+                    var callbackOptions = options;
+                    if (!options.duration) {
+                       callbackOptions.duration = duration;
+                    }
+                    if (!options.interpolator) {
+                        callbackOptions.interpolator = interpolator;
+                    }
+                    if (!options.scope) {
+                        callbackOptions.scope = scope;
+                    }
                     oplib.fx.queue[j].callbacks = oplib.fx.addCallback(oplib.fx.queue[j].callbacks, callbackOptions, "done");
                     callbackAdded = true;
                 }
             }
             if (!callbackAdded) {
-                oplib.fx.init(elems[i], options, duration, interpolator);
+                oplib.fx.init(elems[i], options, duration, interpolator, scope);
             }
 
         }
     };
 
     oplib.fn.extend(oplib.fx, {
-        init: function(elem, options, duration, interpolator) {
+        init: function(elem, options, duration, interpolator, scope) {
 
             //Optionen interpretieren
             var cssSettings = {};
@@ -1910,6 +1925,16 @@ var oplib = (function() {
                 //Auf callbacks reagieren
                 if (i == "callbacks") {
                     callbacks = options[i];
+                    continue;
+                }
+                //Auf interpolator reagieren
+                if (i == "interpolator") {
+                    interpolator = options[i];
+                    continue;
+                }
+                //Auf scope reagieren
+                if (i == "scope") {
+                    scope = options[i];
                     continue;
                 }
                 //Status des Elements festhalten
@@ -2032,7 +2057,7 @@ var oplib = (function() {
                 }, "OPdone");
             }
             //Make sure to apply all changes afterwards #30
-            callbacls = oplib.fx.addCallback(callbacks, function(elem) {
+            callbacks = oplib.fx.addCallback(callbacks, function(elem) {
                 for (var i in elem.oplib.aim) {
                     elem.style[i] = elem.oplib.aim[i] + elem.oplib.unit[i];
                 }
@@ -2050,6 +2075,7 @@ var oplib = (function() {
                 interpolator: interpolator,
                 start_time: oplib.TIME.getCurrentTime(),
                 callbacks: callbacks,
+                scope: scope,
                 done: done,
             });
 
@@ -2065,16 +2091,16 @@ var oplib = (function() {
                 oplib.fx.animatorRunning = true;
             }
         },
-        end: function(i, elem, callbacks) {
+        end: function(i, elem, callbacks, scope) {
             oplib.fx.queue.splice(i, 1);
 
             //Overflow zurücksetzen
             elem.style.overflow = elem.oplib.oldOverflow;
 
             //Callbacks "OPdone" aufrufen
-            callbacks = oplib.fx.callback(elem, callbacks, "OPdone");
+            callbacks = oplib.fx.callback(elem, callbacks, "OPdone", scope);
             //Callbacks "done" aufrufen
-            callbacks = oplib.fx.callback(elem, callbacks, "done");
+            callbacks = oplib.fx.callback(elem, callbacks, "done", scope);
 
             if (!oplib.fx.queue.length) {
                 clearTimeout(oplib.fx.animatorId);
@@ -2129,7 +2155,7 @@ var oplib = (function() {
             var actualProgress;
             var animationProgress;
 
-            var elem, options, duration, interpolator, start_time, actual_time, callbacks;
+            var elem, options, duration, interpolator, start_time, actual_time, callbacks, scope;
 
             var done = [];
 
@@ -2141,19 +2167,20 @@ var oplib = (function() {
                 start_time = oplib.fx.queue[i].start_time;
                 actual_time = currentTime - start_time;
                 callbacks = oplib.fx.queue[i].callbacks;
+                scope = oplib.fx.queue[i].scope;
                 actualProgress = actual_time / duration;
-
+                
                 if (actualProgress > 1.0) {
                     actualProgress = 1.0;
                 }
                 animationProgress = oplib.fx.interpolate(interpolator, actualProgress);
 
                 //Callbacks "OPstart" aufrufen
-                callbacks = oplib.fx.callback(elem, callbacks, "OPstart");
+                callbacks = oplib.fx.callback(elem, callbacks, "OPstart", scope);
                 //Callbacks "start" aufrufen
-                callbacks = oplib.fx.callback(elem, callbacks, "start");
+                callbacks = oplib.fx.callback(elem, callbacks, "start", scope);
                 //Callbacks "update" aufrufen
-                oplib.fx.callback(elem, callbacks, "update");
+                oplib.fx.callback(elem, callbacks, "update", scope);
 
                 for (var j in options) {
                     options[j].current = options[j].old + (options[j].aim - options[j].old) * animationProgress;
@@ -2171,7 +2198,7 @@ var oplib = (function() {
             }
 
             for (var i = 0; i < done.length; i++) {
-                oplib.fx.end(done[i] - i, oplib.fx.queue[done[i] - i].elem, oplib.fx.queue[done[i] - i].callbacks);
+                oplib.fx.end(done[i] - i, oplib.fx.queue[done[i] - i].elem, oplib.fx.queue[done[i] - i].callbacks, oplib.fx.queue[done[i] - i].scope);
             }
 
             if (oplib.fx.animatorRunning) {
@@ -2192,7 +2219,7 @@ var oplib = (function() {
             return interpolators[interpolator];
         },
         //Callbackfunktion
-        callback: function(elem, callbacks, action) {
+        callback: function(elem, callbacks, action, scope) {
             if (!callbacks) {
                 return callbacks;
             }
@@ -2203,7 +2230,7 @@ var oplib = (function() {
             if (callbacks[action] && toString.call(callbacks[action]) === "[object Array]") {
                 for (var i in callbacks[action]) {
                     if ( typeof callbacks[action][i] === "function") {
-                        callbacks[action][i].apply(this, [elem]);
+                        callbacks[action][i].apply(scope, [elem]);
                         delete callbacks[action][i];
                     }
                     else if ( typeof callbacks[action][i] === "object") {
@@ -2214,7 +2241,7 @@ var oplib = (function() {
                 }
             }
             else if (callbacks[action] && typeof callbacks[action] === "function") {
-                callbacks[action].apply(this, [elem]);
+                callbacks[action].apply(scope, [elem]);
                 delete callbacks[action];
             }
             else if (callbacks[action] && typeof callbacks[action] === "object") {
