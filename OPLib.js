@@ -1362,8 +1362,6 @@ var oplib = (function() {
     oplib.fn.ElementSelection.getComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
-        clone.style.display = "";
-        clone.style.visibility = "hidden";
         clone.style = oplib.fn.merge(clone.style, styles);
         document.body.appendChild(clone);
         value = window.getComputedStyle(clone)[expression];
@@ -1375,8 +1373,6 @@ var oplib = (function() {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
         clone.style.cssText = "";
-        clone.style.display = "";
-        clone.style.visibility = "hidden";
         clone.style = oplib.fn.merge(clone.style, styles);
         document.body.appendChild(clone);
         value = window.getComputedStyle(clone)[expression];
