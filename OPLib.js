@@ -446,10 +446,10 @@ var oplib = (function() {
             return oplib.fn.ElementSelection.isHover(this);
         },
         getComputedStyle: function(expression, styles) {
-            return oplib.fn.ElementSelection.getComputedStyle(expression, this, styles);
+            return oplib.fn.ElementSelection.getComputedStyle(expression, this[0], styles);
         },
         getDefaultComputedStyle: function(expression, styles) {
-            return oplib.fn.ElementSelection.getDefaultComputedStyle(expression, this, styles);
+            return oplib.fn.ElementSelection.getDefaultComputedStyle(expression, this[0], styles);
         },
     };
 
