@@ -2034,10 +2034,14 @@ var oplib = (function() {
                         else {
                             cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                         }
-                        //Bug fix -- Animation geht nicht bis zum richtigen Ende
-                        //Fix durch Herstellung der normalen Bedingungen
-                        //TODO getDefaultComputedStyle with additional Styles..
-                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem));
+                        var styles = {
+                            width: elem.oplib.oldWidth,
+                            height: elem.oplib.oldHeight,
+                            opacity: elem.oplib.oldOpacity,
+                            margin: elem.oplib.oldMargin,
+                            padding: elem.oplib.oldPadding,
+                        };
+                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem, styles));
                     }
 
                 }
