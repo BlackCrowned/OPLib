@@ -448,8 +448,8 @@ var oplib = (function() {
         getComputedStyle: function(expression, styles) {
             return oplib.fn.ElementSelection.getComputedStyle(expression, this, styles);
         },
-        getDefaultComputedStyle: function(expression) {
-            return oplib.fn.ElementSelection.getDefaultComputedStyle(expression, this);
+        getDefaultComputedStyle: function(expression, styles) {
+            return oplib.fn.ElementSelection.getDefaultComputedStyle(expression, this, styles);
         },
     };
 
@@ -1371,12 +1371,13 @@ var oplib = (function() {
         return value;
     };
 
-    oplib.fn.ElementSelection.getDefaultComputedStyle = function(expression, elem) {
+    oplib.fn.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
         clone.style.cssText = "";
         clone.style.display = "";
         clone.style.visibility = "hidden";
+        clone.style = oplib.fn.merge(clone.style, styles);
         document.body.appendChild(clone);
         value = window.getComputedStyle(clone)[expression];
         document.body.removeChild(clone);
