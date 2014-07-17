@@ -2000,6 +2000,9 @@ var oplib = (function() {
                 if (!elem.oplib) {
                     elem.oplib = {};
                 }
+                if (!elem.oplib.stylesChanged) {
+                    elem.oplib.stylesChanged = [];
+                }
                 if (options[i] == "toggle") {
                     if (elem.style.display == "none") {
                         options[i] = "show";
@@ -2014,6 +2017,7 @@ var oplib = (function() {
                             elem.oplib.oldDisplay = "inline-block";
                             elem.oplib.oldStyle = {};
                         }
+                        elem.oplib.stylesChanged.push(i);
                         elem.oplib.state = "showing";
 
                         cssSettings[i] = {};
@@ -2037,6 +2041,7 @@ var oplib = (function() {
                             elem.oplib.oldStyle = oplib.fn.merge({}, elem.style);
                             elem.oplib.oldDisplay = elem.style.display;
                         }
+                        elem.oplib.stylesChanged.push(i);
                         elem.oplib.state = "hiding";
 
                         cssSettings[i] = {};
@@ -2086,14 +2091,22 @@ var oplib = (function() {
                     elem.style.display = elem.oplib.oldDisplay;
                 }, "OPstart");
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-                    elem.style.cssText = elem.oplib.oldStyle.cssText;
+                    for (var i = 0; i < elem.oplib.stylesChanged.length; i++) {
+                        elem.style[elem.oplib.stylesChanged[i]] = elem.oplib.oldStyle[elem.oplib.stylesChanged[i]];
+                    }
+                    elem.oplib.stylesChanged.length = 0;
+                    elem.style.overflow = elem.oplib.oldOverflow;
                     elem.oplib.state = "shown";
                 }, "OPdone");
             }
             else if (elem.oplib.state == "hiding") {
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-                    elem.style.cssText = elem.oplib.oldStyle.cssText;
+                    for (var i = 0; i < elem.oplib.stylesChanged.length; i++) {
+                        elem.style[elem.oplib.stylesChanged[i]] = elem.oplib.oldStyle[elem.oplib.stylesChanged[i]];
+                    }
+                    elem.oplib.stylesChanged.length = 0;
                     elem.style.display = "none";
+                    elem.style.overflow = elem.oplib.oldOverflow;
                     elem.oplib.state = "hidden";
                 }, "OPdone");
             }
@@ -2124,7 +2137,7 @@ var oplib = (function() {
             if (!elem.oplib) {
                 elem.oplib = {};
             }
-            elem.oplib.oldOverflow = oplib.fn.ElementSelection.getComputedStyle("overflow", elem);
+            elem.oplib.oldOverflow = elem.style.overflow;
             elem.style.overflow = "hidden";
 
             if (!oplib.fx.animatorRunning) {
