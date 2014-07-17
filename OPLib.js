@@ -1947,6 +1947,22 @@ var oplib = (function() {
         if (duration == "slow") {
             duration = oplib.fn.defaults.animationSettings.slow;
         }
+        
+        //Firefox hat Probleme mit padding/margin #42
+        if (options.padding) {
+            options.paddingTop = options.padding;
+            options.paddingBottom = options.padding;
+            options.paddingLeft = options.padding;
+            options.paddingRight = options.padding;
+            delete options.padding;
+        }
+        if (options.margin) {
+            options.marginTop = options.margin;
+            options.marginBottom = options.margin;
+            options.marginLeft = options.margin;
+            options.marginRight = options.margin;
+            delete options.margin;
+        }
 
         for (var i = 0; i < elems.length; i++) {
             //Wird das Element bereits aniemiert, dann als Callback "done" daran
