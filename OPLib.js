@@ -1767,7 +1767,7 @@ var oplib = (function() {
     };
 
     //Animiert Objekte
-    oplib.fx = function(elems, options, duration, interpolator, scope) {
+    oplib.fx = function(elems, options, duration, interpolator, callbacks, scope) {
         if (duration == undefined) {
             if (options.duration) {
                 duration = options.duration;
@@ -1784,6 +1784,15 @@ var oplib = (function() {
             }
             else {
                 interpolator = oplib.fn.defaults.animationSettings.interpolator;
+            }
+        }
+        if (!callbacks) {
+            if (options.callbacks) {
+                callbacks = options.callbacks;
+                delete options.callbacks;
+            }
+            else {
+                callbacks = oplib.fn.defaults.animationSettings.callbacks;
             }
         }
         if (!scope) {
@@ -1804,6 +1813,9 @@ var oplib = (function() {
         }
         if (options.interpolator != undefined) {
             delete options.interpolator;
+        }
+        if (options.callbacks != undefined) {
+            delete options.callbacks;
         }
         if (options.scope != undefined) {
             delete options.scope;
@@ -1846,6 +1858,7 @@ var oplib = (function() {
                     var callbackOptions = oplib.fn.extend(options, {
                         duration: duration,
                         interpolator: interpolator,
+                        callbacks: callbacks,
                         scope: scope,
                     });
                     oplib.fx.queue[j].callbacks = oplib.fx.addCallback(oplib.fx.queue[j].callbacks, callbackOptions, "done");
@@ -1853,7 +1866,7 @@ var oplib = (function() {
                 }
             }
             if (!callbackAdded) {
-                oplib.fx.init(elems[i], options, duration, interpolator, scope);
+                oplib.fx.init(elems[i], options, duration, interpolator, callbacks, scope);
             }
 
         }
