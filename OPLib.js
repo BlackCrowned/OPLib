@@ -1999,6 +1999,13 @@ var oplib = (function() {
                 done = true;
             }
 
+            //Annehmen, dass Callbacks "done" gemeint ist
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
+
             oplib.fx.queue.push({
                 elem: elem,
                 options: cssSettings,
