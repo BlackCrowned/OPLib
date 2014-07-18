@@ -1941,22 +1941,11 @@ var oplib = (function() {
                 }
                 else {
                     cssSettings[i] = {};
-                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
-                    cssSettings[i].oldUnit = oplib.fn.getCssUnit(oplib.fn.ElementSelection.getComputedStyle(i, elem));
-                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
-                    cssSettings[i].aim = oplib.fn.floatCssValue(options[i], i, elem);
                     cssSettings[i].unit = oplib.fn.getCssUnit(options[i]);
 
-                    if (cssSettings[i].oldUnit == "%") {
-                        cssSettings[i].old = cssSettings[i].old * oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) / 100;
-                        cssSettings[i].current = cssSettings[i].current * oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) / 100;
-                    }
-
-                    if (cssSettings[i].unit == "%") {
-                        cssSettings[i].old = cssSettings[i].old / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) * 100;
-                        cssSettings[i].current = cssSettings[i].current / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) * 100;
-                        cssSettings[i].aim = cssSettings[i].aim / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem)) * 100;
-                    }
+                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.fn.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
+                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.fn.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
+                    cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(options[i], cssSettings[i].unit, i, elem));
 
                     //Make sure to apply all style changes afterwards #30
                     elem.oplib.aim = {};
