@@ -514,6 +514,18 @@ var oplib = (function() {
         return this.merge([], oplib);
     };
 
+    //Erstellt CamelCase
+    oplib.fn.camelCase = function(text) {
+        text = text.replace(/-([a-z]|[A-Z])/g, function(match) {
+            return match[1].toUpperCase();
+        });
+        text = text.replace(/ ([a-z]|[A-Z])/g, function(match) {
+            return match[1].toUpperCase();
+        });
+        text = text.replace(/ /g, "");
+        return text;
+    };
+
     //Array Funktionen zugänglich machen
     oplib.fn.concat = Array.prototype.concat;
     oplib.fn.join = Array.prototype.join;
