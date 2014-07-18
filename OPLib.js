@@ -1748,7 +1748,11 @@ var oplib = (function() {
      * duration:
      *  "slow"|"normal"|"fast"|number
      * interpolator:
-     *  "linear"|"accelerate"|"decelerate"
+     *  "linear"|"accelerate"|"decelerate|acceleratedecelerate"
+     * callbacks:
+     *  function|{done: function}|{done: object}
+     * scope:
+     *  Scope
      */
     oplib.fn.anim = function(options, duration, interpolator, callbacks, scope) {
         if (!options) {
