@@ -1480,7 +1480,33 @@ var oplib = (function() {
         return value += unit;
     };
 
+    //Konvertiert Einheiten eines Css-Wertes
+    oplib.fn.convertCssUnit = function(value, unit, expression, elem) {
+        var oldUnit = oplib.fn.getCssUnit(value);
+        var valueInPx;
+        var conversionFactor;
+        //In Pixel umrechnen
+        if (oldUnit == "px") {
+            conversionFactor = 1;
         }
+        else if (oldUnit == "%") {
+            conversionFactor = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
+        }
+        else {
+            conversionFactor = oplib.fn.defaults.cssConversions[oldUnit + "ToPx"];
+        }
+        valueInPx = oplib.fn.floatCssValue(value) * conversionFactor;
+        //In neue Einheit umrechnen
+        if (unit == "%") {
+            conversionFactor = 100 / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body));
+        }
+        else if (unit == "px") {
+            conversionFactor = 1;
+        }
+        else {
+            conversionFactor = oplib.fn.defaults.cssConversions[oplib.fn.camelCase("px-to-" + unit)];
+        }
+        return (valueInPx * conversionFactor).toString() + unit;
     };
 
     //Klont Elemente, etc...
