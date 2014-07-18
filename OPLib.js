@@ -1750,12 +1750,12 @@ var oplib = (function() {
      * interpolator:
      *  "linear"|"accelerate"|"decelerate"
      */
-    oplib.fn.anim = function(options, duration, interpolator, scope) {
+    oplib.fn.anim = function(options, duration, interpolator, callbacks, scope) {
         if (!options) {
             return this;
         }
 
-        oplib.fx(this, options, duration, interpolator, scope);
+        oplib.fx(this, options, duration, interpolator, callbacks, scope);
 
         return this;
     };
