@@ -1472,6 +1472,14 @@ var oplib = (function() {
         return unit.toLowerCase();
     };
 
+    //Setzt die Einheit eines Css-Wertes
+    oplib.fn.setCssUnit = function(value, unit) {
+        //Alte Einheit entfernen
+        value = value.replace(oplib.fn.getCssUnit(value), "");
+        //Neue Einheit anfügen
+        return value += unit;
+    };
+
         }
     };
 
