@@ -1919,6 +1919,12 @@ var oplib = (function() {
 
             }
 
+            //Annehmen, dass Callbacks "done" gemeint ist
+            if ( typeof callbacks === "function") {
+                callbacks = {
+                    done: callbacks
+                };
+            }
             //Benötigte Callbacks:
             if (elem.oplib.state == "showing") {
                 callbacks = oplib.fx.addCallback(callbacks, function(elem) {
@@ -1954,13 +1960,6 @@ var oplib = (function() {
             //Alle Optionen gleich  --> Animation ist fertig
             if (optionsEqual / optionsCount == 1) {
                 done = true;
-            }
-
-            //Annehmen, dass Callbacks "done" gemeint ist
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
             }
 
             oplib.fx.queue.push({
