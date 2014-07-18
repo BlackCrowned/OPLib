@@ -2858,6 +2858,23 @@ var oplib = (function() {
     //Standartwerte
     oplib.fn.extend(oplib.fn.defaults, {
         cssUnit: "px",
+        cssConversions: {
+            pxToPt: 0.75,
+            pxToPc: 1 / 16,
+            pxToIn: 1 / 96,
+            pxToCm: 1 / 96 * 2.54,
+            pxToMm: 1 / 96 * 25.4,
+            pxToEm: 1 / 16,
+            pxToEx: 2 / 16,
+
+            ptToPx: 1 / 0.75,
+            pcToPx: 16,
+            inToPx: 96,
+            cmToPx: 96 / 2.54,
+            mmToPx: 96 / 25.4,
+            emToPx: 16,
+            exToPx: 16 / 2,
+        },
         animationSettings: {
             duration: "normal",
             interpolator: "acceleratedecelerate",
