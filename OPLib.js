@@ -1457,30 +1457,22 @@ var oplib = (function() {
         return parseFloat(value);
     };
 
-            }
-            else {
-                returns = parseFloat(value);
-                if (cloned) {
-                    document.body.removeChild(elem);
-                }
-                return isNaN(returns) ? 0 : returns;
-            }
-        }
-        else if ( typeof value === "number") {
-            if (cloned) {
-                document.body.removeChild(elem);
-            }
-            return value;
-        }
-    };
-
     //Ermittelt die Einheit eines Css-Wertes
     oplib.fn.getCssUnit = function(value) {
         var unit = "";
         if ( typeof value === "string") {
-            unit = value.replace(/(?!(\W)+)(\w|\d)*/, "");
+            if (value.search(/[\d\.]/g) == -1) {
+                unit = oplib.fn.defaults.cssUnit;
+            }
+            else {
+                unit = value.replace(/[\d\.]/g, "");
+            }
+
         }
-        return unit;
+        return unit.toLowerCase();
+    };
+
+        }
     };
 
     //Klont Elemente, etc...
