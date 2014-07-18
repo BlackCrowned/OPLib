@@ -1568,11 +1568,6 @@ var oplib = (function() {
     //Abkürzungen für allgemeine Animationen
     oplib.fn.extend(oplib.fn, {
         hide: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "hide",
@@ -1585,11 +1580,6 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         show: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "show",
@@ -1602,11 +1592,6 @@ var oplib = (function() {
 
         },
         slideUp: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "hide",
@@ -1619,11 +1604,6 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         slideDown: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "show",
@@ -1636,11 +1616,6 @@ var oplib = (function() {
 
         },
         slideLeft: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "hide",
@@ -1653,11 +1628,6 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         slideRight: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "show",
@@ -1670,11 +1640,6 @@ var oplib = (function() {
 
         },
         fadeOut: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "hide",
@@ -1683,11 +1648,6 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         fadeIn: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "show",
@@ -1696,11 +1656,6 @@ var oplib = (function() {
 
         },
         fadeTo: function(to, duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(to, duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: to,
@@ -1708,11 +1663,6 @@ var oplib = (function() {
             }, [to, duration, interpolator, callbacks, scope || this]);
         },
         toggle: function(duration, interpolator, callbacks, scope) {
-            if ( typeof callbacks === "function") {
-                callbacks = {
-                    done: callbacks
-                };
-            }
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 if (!this.oplib) {
                     this.oplib = {};
