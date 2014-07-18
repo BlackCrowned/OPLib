@@ -2842,6 +2842,7 @@ var oplib = (function() {
         animationSettings: {
             duration: "normal",
             interpolator: "acceleratedecelerate",
+            callbacks: {},
             scope: window,
             slow: 1000,
             normal: 750,
