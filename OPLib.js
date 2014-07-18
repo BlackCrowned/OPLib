@@ -1476,7 +1476,7 @@ var oplib = (function() {
     oplib.fn.setCssUnit = function(value, unit) {
         //Alte Einheit entfernen
         value = value.replace(oplib.fn.getCssUnit(value), "");
-        //Neue Einheit anfÃ¼gen
+        //Neue Einheit anfügen
         return value += unit;
     };
 
@@ -1819,7 +1819,7 @@ var oplib = (function() {
         if (duration == "slow") {
             duration = oplib.fn.defaults.animationSettings.slow;
         }
-        
+
         //Firefox hat Probleme mit padding/margin #42
         if (options.padding) {
             options.paddingTop = options.padding;
