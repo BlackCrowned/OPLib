@@ -2717,14 +2717,14 @@ var oplib = (function() {
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i].style.position = "absolute";
-                    var width = oplib.fn.floatCssValue("d100%", "width", elems[i]);
-                    var height = oplib.fn.floatCssValue("d100%", "height", elems[i]);
+                    var width = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle("width", elems[i]));
+                    var height = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle("height", elems[i]));
                     var left = e.pageX + 5;
                     var top = e.pageY + 5;
-                    if (left + width >= window.innerWidth) {
+                    if (left + width >= window.innerWidth + window.pageXOffset) {
                         left = e.pageX - 5 - width;
                     }
-                    if (top + height >= window.innerHeight) {
+                    if (top + height >= window.innerHeight + window.pageYOffset) {
                         top = e.pageY - 5 - height;
                     }
                     elems[i].style.left = oplib.fn.finalizeCssExpressions("left", left)[1];
