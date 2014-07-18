@@ -1860,11 +1860,11 @@ var oplib = (function() {
     };
 
     oplib.fn.extend(oplib.fx, {
-        init: function(elem, options, duration, interpolator, scope) {
+        init: function(elem, options, duration, interpolator, callbacks, scope) {
 
             //Optionen interpretieren
             var cssSettings = {};
-            var callbacks = {};
+            var callbacks = callbacks || {};
             var done = false;
             var optionsCount = 0;
             var optionsEqual = 0;
