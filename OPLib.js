@@ -1426,9 +1426,7 @@ var oplib = (function() {
         //Bereits ein String
         if ( typeof value === "string") {
             //Bindestriche entfernen und folgendes Zeichen groﬂschreiben
-            expression = expression.replace(/-([a-z]|[A-Z])/g, function(match) {
-                return match[1].toUpperCase();
-            });
+            expression = oplib.fn.camelCase(expression);
         }
         else if ( typeof value === "number") {
             value = value.toString();
