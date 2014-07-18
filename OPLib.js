@@ -1580,8 +1580,7 @@ var oplib = (function() {
                     opacity: "hide",
                     margin: "hide",
                     padding: "hide",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
 
             }, [duration, interpolator, callbacks, scope || this]);
         },
@@ -1598,8 +1597,7 @@ var oplib = (function() {
                     opacity: "show",
                     margin: "show",
                     padding: "show",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
             }, [duration, interpolator, callbacks, scope || this]);
 
         },
@@ -1616,8 +1614,7 @@ var oplib = (function() {
                     paddingTop: "hide",
                     marginBottom: "hide",
                     paddingBottom: "hide",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
 
             }, [duration, interpolator, callbacks, scope || this]);
         },
@@ -1634,8 +1631,7 @@ var oplib = (function() {
                     paddingTop: "show",
                     marginBottom: "show",
                     paddingBottom: "show",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
             }, [duration, interpolator, callbacks, scope || this]);
 
         },
@@ -1652,8 +1648,7 @@ var oplib = (function() {
                     paddingRight: "hide",
                     marginLeft: "hide",
                     paddingLeft: "hide",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
 
             }, [duration, interpolator, callbacks, scope || this]);
         },
@@ -1670,8 +1665,7 @@ var oplib = (function() {
                     paddingRight: "show",
                     marginLeft: "show",
                     paddingLeft: "show",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
             }, [duration, interpolator, callbacks, scope || this]);
 
         },
@@ -1684,8 +1678,7 @@ var oplib = (function() {
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "hide",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
 
             }, [duration, interpolator, callbacks, scope || this]);
         },
@@ -1698,8 +1691,7 @@ var oplib = (function() {
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "show",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
             }, [duration, interpolator, callbacks, scope || this]);
 
         },
@@ -1712,8 +1704,7 @@ var oplib = (function() {
             return this.each(this, function(to, duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: to,
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
             }, [to, duration, interpolator, callbacks, scope || this]);
         },
         toggle: function(duration, interpolator, callbacks, scope) {
@@ -1732,8 +1723,7 @@ var oplib = (function() {
                     opacity: "toggle",
                     margin: "toggle",
                     padding: "toggle",
-                    callbacks: callbacks
-                }, duration, interpolator, scope);
+                }, duration, interpolator, callbacks, scope);
             }, [duration, interpolator, callbacks, scope || this]);
         }
     });
