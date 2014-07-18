@@ -1736,7 +1736,7 @@ var oplib = (function() {
                 delete options.callbacks;
             }
             else {
-                callbacks = oplib.fn.defaults.animationSettings.callbacks;
+                callbacks = {};
             }
         }
         if (!scope) {
@@ -2842,7 +2842,6 @@ var oplib = (function() {
         animationSettings: {
             duration: "normal",
             interpolator: "acceleratedecelerate",
-            callbacks: {},
             scope: window,
             slow: 1000,
             normal: 750,
