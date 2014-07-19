@@ -40,7 +40,7 @@ var oplib = (function() {
             if ( typeof name === "object") {
                 for (var i in name) {
                     //Attribute setzen
-                    this.each(this, function(name, prop) {
+                    this.each(function(name, prop) {
                         this.setAttribute(name, prop);
                     }, [i, name[i]]);
                 }
@@ -48,7 +48,7 @@ var oplib = (function() {
             //Es wurde ein einzelnes Attribut übergeben
             else {
                 //Attribut setzen
-                this.each(this, function(name, prop) {
+                this.each(function(name, prop) {
                     this.setAttribute(name, prop);
                 }, [name, property]);
             }
@@ -61,7 +61,7 @@ var oplib = (function() {
                 if (name.length != undefined) {
                     for (var i = 0; i < name.length; i++) {
                         //Attribute entfernen
-                        this.each(this, function(name) {
+                        this.each(function(name) {
                             this.removeAttribute(name);
                         }, [name[i]]);
                     }
@@ -69,7 +69,7 @@ var oplib = (function() {
                 else {
                     for (var i in name) {
                         //Attribute entfernen
-                        this.each(this, function(name) {
+                        this.each(function(name) {
                             this.removeAttribute(name);
                         }, [i, name[i]]);
                     }
@@ -79,7 +79,7 @@ var oplib = (function() {
             //Es wurde ein einzelnes Attribut übergeben
             else {
                 //Attribut entfernen
-                this.each(this, function(name) {
+                this.each(function(name) {
                     this.removeAttribute(name);
                 }, [name]);
             }
@@ -87,7 +87,7 @@ var oplib = (function() {
         },
         //Klasse hinzufügen
         addClass: function(name) {
-            return this.each(this, function(name) {
+            return this.each(function(name) {
                 var classAttr = OPLib(this).attr("class");
                 if (!classAttr) {
                     classAttr = "";
@@ -105,7 +105,7 @@ var oplib = (function() {
         },
         //Klasse entfernen
         removeClass: function(name) {
-            return this.each(this, function(name) {
+            return this.each(function(name) {
                 var classAttr = OPLib(this).attr("class");
                 if (!classAttr) {
                     classAttr = "";
@@ -156,7 +156,7 @@ var oplib = (function() {
                 //Object mit Eigenschaften - CSS SETZEN
                 else {
                     for (var i in name) {
-                        this.each(this, function(name, value) {
+                        this.each(function(name, value) {
                             this["style"][i] = value;
                         }, [i, name[i]]);
                     }
@@ -169,7 +169,7 @@ var oplib = (function() {
             }
             //Name und Wert übergeben -> CSS SETZEN
             else {
-                return this.each(this, function(name, value) {
+                return this.each(function(name, value) {
                     this["style"][name] = value;
                 }, [name, value]);
             }
@@ -182,7 +182,7 @@ var oplib = (function() {
                 //Als Array angegeben
                 if (name.length != undefined) {
                     for (var i = 0; i < name.length; i++) {
-                        this.each(this, function(name) {
+                        this.each(function(name) {
                             this["style"][name] = "";
                         }, [name[i]]);
                     }
@@ -190,7 +190,7 @@ var oplib = (function() {
                 //Als Object angegeben
                 else {
                     for (var i in name) {
-                        this.each(this, function(name) {
+                        this.each(function(name) {
                             this["style"][name] = "";
                         }, [i]);
                     }
@@ -198,7 +198,7 @@ var oplib = (function() {
             }
             //Nur ein Css Wert löschen
             else {
-                return this.each(this, function(name) {
+                return this.each(function(name) {
                     this["style"][name] = "";
                 }, [name]);
             }
@@ -383,13 +383,13 @@ var oplib = (function() {
         },
         //Setzt .innerHTML für die ausgewählten Elemente
         html: function(html) {
-            return this.each(this, function() {
+            return this.each(function() {
                 this.innerHTML = html;
             }, [html]);
         },
         //Setzt .innerText für die ausgewählten Elemente
         text: function(text) {
-            return this.each(this, function(text) {
+            return this.each(function(text) {
                 this.textContent = text;
             }, [text]);
         },
@@ -416,7 +416,7 @@ var oplib = (function() {
                 args: this
             });
             oplib.AJAX(url, function(text, readyState, status, elems) {
-                oplib.fn.each(elems, function(text) {
+                oplib.each(elems, function(text) {
                     this.innerHTML = text;
                 }, [text]);
             }, header, options);
@@ -1511,13 +1511,13 @@ var oplib = (function() {
     //Klont Elemente, etc...
     oplib.fn.finalizeDOMManipulation = function(obj, fn, args) {
         var returns = [];
-        this.each(obj, function(fn, elems) {
+        oplib.each(obj, function(fn, elems) {
             var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
             returns.push(fn.apply(this, [clones]));
         }, [fn, args[0]]);
 
         //Element löschen
-        this.each(args[0], function() {
+        oplib.each(args[0], function() {
             if (this.parentNode) {
                 this.parentNode.removeChild(this);
             }
@@ -1567,7 +1567,7 @@ var oplib = (function() {
     //Abkürzungen für allgemeine Animationen
     oplib.extend(oplib.fn, {
         hide: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "hide",
                     height: "hide",
@@ -1579,7 +1579,7 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         show: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "show",
                     height: "show",
@@ -1591,7 +1591,7 @@ var oplib = (function() {
 
         },
         slideUp: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "hide",
                     marginTop: "hide",
@@ -1603,7 +1603,7 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         slideDown: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     height: "show",
                     marginTop: "show",
@@ -1615,7 +1615,7 @@ var oplib = (function() {
 
         },
         slideLeft: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "hide",
                     marginRight: "hide",
@@ -1627,7 +1627,7 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         slideRight: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     width: "show",
                     marginRight: "show",
@@ -1639,7 +1639,7 @@ var oplib = (function() {
 
         },
         fadeOut: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "hide",
                 }, duration, interpolator, callbacks, scope);
@@ -1647,7 +1647,7 @@ var oplib = (function() {
             }, [duration, interpolator, callbacks, scope || this]);
         },
         fadeIn: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: "show",
                 }, duration, interpolator, callbacks, scope);
@@ -1655,14 +1655,14 @@ var oplib = (function() {
 
         },
         fadeTo: function(to, duration, interpolator, callbacks, scope) {
-            return this.each(this, function(to, duration, interpolator, callbacks, scope) {
+            return this.each(function(to, duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
                     opacity: to,
                 }, duration, interpolator, callbacks, scope);
             }, [to, duration, interpolator, callbacks, scope || this]);
         },
         toggle: function(duration, interpolator, callbacks, scope) {
-            return this.each(this, function(duration, interpolator, callbacks, scope) {
+            return this.each(function(duration, interpolator, callbacks, scope) {
                 if (!this.oplib) {
                     this.oplib = {};
                 }
@@ -1704,7 +1704,7 @@ var oplib = (function() {
     };
 
     oplib.fn.stop = function(stopAll, finish) {
-        return this.each(this, function(stopAll, finish) {
+        return this.each(function(stopAll, finish) {
             oplib.fx.stop(this, stopAll, finish);
         }, [stopAll, finish]);
     };
@@ -2449,12 +2449,12 @@ var oplib = (function() {
     //Adds Events | Dispatches Events
     oplib.fn.events = function(type, fn) {
         if (!fn) {
-            return this.each(this, function(type) {
+            return this.each(function(type) {
                 oplib.fn.events.dispatchEvent(type, this);
             }, [type]);
         }
         else {
-            return this.each(this, function(type, fn) {
+            return this.each(function(type, fn) {
                 oplib.fn.events.addEvent(type, fn, this);
             }, [type, fn]);
         }
@@ -2463,7 +2463,7 @@ var oplib = (function() {
 
     //Removes Events
     oplib.fn.removeEvents = function(type, fn) {
-        return this.each(this, function(type, fn) {
+        return this.each(function(type, fn) {
             oplib.fn.events.removeEvent(type, fn, this);
         }, [type, fn]);
     };
@@ -2590,7 +2590,7 @@ var oplib = (function() {
 
     //Führt fn aus, sobald das ausgewählte Element bereit/geladen ist
     oplib.fn.ready = function(fn) {
-        return this.each(this, function(fn) {
+        return this.each(function(fn) {
             if (oplib.fn.ready.isReadyState[this]) {
                 //Element bereits geladen, funktion direkt ausführen
                 fn.apply();
@@ -2609,7 +2609,7 @@ var oplib = (function() {
     };
     //Entfernt fn aus der Handler Liste des ausgewählten Elements.
     oplib.fn.unready = function(fn) {
-        return this.each(this, function(fn) {
+        return this.each(function(fn) {
             oplib.fn.events.removeEvent("OPready", fn, this);
         }, [fn]);
     };
