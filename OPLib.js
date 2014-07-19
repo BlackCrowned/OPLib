@@ -2528,7 +2528,7 @@ var oplib = (function() {
         handleList: {},
 
         //Der HandleList einen neuen Listener hinzufügen
-        addListener: function(type, listener, elem) {
+        addListener: function(type, listener, elem, args) {
             if (this.handleList[type] == undefined) {
                 this.handleList[type] = [];
             }
@@ -2536,6 +2536,7 @@ var oplib = (function() {
                 elem: elem,
                 fn: listener,
                 text: listener.toString(),
+                args: args,
                 enabled: true
             }) - 1);
         },
