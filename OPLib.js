@@ -2790,14 +2790,14 @@ var oplib = (function() {
     };
 
     //Funktionen die mit RegExp arbeiten
-    oplib.regexp = oplib.fn.regexp = {
+    oplib.regexp = {
         quote: function(str) {
             return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
         }
     };
 
     //Funktionen für die Zeit
-    oplib.TIME = oplib.fn.TIME = {
+    oplib.TIME = {
         getCurrentTime: function() {
             return new Date().getTime();
         }
