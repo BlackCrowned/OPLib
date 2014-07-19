@@ -1334,17 +1334,6 @@ var oplib = (function() {
         return document.getElementsByTagName(tag);
     };
 
-    oplib.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
-        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
-        var value;
-        clone.style.cssText = "";
-        clone.style = oplib.extend(clone.style, styles);
-        document.body.appendChild(clone);
-        value = window.getComputedStyle(clone)[expression];
-        document.body.removeChild(clone);
-        return value;
-    };
-    
     //Überprüft ob es sich um ein OPObject Handelt
     oplib.isOPLib = function(obj) {
         if (!obj) {
@@ -1375,6 +1364,18 @@ var oplib = (function() {
     oplib.getComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
+        clone.style = oplib.extend(clone.style, styles);
+        document.body.appendChild(clone);
+        value = window.getComputedStyle(clone)[expression];
+        document.body.removeChild(clone);
+        return value;
+    };
+    
+    //Gibt den Standartwert des errechneten Wert des Css-Ausdrucks zurück
+    oplib.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
+        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+        var value;
+        clone.style.cssText = "";
         clone.style = oplib.extend(clone.style, styles);
         document.body.appendChild(clone);
         value = window.getComputedStyle(clone)[expression];
