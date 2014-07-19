@@ -495,6 +495,10 @@ var oplib = (function() {
         }
         return obj;
     };
+    
+    oplib.fn.each = function(fn, args) {
+        return oplib.each(this, fn, args);
+    };
 
     //Überprüft ob es sich um ein OPObject Handelt
     oplib.fn.isOPLib = function(obj) {
