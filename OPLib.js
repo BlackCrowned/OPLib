@@ -2794,10 +2794,6 @@ var oplib = (function() {
             }
             return newObj;
         },
-        //Merge für alle Obejects freigeben
-        merge: oplib.fn.merge,
-        //Extend für alle Objecte freigeben
-        extend: oplib.fn.extend
     };
 
     //Funktionen die mit RegExp arbeiten
