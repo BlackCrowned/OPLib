@@ -2923,6 +2923,9 @@ var oplib = (function() {
         };
 
     }
+    
+    //Nötige Module aktivieren
+    oplib.ElementSelection.isHover();
 
     window._OPLib = window.OPLib;
     window._$ = window.$;
