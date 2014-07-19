@@ -2648,6 +2648,7 @@ var oplib = (function() {
         options.yDistance = options.yDistance || oplib.defaults.get("tooltipSettings", "yDistance");
         options.dontHideWhileHoveringTooltip = options.dontHideWhileHoveringTooltip || oplib.defaults.get("tooltipSettings", "dontHideWhileHoveringTooltip");
         options.showTimeout = [];
+        options.hideTimeout = [];
 
         var elems = oplib.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
@@ -2674,6 +2675,9 @@ var oplib = (function() {
                         }, "fast");
                     }
                 }, options.showDelay, options, this));
+                while (options.hideTimeout.length) {
+                    clearTimeout(options.hideTimeout.pop());
+                }
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
                 function hideTooltips(elems, options, self) {
@@ -2687,10 +2691,10 @@ var oplib = (function() {
                         }, "fast");
                     }
                     else {
-                        setTimeout(hideTooltips, options.hideDelay, elems, options, self);
+                        options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, self));
                     }
                 };
-                setTimeout(hideTooltips, options.hideDelay, elems, options, this);
+                options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, this));
                 while(options.showTimeout.length) {
                     clearTimeout(options.showTimeout.pop());
                 }
