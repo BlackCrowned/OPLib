@@ -866,7 +866,7 @@ var oplib = (function() {
 
         }
         else if ( typeof selector === "object") {
-            if (oplib.fn.isOPLib(selector)) {
+            if (oplib.isOPLib(selector)) {
                 parsedSelectors.push({
                     type: "OPLib",
                     data: selector
@@ -1743,7 +1743,7 @@ var oplib = (function() {
                 scope = options.scope;
                 delete options.scope;
             }
-            else if (oplib.fn.isOPLib(elems)) {
+            else if (oplib.isOPLib(elems)) {
                 scope = elems;
             }
             else {
