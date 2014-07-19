@@ -1278,6 +1278,7 @@ var oplib = (function() {
                     elem = elem.parentNode;
                 }
             }, window);
+            oplib.modules.isHover = true;
         }
 
         if ( elems instanceof Node) {
