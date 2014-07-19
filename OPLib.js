@@ -465,15 +465,17 @@ var oplib = (function() {
     };
 
     //Eine Funtion oder oplib.fn erweitern
-    oplib.fn.extend = function(obj, probs) {
+    oplib.extend = function(obj, probs) {
         //Nur ein argument angegeben? -> oplib erweitern
         if (arguments.length == 1) {
             props = arguments[0];
             obj = this;
         }
         //Objecte zusammenführen und zurückgeben
-        return this.merge(obj, probs);
-
+        for (var i in props) {
+            obj[i] = props[i];
+        }
+        return obj;
     };
 
     //Funktion in einem bestimmten Context mit verschiedenen Argumenten ausführen
