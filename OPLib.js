@@ -2203,10 +2203,10 @@ var oplib = (function() {
     };
 
     //Parses DOM
-    oplib.fn.DOM = function(dom, mimetype) {
+    oplib.DOM = function(dom, mimetype) {
         return oplib.fn.DOM.parse(dom, mimetype);
     };
-    oplib.fn.DOM.parse = function(dom, mimetype) {
+    oplib.DOM.parse = function(dom, mimetype) {
         if (!mimetype) {
             //XML annehmen
             mimetype = "text/xml";
