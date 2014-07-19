@@ -570,8 +570,8 @@ var oplib = (function() {
     //Attribut - End - Regex
     oplib.fn.AttributeEndRegex = /\]/;
 
-    //Selectiert die Entsprechenden Elemente
-    oplib.fn.ElementSelection = function(selector, context) {
+    //Selectiert die entsprechenden Elemente
+    oplib.ElementSelection = function(selector, context) {
         var elems;
         //Context zuweisen //FIX #27 - Wenn kein Context angegeben sind alle
         // Elemente auswählbar
