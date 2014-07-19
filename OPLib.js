@@ -1377,6 +1377,9 @@ var oplib = (function() {
     oplib.isUrl = function(url) {
         return oplib.fn.UrlRegex.test(url);
     };
+    
+    //Überprüft ob das Element gehovert ist
+    oplib.isHover = oplib.ElementSelection.isHover;
 
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
