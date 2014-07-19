@@ -2190,14 +2190,14 @@ var oplib = (function() {
     });
 
     //Parses JSON Data
-    oplib.fn.JSON = function(json) {
+    oplib.JSON = function(json) {
         return oplib.fn.JSON.parse(json);
     };
-    oplib.fn.JSON.parse = function(json) {
+    oplib.JSON.parse = function(json) {
         //Use native Broswser Parser
         return JSON.parse(json);
     };
-    oplib.fn.JSON.stringify = function(obj) {
+    oplib.JSON.stringify = function(obj) {
         //Use native Broswser Stringifier
         return JSON.stringify(obj);
     };
