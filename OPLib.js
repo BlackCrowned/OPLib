@@ -636,7 +636,7 @@ var oplib = (function() {
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
             //Url angegeben. Keine weiteren Selektoren erwartet
-            if (oplib.ElementSelection.isUrl(selector)) {
+            if (oplib.isUrl(selector)) {
                 selector = selector.replace(oplib.fn.UrlRegex, "");
                 parsedSelectors.push({
                     type: "url",
@@ -644,7 +644,7 @@ var oplib = (function() {
                 });
             }
             //Html angegeben, keine weiteren Selektoren erwartet
-            else if (oplib.ElementSelection.isHtml(selector)) {
+            else if (oplib.isHtml(selector)) {
                 parsedSelectors.push({
                     type: "html",
                     data: selector
