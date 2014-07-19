@@ -1386,7 +1386,7 @@ var oplib = (function() {
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //HTML als XML Parsen
-        var dom = oplib.fn.DOM(text, "text/html");
+        var dom = oplib.DOM(text, "text/html");
         var nodes = dom.getElementsByTagName("body")[0].children;
         var elems = [];
         for (var i = 0; i < nodes.length; i++) {
@@ -2204,7 +2204,7 @@ var oplib = (function() {
 
     //Parses DOM
     oplib.DOM = function(dom, mimetype) {
-        return oplib.fn.DOM.parse(dom, mimetype);
+        return oplib.DOM.parse(dom, mimetype);
     };
     oplib.DOM.parse = function(dom, mimetype) {
         if (!mimetype) {
