@@ -2258,7 +2258,7 @@ var oplib = (function() {
 
         return this;
     };
-    oplib.fn.AJAX.request = {
+    oplib.AJAX.request = {
         get: function(xmlhttp, url, fn, header, ajaxSettings) {
             var parsedHeader = "";
             if (header) {
@@ -2326,7 +2326,7 @@ var oplib = (function() {
             return xmlhttp;
         }
     };
-    oplib.fn.AJAX.response = {
+    oplib.AJAX.response = {
         async: function(xmlhttp, fn, ajaxSettings) {
             if (ajaxSettings.content == "text") {
                 xmlhttp.onreadystatechange = function() {
