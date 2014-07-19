@@ -507,11 +507,6 @@ var oplib = (function() {
         }
     };
 
-    //Erstellt ein Array aus dem OPObject
-    oplib.fn.makeArray = function(obj) {
-        return this.merge([], oplib);
-    };
-
     //Erstellt CamelCase
     oplib.fn.camelCase = function(text) {
         text = text.replace(/-([a-z]|[A-Z])/g, function(match) {
