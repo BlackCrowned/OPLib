@@ -11,7 +11,7 @@ var oplib = (function() {
         //Elemente auswählen
         Init: function(selector, context) {
             //Ausgewählte Elemente zuweisen
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             for (var i = 0; i < elems.length; i++) {
                 this[i] = elems[i];
             }
@@ -207,7 +207,7 @@ var oplib = (function() {
 
         //Hängt Elemente an die übereinstimmenden Elemente am Ende an
         append: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     this.appendChild(elems[i]);
@@ -217,7 +217,7 @@ var oplib = (function() {
         },
         //Hängt Elemente an die übereinstimmenden Elemente am Anfang an
         prepend: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     //Gibt es bereits untergeordnete Elemente?
@@ -241,7 +241,7 @@ var oplib = (function() {
         },
         //Hängt Elemente vor die übereinstimmenden Elemente an
         before: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     this.parentNode.insertBefore(elems[i], this);
@@ -251,7 +251,7 @@ var oplib = (function() {
         },
         //Hängt Elemente nach die übereinstimmenden Elemente an
         after: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(this, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
@@ -266,7 +266,7 @@ var oplib = (function() {
         },
         //Hängt übereinstimmende Elemente an Elemente an
         appendTo: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i] = this.appendChild(elems[i]);
@@ -276,7 +276,7 @@ var oplib = (function() {
         },
         //Hängt übereinstimmende Elemente an die Elemente am Anfang an
         prependTo: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     //Gibt es bereits untergeordnete Elemente?
@@ -300,7 +300,7 @@ var oplib = (function() {
         },
         //Hängt übereinstimmende Elemente vor Elemente an
         insertBefore: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i] = this.parentNode.insertBefore(elems[i], this);
@@ -310,7 +310,7 @@ var oplib = (function() {
         },
         //Hängt übereinstimmende Elemente nach Elemente an
         insertAfter: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
+            var elems = oplib.ElementSelection(selector, context);
             return this.finalizeDOMManipulation(elems, function(elems) {
                 for (var i = 0; i < elems.length; i++) {
                     if (this.nextElementSibling != null) {
@@ -330,7 +330,7 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         children: function(R, O) {
-            var children = oplib.fn.ElementSelection.children(this, R);
+            var children = oplib.ElementSelection.children(this, R);
 
             //OPLib soll nur Child Nodes enthalten - Vorherige ELemente
             //löschen
@@ -350,7 +350,7 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         parents: function(R, rekursionLimit, O) {
-            var Parents = oplib.fn.ElementSelection.parents(this, R, rekursionLimit);
+            var Parents = oplib.ElementSelection.parents(this, R, rekursionLimit);
 
             //OPLib soll nur parentNodes enthalten - Vorherige ELemente
             //löschen
@@ -369,7 +369,7 @@ var oplib = (function() {
          * O: Enthält auch eigene(s) Element(e)
          */
         siblings: function(N, O) {
-            var Siblings = oplib.fn.ElementSelection.siblings(this, N);
+            var Siblings = oplib.ElementSelection.siblings(this, N);
 
             //OPLib soll nur siblings enthalten - Vorherige ELemente löschen
             if (!O) {
@@ -397,7 +397,7 @@ var oplib = (function() {
         //limitedTo: Darf nur Elemente aus limitedTo enthalten
         //O: Enthält auch eigene(s) Element(e)
         find: function(selector, O) {
-            var elems = oplib.fn.ElementSelection.find(this, selector);
+            var elems = oplib.ElementSelection.find(this, selector);
             if (!O) {
                 this.length = 0;
             }
@@ -431,8 +431,8 @@ var oplib = (function() {
         },
         //Ersetzt die ausgewähöten Elemente mit einem neuen Element
         replace: function(selector, context) {
-            var elems = oplib.fn.ElementSelection(selector, context);
-            var replaced = oplib.fn.ElementSelection.replace(elems, this);
+            var elems = oplib.ElementSelection(selector, context);
+            var replaced = oplib.ElementSelection.replace(elems, this);
 
             this.length = 0;
 
@@ -443,13 +443,13 @@ var oplib = (function() {
         },
         //Gibt an ob die Elemente gehovert sind
         isHover: function(selector, context) {
-            return oplib.fn.ElementSelection.isHover(this);
+            return oplib.ElementSelection.isHover(this);
         },
         getComputedStyle: function(expression, styles) {
-            return oplib.fn.ElementSelection.getComputedStyle(expression, this[0], styles);
+            return oplib.ElementSelection.getComputedStyle(expression, this[0], styles);
         },
         getDefaultComputedStyle: function(expression, styles) {
-            return oplib.fn.ElementSelection.getDefaultComputedStyle(expression, this[0], styles);
+            return oplib.ElementSelection.getDefaultComputedStyle(expression, this[0], styles);
         },
     };
 
@@ -576,10 +576,10 @@ var oplib = (function() {
         //Context zuweisen //FIX #27 - Wenn kein Context angegeben sind alle
         // Elemente auswählbar
         if (context) {
-            context = oplib.fn.ElementSelection.DOMObjectFromSelector(context);
+            context = oplib.ElementSelection.DOMObjectFromSelector(context);
         }
         //Gewählte Elemente zuweisen
-        elems = oplib.fn.ElementSelection.DOMObjectFromSelector(selector, context);
+        elems = oplib.ElementSelection.DOMObjectFromSelector(selector, context);
         //Ausgewählte Elemente zurückgeben
         return elems;
     };
@@ -598,9 +598,9 @@ var oplib = (function() {
         //Wurde ein context übergeben //FIX #27 - Wenn kein Context angegeben
         // sind alle Elemente auswählbar
 
-        selectors = oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
+        selectors = oplib.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
 
-        return oplib.fn.ElementSelection.DOMObjectFromParsedSelector(selectors, context);
+        return oplib.ElementSelection.DOMObjectFromParsedSelector(selectors, context);
 
     };
 
@@ -636,7 +636,7 @@ var oplib = (function() {
         //Ist Selector ein String, um Regexausdrücke anzuwenden?
         else if ( typeof selector === "string") {
             //Url angegeben. Keine weiteren Selektoren erwartet
-            if (oplib.fn.ElementSelection.isUrl(selector)) {
+            if (oplib.ElementSelection.isUrl(selector)) {
                 selector = selector.replace(oplib.fn.UrlRegex, "");
                 parsedSelectors.push({
                     type: "url",
@@ -644,7 +644,7 @@ var oplib = (function() {
                 });
             }
             //Html angegeben, keine weiteren Selektoren erwartet
-            else if (oplib.fn.ElementSelection.isHtml(selector)) {
+            else if (oplib.ElementSelection.isHtml(selector)) {
                 parsedSelectors.push({
                     type: "html",
                     data: selector
@@ -893,7 +893,7 @@ var oplib = (function() {
             dontCheck = true;
         }
         else {
-            useable = oplib.fn.ElementSelection.children(context, 1);
+            useable = oplib.ElementSelection.children(context, 1);
             for (var i = 0; i < context.length; i++) {
                 useable.push(context[i]);
             }
@@ -927,10 +927,10 @@ var oplib = (function() {
                 case "tag":
                     var matched;
                     if (!dontCheck) {
-                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.tag(selectors[i].data), useable);
+                        matched = useable = oplib.array.sameElements(oplib.ElementSelection.find.tag(selectors[i].data), useable);
                     }
                     else {
-                        matched = useable = oplib.fn.ElementSelection.find.tag(selectors[i].data);
+                        matched = useable = oplib.ElementSelection.find.tag(selectors[i].data);
                         dontCheck = false;
                     }
                     for (var j = 0; j < matched.length; j++) {
@@ -938,14 +938,14 @@ var oplib = (function() {
                     }
                     break;
                 case "id":
-                    if (!dontCheck && oplib.array.includes(useable, oplib.fn.ElementSelection.find.id(selectors[i].data)) != -1) {
-                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
+                    if (!dontCheck && oplib.array.includes(useable, oplib.ElementSelection.find.id(selectors[i].data)) != -1) {
+                        var matched = oplib.ElementSelection.find.id(selectors[i].data);
                         useable = [];
                         useable.push(matched);
                         elems.push(matched);
                     }
                     else if (dontCheck) {
-                        var matched = oplib.fn.ElementSelection.find.id(selectors[i].data);
+                        var matched = oplib.ElementSelection.find.id(selectors[i].data);
                         useable = [];
                         useable.push(matched);
                         elems.push(matched);
@@ -955,10 +955,10 @@ var oplib = (function() {
                 case "class":
                     var matched;
                     if (!dontCheck) {
-                        matched = useable = oplib.array.sameElements(oplib.fn.ElementSelection.find.className(selectors[i].data), useable);
+                        matched = useable = oplib.array.sameElements(oplib.ElementSelection.find.className(selectors[i].data), useable);
                     }
                     else {
-                        matched = useable = oplib.fn.ElementSelection.find.className(selectors[i].data);
+                        matched = useable = oplib.ElementSelection.find.className(selectors[i].data);
                         dontCheck = false;
                     }
                     for (var j = 0; j < matched.length; j++) {
@@ -1040,25 +1040,25 @@ var oplib = (function() {
                     useable = matched;
                     break;
                 case "descendants":
-                    var matched = useable = oplib.fn.ElementSelection.children(useable, 1);
+                    var matched = useable = oplib.ElementSelection.children(useable, 1);
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
                     }
                     break;
                 case "children":
-                    var matched = useable = oplib.fn.ElementSelection.children(useable, 0);
+                    var matched = useable = oplib.ElementSelection.children(useable, 0);
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
                     }
                     break;
                 case "neighbours":
-                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 1);
+                    var matched = useable = oplib.ElementSelection.siblings(useable, 1);
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
                     }
                     break;
                 case "siblings":
-                    var matched = useable = oplib.fn.ElementSelection.siblings(useable, 0);
+                    var matched = useable = oplib.ElementSelection.siblings(useable, 0);
                     for (var j = 0; j < matched.length; j++) {
                         elems.push(matched[j]);
                     }
@@ -1232,8 +1232,8 @@ var oplib = (function() {
         }
         //Alle Siblings gefordert
         if (!N) {
-            var parents = oplib.fn.ElementSelection.parents(elems);
-            var siblings = oplib.fn.ElementSelection.children(parents, 0);
+            var parents = oplib.ElementSelection.parents(elems);
+            var siblings = oplib.ElementSelection.children(parents, 0);
             for (var i = 0; i < elems.length; i++) {
                 if (oplib.array.includes(siblings, elems[i]) != -1) {
                     siblings.splice(oplib.array.includes(siblings, elems[i]), 1);
@@ -1352,7 +1352,7 @@ var oplib = (function() {
      * selector: Selectors
      */
     oplib.ElementSelection.find = function(elems, selector) {
-        return oplib.fn.ElementSelection(selector, elems);
+        return oplib.ElementSelection(selector, elems);
     };
 
     //Findet das Element mit dem angebenen ID
@@ -1489,7 +1489,7 @@ var oplib = (function() {
             conversionFactor = 1;
         }
         else if (oldUnit == "%") {
-            conversionFactor = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
+            conversionFactor = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
         }
         else {
             conversionFactor = oplib.fn.defaults.get("cssConversions", oldUnit + "ToPx");
@@ -1497,7 +1497,7 @@ var oplib = (function() {
         valueInPx = oplib.fn.floatCssValue(value) * conversionFactor;
         //In neue Einheit umrechnen
         if (unit == "%") {
-            conversionFactor = 100 / oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body));
+            conversionFactor = 100 / oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body));
         }
         else if (unit == "px") {
             conversionFactor = 1;
@@ -1859,13 +1859,13 @@ var oplib = (function() {
                     if (elem.style.display == "none" || elem.oplib.state != "shown") {
                         if (!elem.oplib.state) {
                             if (elem.style.display == "none") {
-                                elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem, {display: ""});
-                                if (elem.oplib.oldDisplay == oplib.fn.ElementSelection.getDefaultComputedStyle("display", elem)) {
+                                elem.oplib.oldDisplay = oplib.ElementSelection.getComputedStyle("display", elem, {display: ""});
+                                if (elem.oplib.oldDisplay == oplib.ElementSelection.getDefaultComputedStyle("display", elem)) {
                                     elem.oplib.oldDisplay = "";
                                 }
                             }
                             else {
-                                elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem);
+                                elem.oplib.oldDisplay = oplib.ElementSelection.getComputedStyle("display", elem);
                             }
                             
                             elem.oplib.oldStyle = {};
@@ -1880,11 +1880,11 @@ var oplib = (function() {
                         }
                         //Ansonsten Wert direkt berechnen
                         else {
-                            cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
+                            cssSettings[i].old = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(i, elem));
                         }
                         var styles = oplib.extend({}, elem.oplib.oldStyle);
                         styles.display = elem.oplib.oldDisplay;
-                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem, styles));
+                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.ElementSelection.getDefaultComputedStyle(i, elem, styles));
                     }
 
                 }
@@ -1898,8 +1898,8 @@ var oplib = (function() {
                         elem.oplib.state = "hiding";
 
                         cssSettings[i] = {};
-                        cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
-                        cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
+                        cssSettings[i].old = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(i, elem));
+                        cssSettings[i].current = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(i, elem));
                         cssSettings[i].aim = 0;
                     }
 
@@ -1908,8 +1908,8 @@ var oplib = (function() {
                     cssSettings[i] = {};
                     cssSettings[i].unit = oplib.fn.getCssUnit(options[i]);
 
-                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.fn.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
-                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.fn.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
+                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
+                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
                     cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(options[i], cssSettings[i].unit, i, elem));
 
                     //Make sure to apply all style changes afterwards #30
@@ -2644,7 +2644,7 @@ var oplib = (function() {
         }
         options.showDelay = options.showDelay || oplib.fn.defaults.get("tooltipSettings", "showDelay");
         options.hideDelay = options.hideDelay || oplib.fn.defaults.get("tooltipSettings", "hideDelay");
-        var elems = oplib.fn.ElementSelection(selector, context);
+        var elems = oplib.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
             for (var i = 0; i < elems.length; i++) {
                 if (this.parentNode) {
@@ -2670,7 +2670,7 @@ var oplib = (function() {
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
                 function hideTooltips(elems, options) {
-                    if (oplib.fn.ElementSelection.isHover(elems).length == 0) {
+                    if (oplib.ElementSelection.isHover(elems).length == 0) {
                         for (var i = 0; i < elems.length; i++) {
                             oplib.fx.stop(elems[i], 1, 0);
                         }
@@ -2688,8 +2688,8 @@ var oplib = (function() {
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i].style.position = "absolute";
-                    var width = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle("width", elems[i]));
-                    var height = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle("height", elems[i]));
+                    var width = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle("width", elems[i]));
+                    var height = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle("height", elems[i]));
                     var left = e.pageX + 5;
                     var top = e.pageY + 5;
                     if (left + width >= window.innerWidth + window.pageXOffset) {
