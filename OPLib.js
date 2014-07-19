@@ -1283,7 +1283,11 @@ var oplib = (function() {
             }, window);
             oplib.modules.isHover = true;
         }
-
+        
+        if (!elems) {
+            return false;
+        }
+        
         if ( elems instanceof Node) {
             if (!elems.oplib) {
                 elems.oplib = {};
