@@ -1861,6 +1861,9 @@ var oplib = (function() {
                         if (!elem.oplib.state) {
                             if (elem.style.display == "none") {
                                 elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem, {display: ""});
+                                if (elem.oplib.oldDisplay == oplib.fn.ElementSelection.getDefaultComputedStyle("display", elem)) {
+                                    elem.oplib.oldDisplay = "";
+                                }
                             }
                             else {
                                 elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem);
