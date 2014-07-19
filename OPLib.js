@@ -1372,7 +1372,7 @@ var oplib = (function() {
     };
     
     //Gibt den Standartwert des errechneten Wert des Css-Ausdrucks zurück
-    oplib.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
+    oplib.getDefaultComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
         clone.style.cssText = "";
