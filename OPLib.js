@@ -2469,14 +2469,14 @@ var oplib = (function() {
         // EINMAL GESTZT WERDEN
         handleAttached: {},
         //Listener dem globalen handler hinzufügen
-        addEvent: function(type, fn, elem) {
+        addEvent: function(type, fn, elem, args) {
             //handleAttached überprüfen
             if (this.handleAttached[type] == undefined) {
                 this.handleAttached[type] = [];
             }
             for (var i = 0; i < this.handleAttached[type]; i++) {
                 if (this.handleAttached[type][i]["elem"] == elem && this.handleAttached[type][i]["attached"] == true) {
-                    return oplib.fn.handler.addListener(type, fn, elem);
+                    return oplib.fn.handler.addListener(type, fn, elem, args);
                 }
             }
             this.handleAttached[type].push({
@@ -2484,7 +2484,7 @@ var oplib = (function() {
                 attached: true
             });
             elem.addEventListener(type, oplib.fn.handler, false);
-            return oplib.fn.handler.addListener(type, fn, elem);
+            return oplib.fn.handler.addListener(type, fn, elem, args);
 
         },
         //Listener dem globalen Handler entfernen
