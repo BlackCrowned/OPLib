@@ -479,7 +479,7 @@ var oplib = (function() {
     };
 
     //Funktion in einem bestimmten Context mit verschiedenen Argumenten ausführen
-    oplib.fn.each = function(obj, fn, args) {
+    oplib.each = function(obj, fn, args) {
         //Alle Argument für die Funktion durchgehen
         if (obj.length != undefined) {
             for (var i = 0; i < obj.length; i++) {
