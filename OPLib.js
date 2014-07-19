@@ -1116,16 +1116,6 @@ var oplib = (function() {
         return elems;
     };
 
-    //Überprüft ob es sich um HTML handelt
-    oplib.ElementSelection.isHtml = function(html) {
-        return oplib.fn.HtmlRegex.test(html);
-    };
-
-    //Überprüft ob es sich um eine URL handelt
-    oplib.ElementSelection.isUrl = function(url) {
-        return oplib.fn.UrlRegex.test(url);
-    };
-
     //Namespace oplib.fn.ElementSelection.html festlegen
     oplib.ElementSelection.html = {};
 
@@ -1389,6 +1379,16 @@ var oplib = (function() {
         value = window.getComputedStyle(clone)[expression];
         document.body.removeChild(clone);
         return value;
+    };
+    
+    //Überprüft ob es sich um HTML handelt
+    oplib.isHtml = function(html) {
+        return oplib.fn.HtmlRegex.test(html);
+    };
+    
+    //Überprüft ob es sich um eine URL handelt
+    oplib.isUrl = function(url) {
+        return oplib.fn.UrlRegex.test(url);
     };
 
     //Erstellt ein DOMObject anhand eines Strings
