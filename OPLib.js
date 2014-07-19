@@ -1369,7 +1369,7 @@ var oplib = (function() {
     oplib.fn.ElementSelection.getComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
-        clone.style = oplib.fn.merge(clone.style, styles);
+        clone.style = oplib.extend(clone.style, styles);
         document.body.appendChild(clone);
         value = window.getComputedStyle(clone)[expression];
         document.body.removeChild(clone);
@@ -1380,7 +1380,7 @@ var oplib = (function() {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
         clone.style.cssText = "";
-        clone.style = oplib.fn.merge(clone.style, styles);
+        clone.style = oplib.extend(clone.style, styles);
         document.body.appendChild(clone);
         value = window.getComputedStyle(clone)[expression];
         document.body.removeChild(clone);
@@ -1878,7 +1878,7 @@ var oplib = (function() {
                         else {
                             cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(i, elem));
                         }
-                        var styles = oplib.fn.merge({}, elem.oplib.oldStyle);
+                        var styles = oplib.extend({}, elem.oplib.oldStyle);
                         styles.display = elem.oplib.oldDisplay;
                         cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getDefaultComputedStyle(i, elem, styles));
                     }
@@ -1887,7 +1887,7 @@ var oplib = (function() {
                 else if (options[i] == "hide") {
                     if (elem.style.display != "none" || elem.oplib.state != "hidden") {
                         if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
-                            elem.oplib.oldStyle = oplib.fn.merge({}, elem.style);
+                            elem.oplib.oldStyle = oplib.extend({}, elem.style);
                             elem.oplib.oldDisplay = elem.style.display;
                         }
                         elem.oplib.stylesChanged.push(i);
