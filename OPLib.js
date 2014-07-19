@@ -495,7 +495,7 @@ var oplib = (function() {
         }
         return obj;
     };
-    
+
     oplib.fn.each = function(fn, args) {
         return oplib.each(this, fn, args);
     };
@@ -1346,17 +1346,17 @@ var oplib = (function() {
             return false;
         }
     };
-    
+
     //Überprüft ob es sich um HTML handelt
     oplib.isHtml = function(html) {
         return oplib.fn.HtmlRegex.test(html);
     };
-    
+
     //Überprüft ob es sich um eine URL handelt
     oplib.isUrl = function(url) {
         return oplib.fn.UrlRegex.test(url);
     };
-    
+
     //Überprüft ob das Element gehovert ist
     oplib.isHover = oplib.ElementSelection.isHover;
 
@@ -1370,7 +1370,7 @@ var oplib = (function() {
         document.body.removeChild(clone);
         return value;
     };
-    
+
     //Gibt den Standartwert des errechneten Wert des Css-Ausdrucks zurück
     oplib.getDefaultComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
@@ -1382,7 +1382,7 @@ var oplib = (function() {
         document.body.removeChild(clone);
         return value;
     };
-    
+
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //HTML als XML Parsen
@@ -1851,7 +1851,9 @@ var oplib = (function() {
                     if (elem.style.display == "none" || elem.oplib.state != "shown") {
                         if (!elem.oplib.state) {
                             if (elem.style.display == "none") {
-                                elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem, {display: ""});
+                                elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem, {
+                                    display: ""
+                                });
                                 if (elem.oplib.oldDisplay == oplib.getDefaultComputedStyle("display", elem)) {
                                     elem.oplib.oldDisplay = "";
                                 }
@@ -1859,7 +1861,7 @@ var oplib = (function() {
                             else {
                                 elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem);
                             }
-                            
+
                             elem.oplib.oldStyle = {};
                         }
                         elem.oplib.stylesChanged.push(i);
