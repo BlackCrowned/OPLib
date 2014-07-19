@@ -446,7 +446,7 @@ var oplib = (function() {
             return oplib.ElementSelection.isHover(this);
         },
         getComputedStyle: function(expression, styles) {
-            return oplib.ElementSelection.getComputedStyle(expression, this[0], styles);
+            return oplib.getComputedStyle(expression, this[0], styles);
         },
         getDefaultComputedStyle: function(expression, styles) {
             return oplib.ElementSelection.getDefaultComputedStyle(expression, this[0], styles);
@@ -1481,7 +1481,7 @@ var oplib = (function() {
             conversionFactor = 1;
         }
         else if (oldUnit == "%") {
-            conversionFactor = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
+            conversionFactor = oplib.fn.floatCssValue(oplib.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
         }
         else {
             conversionFactor = oplib.fn.defaults.get("cssConversions", oldUnit + "ToPx");
@@ -1489,7 +1489,7 @@ var oplib = (function() {
         valueInPx = oplib.fn.floatCssValue(value) * conversionFactor;
         //In neue Einheit umrechnen
         if (unit == "%") {
-            conversionFactor = 100 / oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body));
+            conversionFactor = 100 / oplib.fn.floatCssValue(oplib.getComputedStyle(expression, elem.parentNode || document.body));
         }
         else if (unit == "px") {
             conversionFactor = 1;
@@ -1851,13 +1851,13 @@ var oplib = (function() {
                     if (elem.style.display == "none" || elem.oplib.state != "shown") {
                         if (!elem.oplib.state) {
                             if (elem.style.display == "none") {
-                                elem.oplib.oldDisplay = oplib.ElementSelection.getComputedStyle("display", elem, {display: ""});
+                                elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem, {display: ""});
                                 if (elem.oplib.oldDisplay == oplib.ElementSelection.getDefaultComputedStyle("display", elem)) {
                                     elem.oplib.oldDisplay = "";
                                 }
                             }
                             else {
-                                elem.oplib.oldDisplay = oplib.ElementSelection.getComputedStyle("display", elem);
+                                elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem);
                             }
                             
                             elem.oplib.oldStyle = {};
@@ -1872,7 +1872,7 @@ var oplib = (function() {
                         }
                         //Ansonsten Wert direkt berechnen
                         else {
-                            cssSettings[i].old = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(i, elem));
+                            cssSettings[i].old = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
                         }
                         var styles = oplib.extend({}, elem.oplib.oldStyle);
                         styles.display = elem.oplib.oldDisplay;
@@ -1890,8 +1890,8 @@ var oplib = (function() {
                         elem.oplib.state = "hiding";
 
                         cssSettings[i] = {};
-                        cssSettings[i].old = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(i, elem));
-                        cssSettings[i].current = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle(i, elem));
+                        cssSettings[i].old = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
+                        cssSettings[i].current = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
                         cssSettings[i].aim = 0;
                     }
 
@@ -1900,8 +1900,8 @@ var oplib = (function() {
                     cssSettings[i] = {};
                     cssSettings[i].unit = oplib.fn.getCssUnit(options[i]);
 
-                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
-                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.ElementSelection.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
+                    cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
+                    cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
                     cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(options[i], cssSettings[i].unit, i, elem));
 
                     //Make sure to apply all style changes afterwards #30
@@ -2680,8 +2680,8 @@ var oplib = (function() {
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
                     elems[i].style.position = "absolute";
-                    var width = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle("width", elems[i]));
-                    var height = oplib.fn.floatCssValue(oplib.ElementSelection.getComputedStyle("height", elems[i]));
+                    var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", elems[i]));
+                    var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", elems[i]));
                     var left = e.pageX + 5;
                     var top = e.pageY + 5;
                     if (left + width >= window.innerWidth + window.pageXOffset) {
