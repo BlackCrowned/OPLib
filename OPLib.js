@@ -2672,7 +2672,7 @@ var oplib = (function() {
                         oplib.fx(elems, {
                             height: "show",
                             opacity: "show"
-                        }, "fast");
+                        }, "fast", "decelerate");
                     }
                 }, options.showDelay, options, this));
                 while (options.hideTimeout.length) {
@@ -2688,7 +2688,7 @@ var oplib = (function() {
                         oplib.fx(elems, {
                             height: "hide",
                             opacity: "hide"
-                        }, "fast");
+                        }, "fast", "decelerate");
                     }
                     else {
                         options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, self));
