@@ -449,7 +449,7 @@ var oplib = (function() {
             return oplib.getComputedStyle(expression, this[0], styles);
         },
         getDefaultComputedStyle: function(expression, styles) {
-            return oplib.ElementSelection.getDefaultComputedStyle(expression, this[0], styles);
+            return oplib.getDefaultComputedStyle(expression, this[0], styles);
         },
     };
 
@@ -1852,7 +1852,7 @@ var oplib = (function() {
                         if (!elem.oplib.state) {
                             if (elem.style.display == "none") {
                                 elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem, {display: ""});
-                                if (elem.oplib.oldDisplay == oplib.ElementSelection.getDefaultComputedStyle("display", elem)) {
+                                if (elem.oplib.oldDisplay == oplib.getDefaultComputedStyle("display", elem)) {
                                     elem.oplib.oldDisplay = "";
                                 }
                             }
@@ -1876,7 +1876,7 @@ var oplib = (function() {
                         }
                         var styles = oplib.extend({}, elem.oplib.oldStyle);
                         styles.display = elem.oplib.oldDisplay;
-                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.ElementSelection.getDefaultComputedStyle(i, elem, styles));
+                        cssSettings[i].aim = oplib.fn.floatCssValue(oplib.getDefaultComputedStyle(i, elem, styles));
                     }
 
                 }
