@@ -1859,7 +1859,13 @@ var oplib = (function() {
                 if (options[i] == "show") {
                     if (elem.style.display == "none" || elem.oplib.state != "shown") {
                         if (!elem.oplib.state) {
-                            elem.oplib.oldDisplay = "inline-block";
+                            if (elem.style.display == "none") {
+                                elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem, {display: ""});
+                            }
+                            else {
+                                elem.oplib.oldDisplay = oplib.fn.ElementSelection.getComputedStyle("display", elem);
+                            }
+                            
                             elem.oplib.oldStyle = {};
                         }
                         elem.oplib.stylesChanged.push(i);
