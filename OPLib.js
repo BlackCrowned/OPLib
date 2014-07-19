@@ -454,15 +454,13 @@ var oplib = (function() {
     };
 
     //Objecte zusammenführen
-    oplib.fn.merge = function(obj, probs) {
-        //For-schleife für alle Elemente in probs
-        for (var i in probs) {
-            //Elemente aus probs obj zuweisen
-            obj[i] = probs[i];
-
+    oplib.merge = function(arr1, arr2) {
+        //For-schleife für alle Elemente in arr2
+        for (var i = 0; i < arr2.length; i++) {
+            arr1.push(arr2[i]);
         }
-        //Zusammengeführtes obj zurückgeben
-        return obj;
+        //Zusammengeführtes Array zurückgeben
+        return arr1;
 
     };
 
