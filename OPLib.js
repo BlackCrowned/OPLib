@@ -1425,7 +1425,7 @@ var oplib = (function() {
         //Bereits ein String
         if ( typeof value === "string") {
             //Bindestriche entfernen und folgendes Zeichen groﬂschreiben
-            expression = oplib.fn.camelCase(expression);
+            expression = oplib.camelCase(expression);
         }
         else if ( typeof value === "number") {
             value = value.toString();
@@ -1503,7 +1503,7 @@ var oplib = (function() {
             conversionFactor = 1;
         }
         else {
-            conversionFactor = oplib.fn.defaults.get("cssConversions", oplib.fn.camelCase("px-to-" + unit));
+            conversionFactor = oplib.fn.defaults.get("cssConversions", oplib.camelCase("px-to-" + unit));
         }
         return (valueInPx * conversionFactor).toString() + unit;
     };
