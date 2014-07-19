@@ -585,7 +585,7 @@ var oplib = (function() {
     };
 
     //Wandelt einen Selector in ein DOMObject um
-    oplib.fn.ElementSelection.DOMObjectFromSelector = function(selector, context) {
+    oplib.ElementSelection.DOMObjectFromSelector = function(selector, context) {
         var selectors = [];
 
         //Wurde ein selector übergeben
@@ -605,7 +605,7 @@ var oplib = (function() {
     };
 
     //Parst den Selector
-    oplib.fn.ElementSelection.DOMObjectFromSelector.ParseSelector = function(selector) {
+    oplib.ElementSelection.DOMObjectFromSelector.ParseSelector = function(selector) {
         var parsedSelectors = [];
         //[{type, data}]
 
@@ -883,7 +883,7 @@ var oplib = (function() {
     };
 
     //Wandelt geparste Selektoren in DOMObjecte um
-    oplib.fn.ElementSelection.DOMObjectFromParsedSelector = function(selectors, context) {
+    oplib.ElementSelection.DOMObjectFromParsedSelector = function(selectors, context) {
         //Muss im context vorkommen.
         var elems = [];
         var useable;
@@ -1117,25 +1117,25 @@ var oplib = (function() {
     };
 
     //Überprüft ob es sich um HTML handelt
-    oplib.fn.ElementSelection.isHtml = function(html) {
+    oplib.ElementSelection.isHtml = function(html) {
         return oplib.fn.HtmlRegex.test(html);
     };
 
     //Überprüft ob es sich um eine URL handelt
-    oplib.fn.ElementSelection.isUrl = function(url) {
+    oplib.ElementSelection.isUrl = function(url) {
         return oplib.fn.UrlRegex.test(url);
     };
 
     //Namespace oplib.fn.ElementSelection.html festlegen
-    oplib.fn.ElementSelection.html = {};
+    oplib.ElementSelection.html = {};
 
     //Überprüft ob der HTML-String ein einzelnes Element enthält.
-    oplib.fn.ElementSelection.html.singleElement = function(htmlString) {
+    oplib.ElementSelection.html.singleElement = function(htmlString) {
         return oplib.fn.HtmlSingleElementRegex.test(htmlString);
     };
 
     //Überprüft ob der HTML-String nur aus einem Tag besteht <tag>
-    oplib.fn.ElementSelection.html.onlyTag = function(htmlString) {
+    oplib.ElementSelection.html.onlyTag = function(htmlString) {
         return oplib.fn.HtmlTagRegex.test(htmlString);
     };
 
@@ -1143,7 +1143,7 @@ var oplib = (function() {
      * Findet untergeordnete Nodes für die Elemente
      * R: Rekursive Suche möglich
      */
-    oplib.fn.ElementSelection.children = function(parents, R) {
+    oplib.ElementSelection.children = function(parents, R) {
         var children = [];
 
         //Erwartet ein Array;
@@ -1181,7 +1181,7 @@ var oplib = (function() {
      * R: Rekursive Suche möglich
      * rekursionLimit: Limit für rekursive Suche
      */
-    oplib.fn.ElementSelection.parents = function(children, R, rekursionLimit) {
+    oplib.ElementSelection.parents = function(children, R, rekursionLimit) {
 
         var Parents = [];
         var topLimit;
@@ -1225,7 +1225,7 @@ var oplib = (function() {
     /* Findet gleichgeordnete Nodes für die Elemente
      * N: Nur Nachbaren einschließen
      */
-    oplib.fn.ElementSelection.siblings = function(elems, N) {
+    oplib.ElementSelection.siblings = function(elems, N) {
         //Erwartet ein Array
         if ( elems instanceof Node) {
             elems = [elems];
@@ -1258,7 +1258,7 @@ var oplib = (function() {
     };
 
     //Tauscht Elemente mit anderen Elementen aus
-    oplib.fn.ElementSelection.replace = function(newElems, oldElems) {
+    oplib.ElementSelection.replace = function(newElems, oldElems) {
         //Erwartet ein Array
         if ( oldElems instanceof Node) {
             oldElems = [oldElems];
@@ -1283,7 +1283,7 @@ var oplib = (function() {
     };
 
     //Überprüft ob das Element gehovert ist
-    oplib.fn.ElementSelection.isHover = function(elems) {
+    oplib.ElementSelection.isHover = function(elems) {
         //Globaler Handler schon gesetzt?
         if (!oplib.modules.isHover) {
             oplib.fn.events.addEvent("mouseover", function(e) {
@@ -1351,26 +1351,26 @@ var oplib = (function() {
     /* Findet entsprechende Elemente
      * selector: Selectors
      */
-    oplib.fn.ElementSelection.find = function(elems, selector) {
+    oplib.ElementSelection.find = function(elems, selector) {
         return oplib.fn.ElementSelection(selector, elems);
     };
 
     //Findet das Element mit dem angebenen ID
-    oplib.fn.ElementSelection.find.id = function(id) {
+    oplib.ElementSelection.find.id = function(id) {
         return document.getElementById(id);
     };
 
     //Findet die Elemente mit den angebenen Klassennamen
-    oplib.fn.ElementSelection.find.className = function(className) {
+    oplib.ElementSelection.find.className = function(className) {
         return document.getElementsByClassName(className);
     };
 
     //Findet Elemente mit dem angebenen Tag
-    oplib.fn.ElementSelection.find.tag = function(tag) {
+    oplib.ElementSelection.find.tag = function(tag) {
         return document.getElementsByTagName(tag);
     };
 
-    oplib.fn.ElementSelection.getComputedStyle = function(expression, elem, styles) {
+    oplib.ElementSelection.getComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
         clone.style = oplib.extend(clone.style, styles);
@@ -1380,7 +1380,7 @@ var oplib = (function() {
         return value;
     };
 
-    oplib.fn.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
+    oplib.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
         clone.style.cssText = "";
