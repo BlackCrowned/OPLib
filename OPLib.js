@@ -501,7 +501,7 @@ var oplib = (function() {
     };
 
     //Überprüft ob es sich um ein OPObject Handelt
-    oplib.fn.isOPLib = function(obj) {
+    oplib.isOPLib = function(obj) {
         if (!obj) {
             return false;
         }
