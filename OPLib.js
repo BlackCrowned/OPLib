@@ -412,7 +412,7 @@ var oplib = (function() {
             if (!options) {
                 options = {};
             }
-            options = oplib.fn.extend(options, {
+            options = oplib.extend(options, {
                 args: this
             });
             oplib.AJAX(url, function(text, readyState, status, elems) {
@@ -1561,7 +1561,7 @@ var oplib = (function() {
     };
 
     //Abkürzungen für allgemeine Animationen
-    oplib.fn.extend(oplib.fn, {
+    oplib.extend(oplib.fn, {
         hide: function(duration, interpolator, callbacks, scope) {
             return this.each(this, function(duration, interpolator, callbacks, scope) {
                 oplib.fx([this], {
@@ -1794,7 +1794,7 @@ var oplib = (function() {
 
             for (var j = 0; j < oplib.fx.queue.length; j++) {
                 if (oplib.fx.queue[j].elem == elems[i]) {
-                    var callbackOptions = oplib.fn.extend(options, {
+                    var callbackOptions = oplib.extend(options, {
                         duration: duration,
                         interpolator: interpolator,
                         callbacks: callbacks,
@@ -1811,7 +1811,7 @@ var oplib = (function() {
         }
     };
 
-    oplib.fn.extend(oplib.fx, {
+    oplib.extend(oplib.fx, {
         init: function(elem, options, duration, interpolator, callbacks, scope) {
 
             //Optionen interpretieren
@@ -2408,7 +2408,7 @@ var oplib = (function() {
     oplib.AJAX = oplib.fn.AJAX;
 
     //Abkürzungen für events
-    oplib.fn.extend(oplib.fn, {
+    oplib.extend(oplib.fn, {
         click: function(fn) {
             return this.events("click", fn);
         },
@@ -2465,7 +2465,7 @@ var oplib = (function() {
     };
 
     //Event Klasse
-    oplib.fn.extend(oplib.fn.events, {
+    oplib.extend(oplib.fn.events, {
         //Wurde der GLOBALE Handler bereits für dieses Event gesetzt? DARF NUR
         // EINMAL GESTZT WERDEN
         handleAttached: {},
@@ -2524,7 +2524,7 @@ var oplib = (function() {
     };
 
     //Handler Klasse
-    oplib.fn.extend(oplib.fn.handler, {
+    oplib.extend(oplib.fn.handler, {
         //Aufbau: handleList.element[...].type[...].{function, text, enabled}
         handleList: {},
 
@@ -2609,7 +2609,7 @@ var oplib = (function() {
             oplib.fn.events.removeEvent("OPready", fn, this);
         }, [fn]);
     };
-    oplib.fn.extend(oplib.fn.ready, {
+    oplib.extend(oplib.fn.ready, {
         //Globaler .ready() Handler
         handler: function(e) {
             if (oplib.fn.ready.isReadyState[e.target]) {
@@ -2825,7 +2825,7 @@ var oplib = (function() {
         return this;
     };
     //Standartwerte
-    oplib.fn.extend(oplib.fn.defaults, {
+    oplib.extend(oplib.fn.defaults, {
         //Gibt Default-Werte zurück
         get: function(group, name) {
             if (!name) {
