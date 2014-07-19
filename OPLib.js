@@ -2665,8 +2665,8 @@ var oplib = (function() {
                 }, options.showDelay);
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
-                function hideTooltips(elems, options) {
-                    if (oplib.ElementSelection.isHover(elems).length == 0 || !options.dontHideWhileHoveringTooltip) {
+                function hideTooltips(elems, options, self) {
+                    if (!oplib.isHover(self) && oplib.isHover(elems).length == 0 || !options.dontHideWhileHoveringTooltip) {
                         for (var i = 0; i < elems.length; i++) {
                             oplib.fx.stop(elems[i], 1, 0);
                         }
@@ -2676,10 +2676,10 @@ var oplib = (function() {
                         }, "fast");
                     }
                     else {
-                        setTimeout(hideTooltips, options.hideDelay, elems, options);
+                        setTimeout(hideTooltips, options.hideDelay, elems, options, self);
                     }
                 };
-                setTimeout(hideTooltips, options.hideDelay, elems, options);
+                setTimeout(hideTooltips, options.hideDelay, elems, options, this);
             }, this);
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
