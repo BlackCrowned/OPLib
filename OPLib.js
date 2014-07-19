@@ -2647,6 +2647,12 @@ var oplib = (function() {
         options.xDistance = options.xDistance || oplib.defaults.get("tooltipSettings", "xDistance");
         options.yDistance = options.yDistance || oplib.defaults.get("tooltipSettings", "yDistance");
         options.dontHideWhileHoveringTooltip = options.dontHideWhileHoveringTooltip || oplib.defaults.get("tooltipSettings", "dontHideWhileHoveringTooltip");
+        options.showAnimation = options.showAnimation || oplib.defaults.get("tooltipSettings", "showAnimation");
+        options.hideAnimation = options.hideAnimation || oplib.defaults.get("tooltipSettings", "hideAnimation");
+        options.showSpeed = options.showSpeed || oplib.defaults.get("tooltipSettings", "showSpeed");
+        options.hideSpeed = options.hideSpeed || oplib.defaults.get("tooltipSettings", "hideSpeed");
+        options.showInterpolator = options.showInterpolator || oplib.defaults.get("tooltipSettings", "showInterpolator");
+        options.hideInterpolator = options.hideInterpolator || oplib.defaults.get("tooltipSettings", "hideInterpolator");
         options.showTimeout = [];
         options.hideTimeout = [];
 
@@ -2669,10 +2675,7 @@ var oplib = (function() {
                         for (var i = 0; i < elems.length; i++) {
                             oplib.fx.stop(elems[i], 1, 0);
                         }
-                        oplib.fx(elems, {
-                            height: "show",
-                            opacity: "show"
-                        }, "fast", "decelerate");
+                        oplib.fx(elems, options.showAnimation, options.showSpeed, options.showInterpolator);
                     }
                 }, options.showDelay, options, this));
                 while (options.hideTimeout.length) {
@@ -2685,10 +2688,7 @@ var oplib = (function() {
                         for (var i = 0; i < elems.length; i++) {
                             oplib.fx.stop(elems[i], 1, 0);
                         }
-                        oplib.fx(elems, {
-                            height: "hide",
-                            opacity: "hide"
-                        }, "fast", "accelerate");
+                        oplib.fx(elems, options.hideAnimation, options.hideSpeed, options.hideInterpolator);
                     }
                     else {
                         options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, self));
