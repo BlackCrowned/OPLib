@@ -2248,12 +2248,12 @@ var oplib = (function() {
             }
         }
 
-        xmlhttp = oplib.fn.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
+        xmlhttp = oplib.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
         if (ajaxSettings.async == true) {
-            xmlhttp = oplib.fn.AJAX.response.async(xmlhttp, fn, ajaxSettings);
+            xmlhttp = oplib.AJAX.response.async(xmlhttp, fn, ajaxSettings);
         }
         else {
-            xmlhttp = oplib.fn.AJAX.response.sync(xmlhttp, fn, ajaxSettings);
+            xmlhttp = oplib.AJAX.response.sync(xmlhttp, fn, ajaxSettings);
         }
 
         return this;
@@ -2399,9 +2399,6 @@ var oplib = (function() {
             return xmlhttp;
         }
     };
-
-    //Auch über $.AJAX aufrufbar
-    oplib.AJAX = oplib.fn.AJAX;
 
     //Abkürzungen für events
     oplib.extend(oplib.fn, {
