@@ -2191,7 +2191,7 @@ var oplib = (function() {
 
     //Parses JSON Data
     oplib.JSON = function(json) {
-        return oplib.fn.JSON.parse(json);
+        return oplib.JSON.parse(json);
     };
     oplib.JSON.parse = function(json) {
         //Use native Broswser Parser
@@ -2273,7 +2273,7 @@ var oplib = (function() {
                         //Objecte in JSON umwandeln um AJAX-Request möglich zu
                         // machen
                         if ( typeof header[i] === "object") {
-                            header[i] = oplib.fn.JSON.stringify(header[i]);
+                            header[i] = oplib.JSON.stringify(header[i]);
                         }
                         if (!parsedHeader) {
                             parsedHeader += ("?" + i + "=" + header[i]);
@@ -2306,7 +2306,7 @@ var oplib = (function() {
                         //Objecte in JSON umwandeln um AJAX-Request möglich zu
                         // machen
                         if ( typeof header[i] === "object") {
-                            header[i] = oplib.fn.JSON.stringify(header[i]);
+                            header[i] = oplib.JSON.stringify(header[i]);
                         }
                         if (!parsedHeader) {
                             parsedHeader = i + "=" + header[i];
@@ -2372,7 +2372,7 @@ var oplib = (function() {
                         ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
                     }
                     else if (xmlhttp.readyState == 4) {
-                        fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+                        fn.apply(this, [oplib.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
                     }
                 };
             }
@@ -2390,7 +2390,7 @@ var oplib = (function() {
                 fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
             }
             else if (ajaxSettings.content == "json") {
-                fn.apply(this, [oplib.fn.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+                fn.apply(this, [oplib.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
             }
             else {
                 console.log(ajaxSettings.content + ": is not a valid contentType");
