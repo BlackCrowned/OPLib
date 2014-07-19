@@ -1283,11 +1283,11 @@ var oplib = (function() {
             }, window);
             oplib.modules.isHover = true;
         }
-        
+
         if (!elems) {
             return false;
         }
-        
+
         if ( elems instanceof Node) {
             if (!elems.oplib) {
                 elems.oplib = {};
@@ -2695,7 +2695,7 @@ var oplib = (function() {
                     }
                 };
                 options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, this));
-                while(options.showTimeout.length) {
+                while (options.showTimeout.length) {
                     clearTimeout(options.showTimeout.pop());
                 }
             }, this);
@@ -2923,7 +2923,7 @@ var oplib = (function() {
         };
 
     }
-    
+
     //Nötige Module aktivieren
     oplib.ElementSelection.isHover();
 
