@@ -2442,7 +2442,7 @@ var oplib = (function() {
     });
 
     //Adds Events | Dispatches Events
-    oplib.fn.events = function(type, fn) {
+    oplib.fn.events = function(type, fn, args) {
         if (!fn) {
             return this.each(function(type) {
                 oplib.fn.events.dispatchEvent(type, this);
@@ -2450,8 +2450,8 @@ var oplib = (function() {
         }
         else {
             return this.each(function(type, fn) {
-                oplib.fn.events.addEvent(type, fn, this);
-            }, [type, fn]);
+                oplib.fn.events.addEvent(type, fn, this, args);
+            }, [type, fn, args]);
         }
 
     };
