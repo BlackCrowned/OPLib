@@ -1433,7 +1433,7 @@ var oplib = (function() {
             //"width" -> Einheit benötigt
             if (expression.search(/(width|height|position|origin|size|padding|margin|spacing|gap)/i) != -1) {
                 if (!args) {
-                    value += oplib.fn.defaults.cssUnit;
+                    value += oplib.fn.defaults.get("cssUnit");
                 }
                 else {
                     value += args;
@@ -1442,7 +1442,7 @@ var oplib = (function() {
             //"top" -> Einheit benötigt
             else if (expression.search(/^(top|bottom|left|rigth|flex-?basis)/i) != -1) {
                 if (!args) {
-                    value += oplib.fn.defaults.cssUnit;
+                    value += oplib.fn.defaults.get("cssUnit");
                 }
                 else {
                     value += args;
@@ -1462,7 +1462,7 @@ var oplib = (function() {
         var unit = "";
         if ( typeof value === "string") {
             if (value.search(/[\d\.]/g) == -1) {
-                unit = oplib.fn.defaults.cssUnit;
+                unit = oplib.fn.defaults.get("cssUnit");
             }
             else {
                 unit = value.replace(/[\d\.]/g, "");
@@ -1493,7 +1493,7 @@ var oplib = (function() {
             conversionFactor = oplib.fn.floatCssValue(oplib.fn.ElementSelection.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
         }
         else {
-            conversionFactor = oplib.fn.defaults.cssConversions[oldUnit + "ToPx"];
+            conversionFactor = oplib.fn.defaults.get("cssConversions", oldUnit + "ToPx");
         }
         valueInPx = oplib.fn.floatCssValue(value) * conversionFactor;
         //In neue Einheit umrechnen
@@ -1504,7 +1504,7 @@ var oplib = (function() {
             conversionFactor = 1;
         }
         else {
-            conversionFactor = oplib.fn.defaults.cssConversions[oplib.fn.camelCase("px-to-" + unit)];
+            conversionFactor = oplib.fn.defaults.get("cssConversions", oplib.fn.camelCase("px-to-" + unit));
         }
         return (valueInPx * conversionFactor).toString() + unit;
     };
@@ -1718,7 +1718,7 @@ var oplib = (function() {
                 delete options.duration;
             }
             else {
-                duration = oplib.fn.defaults.animationSettings.duration;
+                duration = oplib.fn.defaults.get("animationSettings", "duration");
             }
         }
         if (!interpolator) {
@@ -1727,7 +1727,7 @@ var oplib = (function() {
                 delete options.interpolator;
             }
             else {
-                interpolator = oplib.fn.defaults.animationSettings.interpolator;
+                interpolator = oplib.fn.defaults.get("animationSettings", "interpolator");
             }
         }
         if (!callbacks) {
@@ -1748,7 +1748,7 @@ var oplib = (function() {
                 scope = elems;
             }
             else {
-                scope = oplib.fn.defaults.animationSettings.scope;
+                scope = oplib.fn.defaults.get("animationSettings", "scope");
             }
         }
 
@@ -1767,13 +1767,13 @@ var oplib = (function() {
 
         //Argumente interpretieren
         if (duration == "normal") {
-            duration = oplib.fn.defaults.animationSettings.normal;
+            duration = oplib.fn.defaults.get("animationSettings", "normal");
         }
         if (duration == "fast") {
-            duration = oplib.fn.defaults.animationSettings.fast;
+            duration = oplib.fn.defaults.get("animationSettings", "fast");
         }
         if (duration == "slow") {
-            duration = oplib.fn.defaults.animationSettings.slow;
+            duration = oplib.fn.defaults.get("animationSettings", "slow");
         }
 
         //Firefox hat Probleme mit padding/margin #42
@@ -1981,7 +1981,7 @@ var oplib = (function() {
             elem.style.overflow = "hidden";
 
             if (!oplib.fx.animatorRunning) {
-                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.frameTime);
+                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.get("frameTime"));
                 oplib.fx.animatorRunning = true;
             }
         },
@@ -2096,7 +2096,7 @@ var oplib = (function() {
             }
 
             if (oplib.fx.animatorRunning) {
-                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.frameTime);
+                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.get("frameTime"));
             }
         },
         //Wendet einen interpolator auf actualProgress an
@@ -2111,7 +2111,7 @@ var oplib = (function() {
             };
 
             if (!interpolators[interpolator]) {
-                interpolator = oplib.fn.defaults.animationSettings.interpolator;
+                interpolator = oplib.fn.defaults.get("animationSettings", "interpolator");
             }
             return interpolators[interpolator];
         },
@@ -2218,7 +2218,7 @@ var oplib = (function() {
     //Handles Ajax-Calls
     oplib.fn.AJAX = function(url, fn, header, settings) {
         var xmlhttp = new XMLHttpRequest();
-        var ajaxSettings = oplib.fn.defaults.ajaxSettings;
+        var ajaxSettings = oplib.fn.defaults.get("ajaxSettings");
 
         //Other settings than default?
         if (settings) {
@@ -2634,8 +2634,8 @@ var oplib = (function() {
         if (!options) {
             options = {};
         }
-        options.showDelay = options.showDelay || oplib.fn.defaults.tooltipSettings.showDelay;
-        options.hideDelay = options.hideDelay || oplib.fn.defaults.tooltipSettings.hideDelay;
+        options.showDelay = options.showDelay || oplib.fn.defaults.get("tooltipSettings", "showDelay");
+        options.hideDelay = options.hideDelay || oplib.fn.defaults.get("tooltipSettings", "hideDelay");
         var elems = oplib.fn.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
             for (var i = 0; i < elems.length; i++) {
