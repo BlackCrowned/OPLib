@@ -2566,7 +2566,7 @@ var oplib = (function() {
                 var elementMatch = oplib.fn.handler.handleList[type][i]["elem"] == e.currentTarget;
                 var windowMatch = oplib.fn.handler.handleList[type][i]["elem"] == window;
                 if (enabled && (elementMatch || windowMatch)) {
-                    oplib.fn.handler.handleList[type][i]["fn"].apply(e.currentTarget, [e]);
+                    oplib.fn.handler.handleList[type][i]["fn"].apply(e.currentTarget, oplib.merge([e], oplib.fn.handler.handleList[type][i]["args"]));
                     if (!elem.oplib) {
                         elem.oplib = {};
                     }
