@@ -2635,6 +2635,10 @@ var oplib = (function() {
         }
         options.showDelay = options.showDelay || oplib.defaults.get("tooltipSettings", "showDelay");
         options.hideDelay = options.hideDelay || oplib.defaults.get("tooltipSettings", "hideDelay");
+        options.xDistance = options.xDistance || oplib.defaults.get("tooltipSettings", "xDistance");
+        options.yDistance = options.yDistance || oplib.defaults.get("tooltipSettings", "yDistance");
+        options.dontHideWhileHoveringTooltip = options.dontHideWhileHoveringTooltip || oplib.defaults.get("tooltipSettings", "dontHideWhileHoveringTooltip");
+        
         var elems = oplib.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
             for (var i = 0; i < elems.length; i++) {
@@ -2661,7 +2665,7 @@ var oplib = (function() {
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
                 function hideTooltips(elems, options) {
-                    if (oplib.ElementSelection.isHover(elems).length == 0) {
+                    if (oplib.ElementSelection.isHover(elems).length == 0 || !options.dontHideWhileHoveringTooltip) {
                         for (var i = 0; i < elems.length; i++) {
                             oplib.fx.stop(elems[i], 1, 0);
                         }
@@ -2681,13 +2685,13 @@ var oplib = (function() {
                     elems[i].style.position = "absolute";
                     var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", elems[i]));
                     var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", elems[i]));
-                    var left = e.pageX + 5;
-                    var top = e.pageY + 5;
+                    var left = e.pageX + options.xDistance;
+                    var top = e.pageY + options.yDistance;
                     if (left + width >= window.innerWidth + window.pageXOffset) {
-                        left = e.pageX - 5 - width;
+                        left = e.pageX - options.xDistance - width;
                     }
                     if (top + height >= window.innerHeight + window.pageYOffset) {
-                        top = e.pageY - 5 - height;
+                        top = e.pageY - options.yDistance - height;
                     }
                     elems[i].style.left = oplib.fn.finalizeCssExpressions("left", left)[1];
                     elems[i].style.top = oplib.fn.finalizeCssExpressions("top", top)[1];
@@ -2882,7 +2886,7 @@ var oplib = (function() {
             hideDelay: 100,
             xDistance: 5,
             yDistance: 5,
-            dontHideWhileHovering: false,
+            dontHideWhileHoveringTooltip: false,
         },
     });
 
