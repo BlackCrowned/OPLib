@@ -1334,16 +1334,6 @@ var oplib = (function() {
         return document.getElementsByTagName(tag);
     };
 
-    oplib.ElementSelection.getComputedStyle = function(expression, elem, styles) {
-        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
-        var value;
-        clone.style = oplib.extend(clone.style, styles);
-        document.body.appendChild(clone);
-        value = window.getComputedStyle(clone)[expression];
-        document.body.removeChild(clone);
-        return value;
-    };
-
     oplib.ElementSelection.getDefaultComputedStyle = function(expression, elem, styles) {
         var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
         var value;
@@ -1381,6 +1371,17 @@ var oplib = (function() {
     //Überprüft ob das Element gehovert ist
     oplib.isHover = oplib.ElementSelection.isHover;
 
+    //Gibt den errechneten Wert des Css-Ausdrucks zurück
+    oplib.getComputedStyle = function(expression, elem, styles) {
+        var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+        var value;
+        clone.style = oplib.extend(clone.style, styles);
+        document.body.appendChild(clone);
+        value = window.getComputedStyle(clone)[expression];
+        document.body.removeChild(clone);
+        return value;
+    };
+    
     //Erstellt ein DOMObject anhand eines Strings
     oplib.fn.createDOMObject = function(text) {
         //HTML als XML Parsen
