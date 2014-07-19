@@ -2216,7 +2216,7 @@ var oplib = (function() {
     };
 
     //Handles Ajax-Calls
-    oplib.fn.AJAX = function(url, fn, header, settings) {
+    oplib.AJAX = function(url, fn, header, settings) {
         var xmlhttp = new XMLHttpRequest();
         var ajaxSettings = oplib.fn.defaults.get("ajaxSettings");
 
