@@ -1116,19 +1116,6 @@ var oplib = (function() {
         return elems;
     };
 
-    //Namespace oplib.fn.ElementSelection.html festlegen
-    oplib.ElementSelection.html = {};
-
-    //Überprüft ob der HTML-String ein einzelnes Element enthält.
-    oplib.ElementSelection.html.singleElement = function(htmlString) {
-        return oplib.fn.HtmlSingleElementRegex.test(htmlString);
-    };
-
-    //Überprüft ob der HTML-String nur aus einem Tag besteht <tag>
-    oplib.ElementSelection.html.onlyTag = function(htmlString) {
-        return oplib.fn.HtmlTagRegex.test(htmlString);
-    };
-
     /*
      * Findet untergeordnete Nodes für die Elemente
      * R: Rekursive Suche möglich
