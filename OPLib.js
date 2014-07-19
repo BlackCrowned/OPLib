@@ -2906,6 +2906,18 @@ var oplib = (function() {
             xDistance: 5,
             yDistance: 5,
             dontHideWhileHoveringTooltip: false,
+            showAnimation: {
+                height: "show",
+                opacity: "show",
+            },
+            hideAnimation: {
+                height: "hide",
+                opacity: "hide",
+            },
+            showSpeed: "fast",
+            hideSpeed: "fast",
+            showInterpolator: "decelerate",
+            hideInterpolator: "accelerate",
         },
     });
 
