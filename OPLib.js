@@ -2812,10 +2812,16 @@ var oplib = (function() {
 
     //Standart Werte für name setzen
     oplib.fn.defaults = function(group, name, value) {
-        if (!oplib.fn.defaults[group]) {
-            oplib.fn.defaults[group] = {};
+        //Keine Gruppe ausgewählt
+        if (!value) {
+            oplib.fn.defaults[group] = name;
         }
-        oplib.fn.defaults[group][name] = value;
+        else {
+            if (!oplib.fn.defaults[group]) {
+                oplib.fn.defaults[group] = {};
+            }
+            oplib.fn.defaults[group][name] = value;
+        }
         return this;
     };
     //Standartwerte
