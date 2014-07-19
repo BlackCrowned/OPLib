@@ -456,6 +456,9 @@ var oplib = (function() {
     //Objecte zusammenführen
     oplib.merge = function(arr1, arr2) {
         //For-schleife für alle Elemente in arr2
+        if (!arr1 || !arr2) {
+            return arr1 || arr2 || [];
+        }
         for (var i = 0; i < arr2.length; i++) {
             arr1.push(arr2[i]);
         }
