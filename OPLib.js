@@ -465,10 +465,10 @@ var oplib = (function() {
     };
 
     //Eine Funtion oder oplib.fn erweitern
-    oplib.extend = function(obj, probs) {
+    oplib.extend = function(obj, props) {
         //Nur ein argument angegeben? -> oplib erweitern
         if (arguments.length == 1) {
-            props = arguments[0];
+            props = obj;
             obj = this;
         }
         //Objecte zusammenführen und zurückgeben
