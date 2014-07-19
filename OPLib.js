@@ -500,19 +500,6 @@ var oplib = (function() {
         return oplib.each(this, fn, args);
     };
 
-    //Überprüft ob es sich um ein OPObject Handelt
-    oplib.isOPLib = function(obj) {
-        if (!obj) {
-            return false;
-        }
-        if (obj.op) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    };
-
     //Erstellt CamelCase
     oplib.camelCase = function(text) {
         text = text.replace(/-([a-z]|[A-Z])/g, function(match) {
@@ -1366,6 +1353,19 @@ var oplib = (function() {
         value = window.getComputedStyle(clone)[expression];
         document.body.removeChild(clone);
         return value;
+    };
+    
+    //Überprüft ob es sich um ein OPObject Handelt
+    oplib.isOPLib = function(obj) {
+        if (!obj) {
+            return false;
+        }
+        if (obj.op) {
+            return true;
+        }
+        else {
+            return false;
+        }
     };
     
     //Überprüft ob es sich um HTML handelt
