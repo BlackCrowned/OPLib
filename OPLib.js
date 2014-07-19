@@ -2804,7 +2804,7 @@ var oplib = (function() {
     };
 
     //Standart Werte für name setzen
-    oplib.fn.defaults = function(group, name, value) {
+    oplib.defaults = function(group, name, value) {
         //Keine Gruppe ausgewählt
         if (!value) {
             oplib.fn.defaults[group] = name;
