@@ -2647,7 +2647,8 @@ var oplib = (function() {
         options.xDistance = options.xDistance || oplib.defaults.get("tooltipSettings", "xDistance");
         options.yDistance = options.yDistance || oplib.defaults.get("tooltipSettings", "yDistance");
         options.dontHideWhileHoveringTooltip = options.dontHideWhileHoveringTooltip || oplib.defaults.get("tooltipSettings", "dontHideWhileHoveringTooltip");
-        
+        options.showTimeout = [];
+
         var elems = oplib.ElementSelection(selector, context);
         return this.finalizeDOMManipulation(this, function(elems) {
             for (var i = 0; i < elems.length; i++) {
@@ -2662,15 +2663,17 @@ var oplib = (function() {
                 opacity: "hide"
             }, 0);
             oplib.fn.events.addEvent("mouseover", function(e) {
-                setTimeout(function() {
-                    for (var i = 0; i < elems.length; i++) {
-                        oplib.fx.stop(elems[i], 1, 0);
+                options.showTimeout.push(setTimeout(function(options, self) {
+                    if (oplib.isHover(self)) {
+                        for (var i = 0; i < elems.length; i++) {
+                            oplib.fx.stop(elems[i], 1, 0);
+                        }
+                        oplib.fx(elems, {
+                            height: "show",
+                            opacity: "show"
+                        }, "fast");
                     }
-                    oplib.fx(elems, {
-                        height: "show",
-                        opacity: "show"
-                    }, "fast");
-                }, options.showDelay);
+                }, options.showDelay, options, this));
             }, this);
             oplib.fn.events.addEvent("mouseout", function(e) {
                 function hideTooltips(elems, options, self) {
@@ -2688,6 +2691,9 @@ var oplib = (function() {
                     }
                 };
                 setTimeout(hideTooltips, options.hideDelay, elems, options, this);
+                while(options.showTimeout.length) {
+                    clearTimeout(options.showTimeout.pop());
+                }
             }, this);
             oplib.fn.events.addEvent("mousemove", function(e) {
                 for (var i = 0; i < elems.length; i++) {
