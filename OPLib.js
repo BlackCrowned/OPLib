@@ -2826,6 +2826,21 @@ var oplib = (function() {
     };
     //Standartwerte
     oplib.fn.extend(oplib.fn.defaults, {
+        //Gibt Default-Werte zurück
+        get: function(group, name) {
+            if (!name) {
+                if ( typeof oplib.fn.defaults[group] === "object") {
+                    return Object.create(oplib.fn.defaults[group]);
+                }
+                return oplib.fn.defaults[group];
+            }
+            else {
+                if ( typeof oplib.fn.defaults[group][name] === "object") {
+                    return Object.create(oplib.fn.defaults[group][name]);
+                }
+                return oplib.fn.defaults[group][name];
+            }
+        },
         cssUnit: "px",
         cssConversions: {
             pxToPt: 0.75,
