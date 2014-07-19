@@ -2902,7 +2902,7 @@ var oplib = (function() {
         },
         tooltipSettings: {
             showDelay: 0,
-            hideDelay: 100,
+            hideDelay: 0,
             xDistance: 5,
             yDistance: 5,
             dontHideWhileHoveringTooltip: false,
