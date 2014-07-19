@@ -1981,7 +1981,7 @@ var oplib = (function() {
             elem.style.overflow = "hidden";
 
             if (!oplib.fx.animatorRunning) {
-                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.get("frameTime"));
+                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.get("animationSettings", "frameTime"));
                 oplib.fx.animatorRunning = true;
             }
         },
@@ -2096,7 +2096,7 @@ var oplib = (function() {
             }
 
             if (oplib.fx.animatorRunning) {
-                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.get("frameTime"));
+                oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.fn.defaults.get("animationSettings", "frameTime"));
             }
         },
         //Wendet einen interpolator auf actualProgress an
@@ -2860,6 +2860,7 @@ var oplib = (function() {
             exToPx: 16 / 2,
         },
         animationSettings: {
+            frameTime: 5,
             duration: "normal",
             interpolator: "acceleratedecelerate",
             callbacks: {},
@@ -2881,7 +2882,6 @@ var oplib = (function() {
             },
             args: [],
         },
-        frameTime: 5,
         tooltipSettings: {
             showDelay: 0,
             hideDelay: 100,
