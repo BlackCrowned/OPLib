@@ -514,7 +514,7 @@ var oplib = (function() {
     };
 
     //Erstellt CamelCase
-    oplib.fn.camelCase = function(text) {
+    oplib.camelCase = function(text) {
         text = text.replace(/-([a-z]|[A-Z])/g, function(match) {
             return match[1].toUpperCase();
         });
