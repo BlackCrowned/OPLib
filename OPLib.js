@@ -2497,7 +2497,7 @@ var oplib = (function() {
                 if (oplib.fn.handler.handleList[type]) {
                     for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
                         if (oplib.fn.handler.handleList[type][i] && oplib.fn.handler.handleList[type][i].elem == copyFrom) {
-                            oplib.fn.events.addEvent(type, oplib.fn.handler.handleList[type][i].fn, copyTo);
+                            oplib.fn.events.addEvent(type, oplib.fn.handler.handleList[type][i].fn, copyTo, oplib.fn.handler.handleList[type][i].args);
                         }
                     }
                 }
