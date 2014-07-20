@@ -2841,8 +2841,8 @@ var oplib = (function() {
 			hideSpeed : "fast",
 			showInterpolator : "decelerate",
 			hideInterpolator : "accelerate",
-			showCallbacks : {},
-			hideCallbacks : {},
+			showCallbacks : function() {},
+			hideCallbacks : function() {},
 		},
 	});
 
