@@ -2832,7 +2832,7 @@ var oplib = (function() {
 			exToPx : 16 / 2,
 		},
 		animationSettings : {
-			frameTime : 5,
+			frameTime : 16,
 			duration : "normal",
 			interpolator : "acceleratedecelerate",
 			callbacks : {},
@@ -2857,6 +2857,7 @@ var oplib = (function() {
 		tooltipSettings : {
 			showDelay : 0,
 			hideDelay : 0,
+			delayUpdateTime : 16,
 			xDistance : 5,
 			yDistance : 5,
 			dontHideWhileHoveringTooltip : false,
