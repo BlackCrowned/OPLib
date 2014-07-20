@@ -1998,7 +1998,7 @@ var oplib = (function() {
 					}
 
 					//Die laufende Animation stoppen
-					if (oplib.fx.queue[i].callbacks.OPdone) {
+					if (!finish && oplib.fx.queue[i].callbacks.OPdone) {
 						//Kein display:none when Animationen gestoppt werden
 						delete oplib.fx.queue[i].callbacks.OPdone;
 					}
