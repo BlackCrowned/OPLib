@@ -408,7 +408,7 @@ var oplib = (function() {
 			if (!options) {
 				options = {};
 			}
-			options = oplib.extend(options, {
+			oplib.extend(options, {
 				args : this
 			});
 			oplib.AJAX(url, function(text, readyState, status, elems) {
