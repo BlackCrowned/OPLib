@@ -2873,8 +2873,10 @@ var oplib = (function() {
 			hideSpeed : "fast",
 			showInterpolator : "decelerate",
 			hideInterpolator : "accelerate",
-			showCallbacks : function() {},
-			hideCallbacks : function() {},
+			showCallbacks : function() {
+			},
+			hideCallbacks : function() {
+			},
 		},
 	});
 
