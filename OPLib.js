@@ -2588,50 +2588,24 @@ var oplib = (function() {
 
 		var elems = oplib.ElementSelection(selector, context);
 		return this.finalizeDOMManipulation(this, function(elems) {
-			for (var i = 0; i < elems.length; i++) {
-				if (this.parentNode) {
-					elems[i] = this.parentNode.appendChild(elems[i]);
-				} else {
-					elems[i] = document.body.appendChild(elems[i]);
+			function showTooltips(options, self) {
+				for (var i = 0; i < elems.length; i++) {
+					oplib.fx.stop(elems[i], 1, 0);
 				}
-			}
-			oplib.fx(elems, {
-				opacity : "hide"
-			}, 0);
-			oplib.fn.events.addEvent("mouseover", function(e) {
-				options.showTimeout.push(setTimeout(function(options, self) {
-					if (oplib.isHover(self)) {
-						for (var i = 0; i < elems.length; i++) {
-							oplib.fx.stop(elems[i], 1, 0);
-						}
-						oplib.fx(elems, options.showAnimation, options.showSpeed, options.showInterpolator);
-					}
-				}, options.showDelay, options, this));
-				while (options.hideTimeout.length) {
-					clearTimeout(options.hideTimeout.pop());
+				oplib.fx(elems, options.showAnimation, options.showSpeed, options.showInterpolator);
+			};
+			function hideTooltips(options, self) {
+				for (var i = 0; i < elems.length; i++) {
+					oplib.fx.stop(elems[i], 1, 0);
 				}
-			}, this);
-			oplib.fn.events.addEvent("mouseout", function(e) {
-				function hideTooltips(elems, options, self) {
-					if (!oplib.isHover(self) && oplib.isHover(elems).length == 0 || !options.dontHideWhileHoveringTooltip) {
-						for (var i = 0; i < elems.length; i++) {
-							oplib.fx.stop(elems[i], 1, 0);
-						}
-						oplib.fx(elems, options.hideAnimation, options.hideSpeed, options.hideInterpolator);
-					} else {
-						options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, self));
-					}
-				};
-				options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, this));
-				while (options.showTimeout.length) {
-					clearTimeout(options.showTimeout.pop());
-				}
-			}, this);
-			oplib.fn.events.addEvent("mousemove", function(e) {
+				oplib.fx(elems, options.hideAnimation, options.hideSpeed, options.hideInterpolator);
+			};
+			function moveTooltips(e, options, self) {
 				for (var i = 0; i < elems.length; i++) {
 					elems[i].style.position = "absolute";
 					var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", elems[i]));
 					var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", elems[i]));
+					console.log(oplib.getComputedStyle("width", elems[i]));
 					var left = e.pageX + options.xDistance;
 					var top = e.pageY + options.yDistance;
 					if (left + width >= window.innerWidth + window.pageXOffset) {
@@ -2643,6 +2617,26 @@ var oplib = (function() {
 					elems[i].style.left = oplib.fn.finalizeCssExpressions("left", left)[1];
 					elems[i].style.top = oplib.fn.finalizeCssExpressions("top", top)[1];
 				}
+			};
+
+			for (var i = 0; i < elems.length; i++) {
+				if (this.parentNode) {
+					elems[i] = this.parentNode.appendChild(elems[i]);
+				} else {
+					elems[i] = document.body.appendChild(elems[i]);
+				}
+			}
+			oplib.fx(elems, {
+				opacity : "hide"
+			}, 0);
+			oplib.fn.events.addEvent("mouseover", function(e) {
+				showTooltips(options, this);
+			}, this);
+			oplib.fn.events.addEvent("mouseout", function(e) {
+				hideTooltips(options, this);
+			}, this);
+			oplib.fn.events.addEvent("mousemove", function(e) {
+				moveTooltips(e, options, this);
 			}, this);
 
 			return this;
