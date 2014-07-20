@@ -1865,7 +1865,6 @@ var oplib = (function() {
 						cssSettings[i].old = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
 						cssSettings[i].current = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
 						cssSettings[i].aim = 0;
-						
 					}
 
 				} else {
@@ -1957,15 +1956,16 @@ var oplib = (function() {
 			}
 		},
 		end : function(i, elem, callbacks, scope) {
-			//oplib.fx.queue.splice(i, 1);
+			oplib.fx.queue.splice(i, 1);
+
+			//Overflow zurücksetzen
+			elem.style.overflow = elem.oplib.oldOverflow;
 
 			//Callbacks "OPdone" aufrufen
 			callbacks = oplib.fx.callback(elem, callbacks, "OPdone", scope);
 			//Callbacks "done" aufrufen
 			callbacks = oplib.fx.callback(elem, callbacks, "done", scope);
-			
-			oplib.fx.queue.splice(i, 1);
-			
+
 			if (!oplib.fx.queue.length) {
 				clearTimeout(oplib.fx.animatorId);
 				oplib.fx.animatorRunning = false;
@@ -1998,7 +1998,7 @@ var oplib = (function() {
 					}
 
 					//Die laufende Animation stoppen
-					if (!finish && oplib.fx.queue[i].callbacks.OPdone) {
+					if (oplib.fx.queue[i].callbacks.OPdone) {
 						//Kein display:none when Animationen gestoppt werden
 						delete oplib.fx.queue[i].callbacks.OPdone;
 					}
@@ -2483,20 +2483,11 @@ var oplib = (function() {
 				return 1;
 			} else {
 				var listenerId = [];
-				if (listener != undefined) {
-					for (var i = 0; i < this.handleList[type].length; i++) {
-						if (this.handleList[type][i]["elem"] == elem && this.handleList[type][i]["text"] == listener.toString()) {
-							listenerId.push(i);
-						}
-					}
-				} else {
-					for (var i = 0; i < this.handleList[type].length; i++) {
-						if (this.handleList[type][i]["elem"] == elem) {
-							listenerId.push(i);
-						}
+				for (var i = 0; i < this.handleList[type].length; i++) {
+					if (this.handleList[type][i]["elem"] == elem && this.handleList[type][i]["text"] == listener.toString()) {
+						listenerId.push(i);
 					}
 				}
-
 				for (var i = 0; i < listenerId.length; i++) {
 					this.handleList[type][listenerId[i]]["enabled"] = false;
 				}
@@ -2592,13 +2583,11 @@ var oplib = (function() {
 		options.hideSpeed = options.hideSpeed || oplib.defaults.get("tooltipSettings", "hideSpeed");
 		options.showInterpolator = options.showInterpolator || oplib.defaults.get("tooltipSettings", "showInterpolator");
 		options.hideInterpolator = options.hideInterpolator || oplib.defaults.get("tooltipSettings", "hideInterpolator");
-		options.showCallbacks = options.showCallbacks || oplib.defaults.get("tooltipSettings", "showCallbacks");
-		options.hideCallbacks = options.hideCallbacks || oplib.defaults.get("tooltipSettings", "hideCallbacks");
 		options.showTimeout = [];
 		options.hideTimeout = [];
 
 		var elems = oplib.ElementSelection(selector, context);
-		return this.each(function(elems) {
+		return this.finalizeDOMManipulation(this, function(elems) {
 			for (var i = 0; i < elems.length; i++) {
 				if (this.parentNode) {
 					elems[i] = this.parentNode.appendChild(elems[i]);
@@ -2610,39 +2599,30 @@ var oplib = (function() {
 				opacity : "hide"
 			}, 0);
 			oplib.fn.events.addEvent("mouseover", function(e) {
-				function showTooltips(option, self) {
+				options.showTimeout.push(setTimeout(function(options, self) {
 					if (oplib.isHover(self)) {
 						for (var i = 0; i < elems.length; i++) {
 							oplib.fx.stop(elems[i], 1, 0);
-							oplib.fx([elems[i]], options.showAnimation, options.showSpeed, options.showInterpolator, options.showCallbacks, elems[i]);
 						}
+						oplib.fx(elems, options.showAnimation, options.showSpeed, options.showInterpolator);
 					}
-				};
-				if (options.showDelay == 0) {
-					setTimeout(showTooltips, options.showDelay, options, this);
-				} else {
-					options.showTimeout.push(setTimeout(showTooltips, options.showDelay, options, this));
-				}
+				}, options.showDelay, options, this));
 				while (options.hideTimeout.length) {
 					clearTimeout(options.hideTimeout.pop());
 				}
 			}, this);
 			oplib.fn.events.addEvent("mouseout", function(e) {
 				function hideTooltips(elems, options, self) {
-					if (!oplib.isHover(self) && (oplib.isHover(elems).length == 0 || !options.dontHideWhileHoveringTooltip)) {
+					if (!oplib.isHover(self) && oplib.isHover(elems).length == 0 || !options.dontHideWhileHoveringTooltip) {
 						for (var i = 0; i < elems.length; i++) {
 							oplib.fx.stop(elems[i], 1, 0);
-							oplib.fx([elems[i]], options.hideAnimation, options.hideSpeed, options.hideInterpolator, options.hideCallbacks);
 						}
+						oplib.fx(elems, options.hideAnimation, options.hideSpeed, options.hideInterpolator);
 					} else {
 						options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, self));
 					}
 				};
-				if (options.hideDelay == 0) {
-					setTimeout(hideTooltips, options.hideDelay, elems, options, this);
-				} else {
-					options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, this));
-				}
+				options.hideTimeout.push(setTimeout(hideTooltips, options.hideDelay, elems, options, this));
 				while (options.showTimeout.length) {
 					clearTimeout(options.showTimeout.pop());
 				}
@@ -2831,7 +2811,7 @@ var oplib = (function() {
 			scope : window,
 			slow : 1000,
 			normal : 750,
-			fast : 5000,
+			fast : 500,
 		},
 		ajaxSettings : {
 			method : "get",
@@ -2864,8 +2844,6 @@ var oplib = (function() {
 			hideSpeed : "fast",
 			showInterpolator : "decelerate",
 			hideInterpolator : "accelerate",
-			showCallbacks : {},
-			hideCallbacks : {},
 		},
 	});
 
