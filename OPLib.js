@@ -2483,9 +2483,17 @@ var oplib = (function() {
 				return 1;
 			} else {
 				var listenerId = [];
-				for (var i = 0; i < this.handleList[type].length; i++) {
-					if (this.handleList[type][i]["elem"] == elem && this.handleList[type][i]["text"] == listener.toString()) {
-						listenerId.push(i);
+				if (listener != undefined) {
+					for (var i = 0; i < this.handleList[type].length; i++) {
+						if (this.handleList[type][i]["elem"] == elem && this.handleList[type][i]["text"] == listener.toString()) {
+							listenerId.push(i);
+						}
+					}
+				} else {
+					for (var i = 0; i < this.handleList[type].length; i++) {
+						if (this.handleList[type][i]["elem"] == elem) {
+							listenerId.push(i);
+						}
 					}
 				}
 				for (var i = 0; i < listenerId.length; i++) {
