@@ -2478,6 +2478,9 @@ var oplib = (function() {
 		},
 		//Disabled einen Listener durch setzen deaktivieren des enabled-flags
 		removeListener : function(type, listener, elem) {
+			if (!elem) {
+				elem = listener;
+			}
 			if ( typeof listner === "number") {
 				this.handleList[type][listener]["enabled"] = false;
 				return 1;
