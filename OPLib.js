@@ -2583,6 +2583,8 @@ var oplib = (function() {
 		options.hideSpeed = options.hideSpeed || oplib.defaults.get("tooltipSettings", "hideSpeed");
 		options.showInterpolator = options.showInterpolator || oplib.defaults.get("tooltipSettings", "showInterpolator");
 		options.hideInterpolator = options.hideInterpolator || oplib.defaults.get("tooltipSettings", "hideInterpolator");
+		options.showCallbacks = options.showCallbacks || oplib.defaults.get("tooltipSettings", "showCallbacks");
+		options.hideCallbacks = options.hideCallbacks || oplib.defaults.get("tooltipSettings", "hideCallbacks");
 		options.showTimeout = [];
 		options.hideTimeout = [];
 
@@ -2591,14 +2593,16 @@ var oplib = (function() {
 			function showTooltips(options, self) {
 				for (var i = 0; i < elems.length; i++) {
 					oplib.fx.stop(elems[i], 1, 0);
+					oplib.fx([elems[i]], options.showAnimation, options.showSpeed, options.showInterpolator, options.showCallbacks, elems[i]);
 				}
-				oplib.fx(elems, options.showAnimation, options.showSpeed, options.showInterpolator);
+				
 			};
 			function hideTooltips(options, self) {
 				for (var i = 0; i < elems.length; i++) {
 					oplib.fx.stop(elems[i], 1, 0);
+					oplib.fx([elems[i]], options.hideAnimation, options.hideSpeed, options.hideInterpolator, options.hideCallbacks, elems[i]);
 				}
-				oplib.fx(elems, options.hideAnimation, options.hideSpeed, options.hideInterpolator);
+				
 			};
 			function moveTooltips(e, options, self) {
 				for (var i = 0; i < elems.length; i++) {
@@ -2837,6 +2841,8 @@ var oplib = (function() {
 			hideSpeed : "fast",
 			showInterpolator : "decelerate",
 			hideInterpolator : "accelerate",
+			showCallbacks : {},
+			hideCallbacks : {},
 		},
 	});
 
