@@ -2605,7 +2605,6 @@ var oplib = (function() {
 					elems[i].style.position = "absolute";
 					var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", elems[i]));
 					var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", elems[i]));
-					console.log(oplib.getComputedStyle("width", elems[i]));
 					var left = e.pageX + options.xDistance;
 					var top = e.pageY + options.yDistance;
 					if (left + width >= window.innerWidth + window.pageXOffset) {
