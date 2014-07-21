@@ -550,7 +550,7 @@ var oplib = (function() {
 	//Url - Regex
 	oplib.fn.UrlRegex = /url:/;
 	//Html - Regex
-	oplib.fn.HtmlRegex = /^\s*<[\w\d\s=\-;:\/\.%&?"'`´]*>[\w\W]*<\/[\w\s]*>\s*$/;
+	oplib.fn.HtmlRegex = /<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/;
 	//Html - Single Element - Regex
 	oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=\-;:\/\.%&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
 	//Html - Tag - Regex
