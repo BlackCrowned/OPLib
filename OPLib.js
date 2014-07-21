@@ -40,6 +40,7 @@ var oplib = (function() {
 				for (var i in name) {
 					//Attribute setzen
 					this.each(function(name, prop) {
+						this[name] = prop;
 						this.setAttribute(name, prop);
 					}, [i, name[i]]);
 				}
@@ -48,6 +49,7 @@ var oplib = (function() {
 			else {
 				//Attribut setzen
 				this.each(function(name, prop) {
+					this[name] = prop;
 					this.setAttribute(name, prop);
 				}, [name, property]);
 			}
@@ -61,6 +63,7 @@ var oplib = (function() {
 					for (var i = 0; i < name.length; i++) {
 						//Attribute entfernen
 						this.each(function(name) {
+							this[name] = "";
 							this.removeAttribute(name);
 						}, [name[i]]);
 					}
@@ -68,6 +71,7 @@ var oplib = (function() {
 					for (var i in name) {
 						//Attribute entfernen
 						this.each(function(name) {
+							this[name] = "";
 							this.removeAttribute(name);
 						}, [i, name[i]]);
 					}
@@ -78,6 +82,7 @@ var oplib = (function() {
 			else {
 				//Attribut entfernen
 				this.each(function(name) {
+					this[name] = "";
 					this.removeAttribute(name);
 				}, [name]);
 			}
