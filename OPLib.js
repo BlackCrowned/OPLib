@@ -29,7 +29,7 @@ var oplib = (function() {
 			//Wurde nur 'name' übergeben? - Attribut zurückgeben
 			if (arguments.length == 1) {
 				if (this.length != 0) {
-					return this[0].getAttribute(name);
+					return this[0][name] || this[0].getAttribute(name);
 				} else {
 					return this;
 				}
