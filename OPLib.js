@@ -724,7 +724,7 @@ var oplib = (function() {
 							i++;
 							selector_end = i;
 							//Prefix ~, |, ^. $, *
-							if (/(~|\||\^|\$|\*)/.test(selector[i])) {
+							if (/(~|\||\^|\$|\*|!)/.test(selector[i])) {
 								//Attribut Name
 								if (selector_type == "attribute") {
 									name = selector.slice(selector_start, selector_end);
@@ -1003,6 +1003,14 @@ var oplib = (function() {
 								for (var j = 0; j < useable.length; j++) {
 									var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value));
 									if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
+										matched.push(useable[j]);
+										elems.push(useable[j]);
+									}
+								}
+								break;
+							case "!":
+								for (var j = 0; j < useable.length; j++) {
+									if (useable[j].getAttribute(selectors[i].data.name) != selectors[i].data.value) {
 										matched.push(useable[j]);
 										elems.push(useable[j]);
 									}
