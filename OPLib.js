@@ -477,6 +477,9 @@ var oplib = (function() {
 		}
 		//Objecte zusammenführen und zurückgeben
 		for (var i in props) {
+			if (!props[i]) {
+				continue;
+			}
 			obj[i] = props[i];
 		}
 		return obj;
