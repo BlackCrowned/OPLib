@@ -2772,7 +2772,7 @@ var oplib = (function() {
 	oplib.fn.Form.updateData.insertElem = function(data, elem) {
 		//Falls kein vorausgehendes Element angegeben ist. Position #1 annehmen;
 		var options = ["fieldset", "label", "legend", "input"];
-		var nodeOrder = elem.oplib.Form.nodeOrder = elem.oplib.Form.nodeOrder || [];
+		var nodeOrder = elem.oplib.Form.nodeOrder = [];
 
 		for (var j = 0; j < options.length; j++) {
 			type = options[j];
@@ -2780,7 +2780,7 @@ var oplib = (function() {
 				for (var i = 0; i < data[type].length; i++) {
 					var nodeData = data[type][i];
 					var node = oplib.fn.Form.updateData.createElement(type, nodeData, elem);
-					if (nodeData.updata) {
+					if (nodeData.update) {
 						//Eventuell noch auf alte actions-achten
 						oplib.extend(nodeData, nodeData.update);
 					}
@@ -2900,7 +2900,7 @@ var oplib = (function() {
 		if (!elem.oplib.Form.data[type]) {
 			elem.oplib.Form.data[type] = [];
 		}
-		for (var i = 0; i < elem.oplib.Form.data[type]; i++) {
+		for (var i = 0; i < elem.oplib.Form.data[type].length; i++) {
 			if (elem.oplib.Form.data[type][i].id == id) {
 				elem.oplib.Form.data[type][i].update = data;
 				return true;
