@@ -2848,41 +2848,33 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.updateData.orderElems.getParent = function(ordered, pType, pId, exec) {
-		//pType == "Root" -> Knoten dem Root zufügen, wenn es noch nicht existiert
-		if (exec && pType == "Root") {
-			var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered, "Node", pId, exec);
-			console.log(parent);
-			if (parent) {
-				return parent;
-			} else {
-				return "Root";
-			}
-		}
-		//Begin der Suche
-		if (exec) {
+		//Root
+		if (toString.call(ordered) == "[object Array]" && ordered.length) {
 			for (var i = 0; i < ordered.length; i++) {
 				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered[i], pType, pId);
-				if (parent) {
-					return parent;
-				}
 			}
 		}
-		//Parent ist bereits gelistet
-		if (ordered.id == pId && !ordered.removed) {
-			return ordered;
-		}
-		else if (ordered.parent == pId && !ordered.removed) {
-			return ordered;
-		} else if (ordered.children) {
-			//Könnte der parent bereits einem parent-Untergeordnet sein?
+		//Parent
+		else if (ordered.children && toString.call(ordered.children) == "[object Array]" && ordered.children.length) {
 			for (var i = 0; i < ordered.children.length; i++) {
-				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered.children, pType, pId);
-				if (parent) {
-					return parent;
-				}
+				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered.children[i], pType, pId);
 			}
 		}
-		return false;
+		//Ende der Rekursion
+		else {
+			//IDs stimmen überein
+			if (ordered.id && ordered.id == pId && !ordered.removed) {
+				return ordered;
+			}
+			//Nodes stimmen überein
+			else if (ordered.node && ordered.node == pId && !ordered.removed) {
+				return ordered;
+			}
+			//Nichts stimmt überein
+			else {
+				return false;
+			}
+		}
 	};
 
 	oplib.fn.Form.addData = function(type, data, elem) {
