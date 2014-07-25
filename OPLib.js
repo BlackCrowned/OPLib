@@ -2645,8 +2645,7 @@ var oplib = (function() {
 						} else {
 							setTimeout(hideTooltips, options.delayUpdateTime, options, self, delay);
 						}
-					}
-					else {
+					} else {
 						setTimeout(hideTooltips, options.delayUpdateTime, options, self, options.hideDelay);
 					}
 				}
@@ -2691,6 +2690,235 @@ var oplib = (function() {
 
 			return this;
 		}, [elems]);
+	};
+
+	oplib.fn.Form = function(data) {
+		/*
+		 * {
+		 * 	fieldset: {id, fieldset, label, legend, after, before, attr, action},
+		 *  label: {id, html, fieldset, label, after, before, attr, action},
+		 * 	legend: {id, html, fieldset, after, before, attr, action},
+		 *  input: {id, html, type, fieldset, label, after, before, attr, action, options},
+		 * }
+		 */
+
+		if (!data) {
+			return this;
+		}
+
+		return this.each(function(data) {
+			//TODO: ADD DEFAULTS
+			var options = ["fieldset", "label", "legend", "input"];
+			if (!this.oplib) {
+				this.oplib = {};
+			}
+			if (!this.oplib.Form) {
+				this.oplib.Form = {};
+			}
+			if (!this.oplib.Form.data) {
+				this.oplib.Form.data = {};
+			}
+
+			for (var j = 0; j < options.length; j++) {
+				type = options[j];
+				if (data[type]) {
+					if (toString.call(data[type]) != "[object Array]") {
+						data[type] = [data[type]];
+					}
+					for (var i = 0; i < data[type].length; i++) {
+						oplib.fn.Form.changeData(type, data[type][i].id, data[type][i], this);
+					}
+				}
+			}
+			oplib.fn.Form.updateData(this);
+			console.log(this.oplib.Form);
+
+		}, [data]);
+
+	};
+
+	oplib.fn.Form.updateData = function(elem) {
+		oplib.fn.Form.updateData.insertElem(elem.oplib.Form.data, elem);
+	};
+
+	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
+		var node;
+		if (nodeData.created) {
+			switch(type) {
+				case "fieldset":
+				case "label":
+				case "legend":
+				case "input":
+					node = document.createElement(type);
+					break;
+				default:
+					console.log(".Form.updateData.createElement: Unknown Type: " + type);
+			}
+			nodeData.created = false;
+		}
+		switch(type) {
+			case "fieldset":
+			case "label":
+			case "legend":
+			case "input":
+				node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
+				break;
+			default:
+				console.log(".Form.updateData.createElement: Unknown Type: " + type);
+		}
+		return node;
+	};
+
+	oplib.fn.Form.updateData.insertElem = function(data, elem) {
+		//Falls kein vorausgehendes Element angegeben ist. Position #1 annehmen;
+		var options = ["fieldset", "label", "legend", "input"];
+		var nodeOrder = elem.oplib.Form.nodeOrder = elem.oplib.Form.nodeOrder || [];
+
+		for (var j = 0; j < options.length; j++) {
+			type = options[j];
+			if (data[type]) {
+				for (var i = 0; i < data[type].length; i++) {
+					var nodeData = data[type][i];
+					var node = oplib.fn.Form.updateData.createElement(type, nodeData, elem);
+					if (nodeData.updata) {
+						//Eventuell noch auf alte actions-achten
+						oplib.extend(nodeData, nodeData.update);
+					}
+					elem.oplib.Form.nodeOrder.push({
+						node : node,
+						nodeData : nodeData,
+						nodeType : type
+					});
+				}
+			}
+		}
+		/*
+		 * [
+		 * {id: ID, type: String, children: Array}
+		 * ]
+		 */
+		var ordered = [];
+		for (var i = 0; i < nodeOrder.length; i++) {
+			var nodeData = nodeOrder[i].nodeData;
+			var nodeType = nodeOrder[i].nodeType;
+			var node = nodeOrder[i].node;
+			for (var j = 0; j < options.length; j++) {
+				var type = options[j];
+				if (nodeData[type]) {
+					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, ordered, type, nodeData[type]);
+				} else {
+					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, ordered, "Root", node);
+				}
+			}
+
+		}
+		elem.oplib.Form.ordered = ordered;
+	};
+
+	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, ordered, pType, pId) {
+		var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered, pType, pId, true);
+		var children = oplib.fn.Form.updateData.orderElems.getParent(ordered, nodeType, nodeData.id, true);
+		//Parent existiert nicht -> Neuen Parent anhängen
+		if (!parent || parent.length == 0) {
+			var newLength = ordered.push({
+				id : pId,
+				type : pType,
+				children : [],
+				parent : "Root",
+			});
+			parent = ordered[newLength - 1];
+		}
+		else if (parent == "Root") {
+			var parent = {};
+			parent.children = ordered;
+		}
+		//Kind existiert bereits. Knoten verschieben
+		if (children) {
+			parent.children.push(Object.create(children));
+			children.remove = true;
+		} else {
+			parent.children.push({
+				id : nodeData.id,
+				type : nodeType,
+				children : [],
+				parent : parent,
+			});
+		}
+
+	};
+
+	oplib.fn.Form.updateData.orderElems.getParent = function(ordered, pType, pId, exec) {
+		//pType == "Root" -> Knoten dem Root zufügen, wenn es noch nicht existiert
+		if (exec && pType == "Root") {
+			var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered, "Node", pId, exec);
+			console.log(parent);
+			if (parent) {
+				return parent;
+			} else {
+				return "Root";
+			}
+		}
+		//Begin der Suche
+		if (exec) {
+			for (var i = 0; i < ordered.length; i++) {
+				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered[i], pType, pId);
+				if (parent) {
+					return parent;
+				}
+			}
+		}
+		//Parent ist bereits gelistet
+		if (ordered.id == pId && !ordered.removed) {
+			return ordered;
+		}
+		else if (ordered.parent == pId && !ordered.removed) {
+			return ordered;
+		} else if (ordered.children) {
+			//Könnte der parent bereits einem parent-Untergeordnet sein?
+			for (var i = 0; i < ordered.children.length; i++) {
+				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered.children, pType, pId);
+				if (parent) {
+					return parent;
+				}
+			}
+		}
+		return false;
+	};
+
+	oplib.fn.Form.addData = function(type, data, elem) {
+		if (!elem.oplib.Form.data[type]) {
+			elem.oplib.data[type] = [];
+		}
+		oplib.extend(data, {
+			created : true
+		});
+		elem.oplib.Form.data[type].push(data);
+		return false;
+	};
+
+	oplib.fn.Form.changeData = function(type, id, data, elem) {
+		if (!elem.oplib.Form.data[type]) {
+			elem.oplib.Form.data[type] = [];
+		}
+		for (var i = 0; i < elem.oplib.Form.data[type]; i++) {
+			if (elem.oplib.Form.data[type][i].id == id) {
+				elem.oplib.Form.data[type][i].update = data;
+				return true;
+			}
+		}
+		return oplib.fn.Form.addData(type, data, elem);
+	};
+
+	oplib.fn.Form.hasData = function(type, id, elem) {
+		if (!elem.oplib.Form.data[type]) {
+			return false;
+		}
+		for (var i = 0; i < elem.oplib.Form.data[type]; i++) {
+			if (elem.oplib.Form.data[type][i].id == id) {
+				return true;
+			}
+		}
+		return false;
 	};
 
 	//Funktionen die mit Arrays arbeiten
