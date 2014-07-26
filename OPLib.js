@@ -2737,6 +2737,7 @@ var oplib = (function() {
 
 	oplib.fn.Form.updateData = function(elem) {
 		//Falls kein vorausgehendes Element angegeben ist. Position #1 annehmen;
+		var data = elem.oplib.Form.data;
 		var options = ["fieldset", "label", "legend", "input"];
 		var nodeOrder = elem.oplib.Form.nodeOrder = [];
 
@@ -2810,8 +2811,8 @@ var oplib = (function() {
 		return node;
 	};
 
-	oplib.fn.Form.updateData.insertElem = function(data, elem) {
-
+	oplib.fn.Form.updateData.insertElem = function(nodeOrder, elem) {
+		
 	};
 
 	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
