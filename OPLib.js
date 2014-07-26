@@ -2787,7 +2787,9 @@ var oplib = (function() {
 					elem.oplib.Form.nodeOrder.push({
 						node : node,
 						nodeData : nodeData,
-						nodeType : type
+						nodeType : type,
+						children : [],
+						parent : "Root",
 					});
 				}
 			}
@@ -2797,7 +2799,7 @@ var oplib = (function() {
 		 * {id: ID, type: String, children: Array}
 		 * ]
 		 */
-		var ordered = [];
+		var ordered = oplib.merge([], nodeOrder);
 		for (var i = 0; i < nodeOrder.length; i++) {
 			var nodeData = nodeOrder[i].nodeData;
 			var nodeType = nodeOrder[i].nodeType;
@@ -2805,75 +2807,67 @@ var oplib = (function() {
 			for (var j = 0; j < options.length; j++) {
 				var type = options[j];
 				if (nodeData[type]) {
-					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, ordered, type, nodeData[type]);
-				} else {
-					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, ordered, "Root", node);
+					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, node, ordered, type, nodeData[type]);
 				}
 			}
 
 		}
-		elem.oplib.Form.ordered = ordered;
+		elem.oplib.Form.nodeOrder = ordered;
 	};
 
-	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, ordered, pType, pId) {
-		var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered, pType, pId, true);
-		var children = oplib.fn.Form.updateData.orderElems.getParent(ordered, nodeType, nodeData.id, true);
-		//Parent existiert nicht -> Neuen Parent anhängen
-		if (!parent || parent.length == 0) {
-			var newLength = ordered.push({
-				id : pId,
-				type : pType,
-				children : [],
-				parent : "Root",
-			});
-			parent = ordered[newLength - 1];
-		}
-		else if (parent == "Root") {
-			var parent = {};
-			parent.children = ordered;
-		}
+	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
+		var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, pType, pId);
+		var children = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, nodeType, nodeData.id);
 		//Kind existiert bereits. Knoten verschieben
 		if (children) {
-			parent.children.push(Object.create(children));
+			parent.children.push(oplib.extend({}, children));
 			children.remove = true;
 		} else {
 			parent.children.push({
-				id : nodeData.id,
-				type : nodeType,
+				node : node,
+				nodeData : nodeData,
+				nodeType : nodeType,
 				children : [],
 				parent : parent,
 			});
 		}
-
 	};
 
-	oplib.fn.Form.updateData.orderElems.getParent = function(ordered, pType, pId, exec) {
+	oplib.fn.Form.updateData.orderElems.getElems = function(nodeOrder, pType, pId) {
 		//Root
-		if (toString.call(ordered) == "[object Array]" && ordered.length) {
-			for (var i = 0; i < ordered.length; i++) {
-				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered[i], pType, pId);
+		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
+			for (var i = 0; i < nodeOrder.length; i++) {
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder[i], pType, pId);
+				if (parent) {
+					return parent;
+				}
 			}
 		}
 		//Parent
-		else if (ordered.children && toString.call(ordered.children) == "[object Array]" && ordered.children.length) {
-			for (var i = 0; i < ordered.children.length; i++) {
-				var parent = oplib.fn.Form.updateData.orderElems.getParent(ordered.children[i], pType, pId);
+		else if (nodeOrder.children && toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
+			for (var i = 0; i < nodeOrder.children.length; i++) {
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder.children[i], pType, pId);
+				if (parent) {
+					return parent;
+				}
 			}
 		}
 		//Ende der Rekursion
+		//NodeData *muss* vorhanden sein!
+		if (!nodeOrder.nodeData) {
+			return false;
+		}
+		//IDs stimmen überein
+		if (nodeOrder.nodeData.id && nodeOrder.nodeData.id == pId && !nodeOrder.removed) {
+			return nodeOrder;
+		}
+		//Nodes stimmen überein
+		else if (nodeOrder.node && nodeOrder.node == pId && !nodeOrder.removed) {
+			return nodeOrder;
+		}
+		//Nichts stimmt überein
 		else {
-			//IDs stimmen überein
-			if (ordered.id && ordered.id == pId && !ordered.removed) {
-				return ordered;
-			}
-			//Nodes stimmen überein
-			else if (ordered.node && ordered.node == pId && !ordered.removed) {
-				return ordered;
-			}
-			//Nichts stimmt überein
-			else {
-				return false;
-			}
+			return false;
 		}
 	};
 
