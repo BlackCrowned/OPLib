@@ -2818,7 +2818,7 @@ var oplib = (function() {
 		var children = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, nodeType, nodeData.id);
 		//Kind existiert bereits. Knoten verschieben
 		if (children) {
-			parent.children.push(oplib.extend({}, children));
+			parent.children.push(oplib.extend({}, children, {parent: parent}));
 			children.remove = true;
 		} else {
 			parent.children.push({
