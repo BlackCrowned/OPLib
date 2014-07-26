@@ -470,17 +470,15 @@ var oplib = (function() {
 
 	//Eine Funtion oder oplib.fn erweitern
 	oplib.extend = function(obj, props) {
-		//Nur ein argument angegeben? -> oplib erweitern
-		if (arguments.length == 1) {
-			props = obj;
-			obj = this;
-		}
 		//Objecte zusammenführen und zurückgeben
-		for (var i in props) {
-			if (props[i] == undefined) {
-				continue;
+		for (var a = 1; a <= arguments.length; a++) {
+			for (var i in arguments[a]) {
+				if (arguments[a][i] == undefined) {
+					continue;
+				}
+				obj[i] = arguments[a][i];
 			}
-			obj[i] = props[i];
+
 		}
 		return obj;
 	};
