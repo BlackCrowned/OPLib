@@ -2753,16 +2753,17 @@ var oplib = (function() {
 					console.log(".Form.updateData.createElement: Unknown Type: " + type);
 			}
 			nodeData.created = false;
-		}
-		switch(type) {
-			case "fieldset":
-			case "label":
-			case "legend":
-			case "input":
-				node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
-				break;
-			default:
-				console.log(".Form.updateData.createElement: Unknown Type: " + type);
+		} else {
+			switch(type) {
+				case "fieldset":
+				case "label":
+				case "legend":
+				case "input":
+					node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
+					break;
+				default:
+					console.log(".Form.updateData.createElement: Unknown Type: " + type);
+			}
 		}
 		return node;
 	};
