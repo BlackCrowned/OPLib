@@ -2788,7 +2788,7 @@ var oplib = (function() {
 						nodeData : nodeData,
 						nodeType : type,
 						children : [],
-						parent : "Root",
+						parent : elem,
 					});
 				}
 			}
@@ -2819,7 +2819,9 @@ var oplib = (function() {
 		var children = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, nodeType, nodeData.id);
 		//Kind existiert bereits. Knoten verschieben
 		if (children) {
-			parent.children.push(oplib.extend({}, children, {parent: parent}));
+			parent.children.push(oplib.extend({}, children, {
+				parent : parent.node
+			}));
 			children.remove = true;
 		} else {
 			parent.children.push({
@@ -2827,7 +2829,7 @@ var oplib = (function() {
 				nodeData : nodeData,
 				nodeType : nodeType,
 				children : [],
-				parent : parent,
+				parent : parent.node,
 			});
 		}
 	};
