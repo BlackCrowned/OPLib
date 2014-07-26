@@ -2736,39 +2736,6 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.updateData = function(elem) {
-		oplib.fn.Form.updateData.insertElem(elem.oplib.Form.data, elem);
-	};
-
-	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
-		var node;
-		if (nodeData.created) {
-			switch(type) {
-				case "fieldset":
-				case "label":
-				case "legend":
-				case "input":
-					node = document.createElement(type);
-					break;
-				default:
-					console.log(".Form.updateData.createElement: Unknown Type: " + type);
-			}
-			nodeData.created = false;
-		} else {
-			switch(type) {
-				case "fieldset":
-				case "label":
-				case "legend":
-				case "input":
-					node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
-					break;
-				default:
-					console.log(".Form.updateData.createElement: Unknown Type: " + type);
-			}
-		}
-		return node;
-	};
-
-	oplib.fn.Form.updateData.insertElem = function(data, elem) {
 		//Falls kein vorausgehendes Element angegeben ist. Position #1 annehmen;
 		var options = ["fieldset", "label", "legend", "input"];
 		var nodeOrder = elem.oplib.Form.nodeOrder = [];
@@ -2812,6 +2779,39 @@ var oplib = (function() {
 
 		}
 		elem.oplib.Form.nodeOrder = ordered;
+	};
+
+	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
+		var node;
+		if (nodeData.created) {
+			switch(type) {
+				case "fieldset":
+				case "label":
+				case "legend":
+				case "input":
+					node = document.createElement(type);
+					break;
+				default:
+					console.log(".Form.updateData.createElement: Unknown Type: " + type);
+			}
+			nodeData.created = false;
+		} else {
+			switch(type) {
+				case "fieldset":
+				case "label":
+				case "legend":
+				case "input":
+					node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
+					break;
+				default:
+					console.log(".Form.updateData.createElement: Unknown Type: " + type);
+			}
+		}
+		return node;
+	};
+
+	oplib.fn.Form.updateData.insertElem = function(data, elem) {
+
 	};
 
 	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
