@@ -2780,6 +2780,7 @@ var oplib = (function() {
 
 		}
 		elem.oplib.Form.nodeOrder = ordered;
+		oplib.fn.Form.updateData.insertElem(nodeOrder);
 	};
 
 	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
@@ -2791,6 +2792,7 @@ var oplib = (function() {
 				case "legend":
 				case "input":
 					node = document.createElement(type);
+					$(node).addClass("OPForm" + type + nodeData.id);
 					break;
 				default:
 					console.log(".Form.updateData.createElement: Unknown Type: " + type);
@@ -2811,8 +2813,27 @@ var oplib = (function() {
 		return node;
 	};
 
-	oplib.fn.Form.updateData.insertElem = function(nodeOrder, elem) {
-		
+	oplib.fn.Form.updateData.insertElem = function(nodeOrder) {
+		//Root
+		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
+			for (var i = 0; i < nodeOrder.length; i ++) {
+				if (!nodeOrder[i].remove) {
+					oplib.fn.Form.updateData.insertElem(nodeOrder[i]);
+					$(nodeOrder[i].parent).append(nodeOrder[i].node);
+				}
+			}
+			
+		}
+		//Children
+		else if (toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
+			for (var i = 0; i < nodeOrder.children.length; i++) {
+				if (!nodeOrder.children[i].remove) {
+					oplib.fn.Form.updateData.insertElem(nodeOrder.children[i]);
+					$(nodeOrder.children[i].parent).append(nodeOrder.children[i].node);
+				}
+			}
+		}
+		return false;
 	};
 
 	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
