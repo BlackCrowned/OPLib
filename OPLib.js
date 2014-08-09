@@ -2810,15 +2810,13 @@ var oplib = (function() {
 				//Element entfernen
 				parent.children.splice(indexOfNode, 1);
 				//Elemente neu einsortieren
-				if (indexOfNode > indexOfBefore) {
+				if (indexOfNode < indexOfBefore) {
 					indexOfBefore--;
-				} else {
-					indexOfBefore -= 2;
 				}
 				if (indexOfBefore <= 0) {
 					parent.children.unshift(node);
 				} else {
-					parent.children.splice(insertBefore, 0, node);
+					parent.children.splice(indexOfBefore, 0, node);
 				}
 			}
 			if (nodeData.after) {
