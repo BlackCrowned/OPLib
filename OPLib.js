@@ -2768,12 +2768,13 @@ var oplib = (function() {
 		 */
 		var ordered = oplib.merge([], nodeOrder);
 		for (var i = 0; i < nodeOrder.length; i++) {
+			var containers = ["fieldset"];
 			var nodeData = nodeOrder[i].nodeData;
 			var nodeType = nodeOrder[i].nodeType;
 			var node = nodeOrder[i].node;
 			//Order Elements
-			for (var j = 0; j < options.length; j++) {
-				var type = options[j];
+			for (var j = 0; j < containers.length; j++) {
+				var type = containers[j];
 				if (nodeData[type]) {
 					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, node, ordered, type, nodeData[type]);
 				}
