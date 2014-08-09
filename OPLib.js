@@ -2861,13 +2861,13 @@ var oplib = (function() {
 	oplib.fn.Form.updateData.insertElem = function(nodeOrder) {
 		//Root
 		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
-			for (var i = 0; i < nodeOrder.length; i ++) {
+			for (var i = 0; i < nodeOrder.length; i++) {
 				if (!nodeOrder[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder[i]);
 					$(nodeOrder[i].parent).append(nodeOrder[i].node);
 				}
 			}
-			
+
 		}
 		//Children
 		else if (toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
