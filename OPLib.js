@@ -2918,7 +2918,7 @@ var oplib = (function() {
 		}
 		return false;
 	};
-
+	//DEPRECATED in updateData einfügen
 	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
 		var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, pType, pId);
 		var children = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, nodeType, nodeData.id);
