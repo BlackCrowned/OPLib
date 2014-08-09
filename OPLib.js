@@ -2779,7 +2779,13 @@ var oplib = (function() {
 				}
 			}
 			//Apply Attributes
-			$(node).attr(nodeData.attr);
+			if (nodeData.attr != undefined) {
+				$(node).attr(nodeData.attr);
+			}
+			//Apply html
+			if (nodeData.html != undefined) {
+				$(node).html(nodeData.html);
+			}
 
 		}
 		for (var i = 0; i < nodeOrder.length; i++) {
