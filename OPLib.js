@@ -2693,10 +2693,10 @@ var oplib = (function() {
 	oplib.fn.Form = function(data) {
 		/*
 		 * {
-		 * 	fieldset: {id, fieldset, label, legend, after, before, attr, action},
-		 *  label: {id, html, fieldset, label, after, before, attr, action},
-		 * 	legend: {id, html, fieldset, after, before, attr, action},
-		 *  input: {id, html, type, fieldset, label, after, before, attr, action, options},
+		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, attr, action},
+		 *  label: {id, html, fieldset, label, after, before, first, last, attr, action},
+		 * 	legend: {id, html, fieldset, after, before, first, last, attr, action},
+		 *  input: {id, html, type, fieldset, label, after, before, first, last, attr, action, options},
 		 * }
 		 */
 
@@ -2825,6 +2825,24 @@ var oplib = (function() {
 				} else {
 					parent.children.splice(indexOfAfter + 1, 0, node);
 				}
+			}
+			if (nodeData.first) {
+				var node = oplib.fn.Form.updateData.orderElems.getElems(ordered, nodeType, nodeData.id);
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(ordered, node.nodeType, node.parent);
+				var indexOfNode = parent.children.indexOf(node);
+				//Element entfernen
+				parent.children.splice(indexOfNode, 1);
+				//Element an den Anfang setzen
+				parent.children.unshift(node);
+			}
+			if (nodeData.last) {
+				var node = oplib.fn.Form.updateData.orderElems.getElems(ordered, nodeType, nodeData.id);
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(ordered, node.nodeType, node.parent);
+				var indexOfNode = parent.children.indexOf(node);
+				//Element entfernen
+				parent.children.splice(indexOfNode, 1);
+				//Element an das Ende setzen
+				parent.children.push(node);
 			}
 		}
 		elem.oplib.Form.nodeOrder = ordered;
