@@ -2900,7 +2900,7 @@ var oplib = (function() {
 			});
 		}
 	};
-
+	//DEPRECATED 'pType' wird nicht benötigt
 	oplib.fn.Form.updateData.orderElems.getElems = function(nodeOrder, pType, pId) {
 		//Root
 		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
