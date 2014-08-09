@@ -2779,6 +2779,51 @@ var oplib = (function() {
 			}
 
 		}
+		for (var i = 0; i < nodeOrder.length; i++) {
+			var nodeData = nodeOrder[i].nodeData;
+			var nodeType = nodeOrder[i].nodeType;
+			var node = nodeOrder[i].node;
+			if (nodeData.before) {
+				var node = oplib.fn.Form.updateData.orderElems.getElems(ordered, nodeType, nodeData.id);
+				var before = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.before);
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(ordered, node.nodeType, node.parent);
+				var indexOfNode = parent.children.indexOf(node);
+				var indexOfBefore = parent.children.indexOf(before);
+				//Element entfernen
+				parent.children.splice(indexOfNode, 1);
+				//Elemente neu einsortieren
+				if (indexOfNode > indexOfBefore) {
+					indexOfBefore--;
+				} else {
+					indexOfBefore -= 2;
+				}
+				if (indexOfBefore <= 0) {
+					parent.children.unshift(node);
+				} else {
+					parent.children.splice(insertBefore, 0, node);
+				}
+			}
+			if (nodeData.after) {
+				var node = oplib.fn.Form.updateData.orderElems.getElems(ordered, nodeType, nodeData.id);
+				var after = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.after);
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(ordered, node.nodeType, node.parent);
+				var indexOfNode = parent.children.indexOf(node);
+				var indexOfAfter = parent.children.indexOf(after);
+				//Element entfernen
+				parent.children.splice(indexOfNode, 1);
+				//Elemente neu einsortieren
+				if (indexOfNode < indexOfAfter) {
+					indexOfAfter--;
+				}
+				if (indexOfAfter < -1) {
+					parent.children.push(node);
+				} else if (indexOfAfter == -1) {
+					parent.children.splice(indexOfAfter + 2, 0, node);
+				} else {
+					parent.children.splice(indexOfAfter + 1, 0, node);
+				}
+			}
+		}
 		elem.oplib.Form.nodeOrder = ordered;
 		oplib.fn.Form.updateData.insertElem(nodeOrder);
 	};
