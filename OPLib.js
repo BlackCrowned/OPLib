@@ -27,7 +27,7 @@ var oplib = (function() {
 		//Attribut setzen
 		attr : function(name, property) {
 			//Wurde nur 'name' übergeben? - Attribut zurückgeben
-			if (arguments.length == 1) {
+			if (arguments.length == 1 && typeof name !== "object") {
 				if (this.length != 0) {
 					return this[0][name] || this[0].getAttribute(name);
 				} else {
