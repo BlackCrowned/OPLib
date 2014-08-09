@@ -2787,6 +2787,10 @@ var oplib = (function() {
 					legend.nodeData.first = true;
 				}
 			}
+			//Apply type
+			if (nodeType == "input" && nodeData.type != undefined) {
+				$(node).attr("type", nodeData.type);
+			}
 			//Apply Attributes
 			if (nodeData.attr != undefined) {
 				$(node).attr(nodeData.attr);
