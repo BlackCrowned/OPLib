@@ -2778,6 +2778,14 @@ var oplib = (function() {
 				if (nodeData[type]) {
 					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, node, ordered, type, nodeData[type]);
 				}
+				if (nodeData["label"]) {
+					var label = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.label);
+					label.nodeData.before = nodeData.id;
+				}
+				if (nodeData["legend"]) {
+					var legend = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.legend);
+					legend.nodeData.first = true;
+				}
 			}
 			//Apply Attributes
 			if (nodeData.attr != undefined) {
