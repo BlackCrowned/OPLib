@@ -2786,6 +2786,10 @@ var oplib = (function() {
 					var legend = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.legend);
 					legend.nodeData.first = true;
 				}
+				if (nodeData["br"] && !(nodeData["br"] instanceof Node)) {
+					var br = document.createElement("br");
+					nodeData.br = br;
+				}	
 			}
 			//Apply type
 			if (nodeType == "input" && nodeData.type != undefined) {
@@ -2903,6 +2907,9 @@ var oplib = (function() {
 				if (!nodeOrder[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder[i]);
 					$(nodeOrder[i].parent).append(nodeOrder[i].node);
+					if (nodeOrder[i].nodeData.br) {
+						$(nodeOrder[i].parent).append(nodeOrder[i].nodeData.br);
+					}
 				}
 			}
 
@@ -2913,6 +2920,9 @@ var oplib = (function() {
 				if (!nodeOrder.children[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder.children[i]);
 					$(nodeOrder.children[i].parent).append(nodeOrder.children[i].node);
+					if (nodeOrder.children[i].nodeData.br) {
+						$(nodeOrder.children[i].parent).append(nodeOrder.children[i].nodeData.br);
+					}
 				}
 			}
 		}
