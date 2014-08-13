@@ -2786,16 +2786,25 @@ var oplib = (function() {
 					var legend = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.legend);
 					legend.nodeData.first = true;
 				}
-				if (nodeData["br"]) {
-					var brData = {
+				if (nodeData["br"] && typeof nodeData["br"] !== "object") {
+					nodeData["br"] = {
 						id : "__OPLibFormBr" + oplib.ID.getUniqueRandomId(),
 						fieldset : nodeData.fieldset,
 						after : nodeData.id,
 						created : true,
 					};
 					elem.oplib.Form.nodeOrder.push({
-						node : oplib.fn.Form.updateData.createElement("br", brData, elem),
-						nodeData : brData,
+						node : oplib.fn.Form.updateData.createElement("br", nodeData["br"], elem),
+						nodeData : nodeData["br"],
+						nodeType : "br",
+						children : [],
+						parent : elem,
+					});
+				} else if (nodeData["br"]) {
+					nodeData["br"].after = nodeData.id;
+					elem.oplib.Form.nodeOrder.push({
+						node : oplib.fn.Form.updateData.createElement("br", nodeData["br"], elem),
+						nodeData : nodeData["br"],
 						nodeType : "br",
 						children : [],
 						parent : elem,
