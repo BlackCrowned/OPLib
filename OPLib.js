@@ -2788,7 +2788,7 @@ var oplib = (function() {
 				}
 				if (nodeData["br"]) {
 					var brData = {
-						id : "__OPLibFormBr" + oplib.ID.getUniqueId(),
+						id : "__OPLibFormBr" + oplib.ID.getUniqueRandomId(),
 						fieldset : nodeData.fieldset,
 						after : nodeData.id,
 						created : true,
