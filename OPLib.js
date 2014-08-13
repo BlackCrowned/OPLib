@@ -2693,10 +2693,10 @@ var oplib = (function() {
 	oplib.fn.Form = function(data) {
 		/*
 		 * {
-		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, attr, action},
-		 *  label: {id, html, fieldset, label, after, before, first, last, attr, action},
-		 * 	legend: {id, html, fieldset, after, before, first, last, attr, action},
-		 *  input: {id, html, type, fieldset, label, after, before, first, last, attr, action, options},
+		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, action},
+		 *  label: {id, html, fieldset, label, after, before, first, last, br, attr, action},
+		 * 	legend: {id, html, fieldset, after, before, first, last, br, attr, action},
+		 *  input: {id, html, type, fieldset, label, after, before, first, last, br, attr, action, options},
 		 * }
 		 */
 
