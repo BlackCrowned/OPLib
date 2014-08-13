@@ -1497,22 +1497,28 @@ var oplib = (function() {
 	//Klont Elemente, etc...
 	oplib.fn.finalizeDOMManipulation = function(obj, fn, args) {
 		var returns = [];
-		oplib.each(obj, function(fn, elems) {
-			var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
-			returns.push(fn.apply(this, [clones]));
-		}, [fn, args[0]]);
+		if (obj.length <= 1) {
+			oplib.each(obj, function(fn, elems) {
+				returns.push(fn.apply(this, [elems]));
+			}, [fn, args[0]]);
+		} else {
+			oplib.each(obj, function(fn, elems) {
+				var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
+				returns.push(fn.apply(this, [clones]));
+			}, [fn, args[0]]);
 
-		//Element löschen
-		oplib.each(args[0], function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-			//Element muss in DOM eingeordnet werden
-			else {
-				document.body.appendChild(this);
-				document.body.removeChild(this);
-			}
-		}, []);
+			//Element löschen
+			oplib.each(args[0], function() {
+				if (this.parentNode) {
+					this.parentNode.removeChild(this);
+				}
+				//Element muss in DOM eingeordnet werden
+				else {
+					document.body.appendChild(this);
+					document.body.removeChild(this);
+				}
+			}, []);
+		}
 
 		//Alte Elemente entfernen und durch neue ersetzen
 		this.length = 0;
