@@ -2693,10 +2693,10 @@ var oplib = (function() {
 	oplib.fn.Form = function(data) {
 		/*
 		 * {
-		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, action},
-		 *  label: {id, html, fieldset, label, after, before, first, last, br, attr, action},
-		 * 	legend: {id, html, fieldset, after, before, first, last, br, attr, action},
-		 *  input: {id, html, type, fieldset, label, after, before, first, last, br, attr, action, options},
+		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, events, action},
+		 *  label: {id, html, fieldset, label, after, before, first, last, br, attr, events, action},
+		 * 	legend: {id, html, fieldset, after, before, first, last, br, attr, events, action},
+		 *  input: {id, html, type, fieldset, label, after, before, first, last, br, attr, events, action, options},
 		 * }
 		 */
 
@@ -2823,6 +2823,23 @@ var oplib = (function() {
 			//Apply html
 			if (nodeData.html != undefined) {
 				$(node).html(nodeData.html);
+			}
+			//Apply Events
+			if (nodeData.events != undefined && typeof nodeData.events === "object") {
+				for (var e in nodeData.events) {
+					if (toString.call(nodeData.events[e]) !== "[object Array]") {
+						nodeData.events[e] = [nodeData.events[e]];
+					}
+					for (var z = 0; z < nodeData.events[e].length; z++) {
+						if (typeof nodeData.events[e][z] === "object") {
+							
+						}
+						else {
+							$(node).events(e, nodeData.events[e][z]);
+						}
+					}
+				}
+				nodeData.events = undefined;
 			}
 
 		}
