@@ -2801,9 +2801,13 @@ var oplib = (function() {
 	//Funktionen für IDs
 	oplib.ID = {
 		uid : 0,
+		urid : 0,
 		getUniqueId : function() {
 			return ++this.uid;
 		},
+		getUniqueRandomId : function() {
+			return oplib.TIME.getCurrentTime() + "_" + ++this.urid;
+		}
 	};
 
 	//Standart Werte für name setzen
