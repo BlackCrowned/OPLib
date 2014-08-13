@@ -2837,10 +2837,9 @@ var oplib = (function() {
 						nodeData.events[e] = [nodeData.events[e]];
 					}
 					for (var z = 0; z < nodeData.events[e].length; z++) {
-						if (typeof nodeData.events[e][z] === "object") {
-							
-						}
-						else {
+						if ( typeof nodeData.events[e][z] === "object") {
+
+						} else {
 							$(node).events(e, nodeData.events[e][z]);
 						}
 					}
