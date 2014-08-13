@@ -2786,10 +2786,22 @@ var oplib = (function() {
 					var legend = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.legend);
 					legend.nodeData.first = true;
 				}
-				if (nodeData["br"] && !(nodeData["br"] instanceof Node)) {
-					var br = document.createElement("br");
-					nodeData.br = br;
-				}	
+				if (nodeData["br"]) {
+					var brData = {
+						id : "__OPLibFormBr" + oplib.ID.getUniqueId(),
+						fieldset : nodeData.fieldset,
+						after : nodeData.id,
+						created : true,
+					};
+					elem.oplib.Form.nodeOrder.push({
+						node : oplib.fn.Form.updateData.createElement("br", brData, elem),
+						nodeData : brData,
+						nodeType : "br",
+						children : [],
+						parent : elem,
+					});
+				}
+
 			}
 			//Apply type
 			if (nodeType == "input" && nodeData.type != undefined) {
@@ -2867,7 +2879,7 @@ var oplib = (function() {
 			}
 		}
 		elem.oplib.Form.nodeOrder = ordered;
-		oplib.fn.Form.updateData.insertElem(nodeOrder);
+		oplib.fn.Form.updateData.insertElem(ordered);
 	};
 
 	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
@@ -2877,6 +2889,7 @@ var oplib = (function() {
 				case "fieldset":
 				case "label":
 				case "legend":
+				case "br":
 				case "input":
 					node = document.createElement(type);
 					$(node).addClass("OPForm" + type + nodeData.id);
@@ -2890,6 +2903,7 @@ var oplib = (function() {
 				case "fieldset":
 				case "label":
 				case "legend":
+				case "br":
 				case "input":
 					node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
 					break;
@@ -2907,9 +2921,6 @@ var oplib = (function() {
 				if (!nodeOrder[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder[i]);
 					$(nodeOrder[i].parent).append(nodeOrder[i].node);
-					if (nodeOrder[i].nodeData.br) {
-						$(nodeOrder[i].parent).append(nodeOrder[i].nodeData.br);
-					}
 				}
 			}
 
@@ -2920,9 +2931,6 @@ var oplib = (function() {
 				if (!nodeOrder.children[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder.children[i]);
 					$(nodeOrder.children[i].parent).append(nodeOrder.children[i].node);
-					if (nodeOrder.children[i].nodeData.br) {
-						$(nodeOrder.children[i].parent).append(nodeOrder.children[i].nodeData.br);
-					}
 				}
 			}
 		}
