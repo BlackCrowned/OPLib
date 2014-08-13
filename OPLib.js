@@ -2643,8 +2643,7 @@ var oplib = (function() {
 						} else {
 							setTimeout(hideTooltips, options.delayUpdateTime, options, self, delay);
 						}
-					}
-					else {
+					} else {
 						setTimeout(hideTooltips, options.delayUpdateTime, options, self, options.hideDelay);
 					}
 				}
