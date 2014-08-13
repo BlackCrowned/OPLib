@@ -2798,6 +2798,14 @@ var oplib = (function() {
 		}
 	};
 
+	//Funktionen für IDs
+	oplib.ID = {
+		uid : 0,
+		getUniqueId : function() {
+			return ++this.uid;
+		},
+	};
+
 	//Standart Werte für name setzen
 	oplib.defaults = function(group, name, value) {
 		//Keine Gruppe ausgewählt
