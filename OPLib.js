@@ -3046,7 +3046,10 @@ var oplib = (function() {
 		if (id == undefined || args == undefined || fn == undefined || elems == undefined) {
 			return false;
 		}
-		return this.each(elems, function(id, args, fn) {
+		if (toString.call(elems) !== "[object Array]") {
+			elems = [elems];
+		}
+		return oplib.each(elems, function(id, args, fn) {
 			if (toString.call(id) == "[object Array]") {
 				oplib.each(id, function(args, fn, that) {
 					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
