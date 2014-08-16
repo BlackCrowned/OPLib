@@ -3070,6 +3070,35 @@ var oplib = (function() {
 		}, [id, args, fn]);
 	};
 
+	oplib.fn.Form.state = function(id, state, elems) {
+		return oplib.fn.Form.each(id, [state], function(state) {
+			switch (state) {
+				case "shown":
+					if (this.nodeData.created) {
+						OPLib(this.node).show(0);
+					} else {
+						OPLib(this.node).show();
+					}
+					break;
+				case "hidden":
+					if (this.nodeData.created) {
+						OPLib(this.node).hide(0);
+					} else {
+						OPLib(this.node).hide();
+					}
+					break;
+				case "enabled":
+					OPLib(this.node).removeAttr("disabled");
+					break;
+				case "disabled":
+					OPLib(this.node).attr("disabled", "disabled");
+					break;
+				default:
+					console.log(".Form: State [" + state + "] not recognized.");
+			}
+		}, elems);
+	};
+
 	oplib.fn.Form.actions = function(id, actions, elems) {
 		return oplib.fn.Form.each(id, [actions], function(actions) {
 			for (var a in actions) {
