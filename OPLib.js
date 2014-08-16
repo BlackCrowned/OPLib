@@ -3069,6 +3069,17 @@ var oplib = (function() {
 			}
 		}, [id, args, fn]);
 	};
+
+	oplib.fn.Form.actions = function(id, actions, elems) {
+		return oplib.fn.Form.each(id, [actions], function(actions) {
+			for (var a in actions) {
+				if (oplib.fn[a]) {
+					oplib.fn[a].apply(OPLib(this.node), [actions[a]]);
+				}
+			}
+		}, elems);
+	};
+
 	oplib.fn.FormActions = function(id, actions) {
 		return this.each(function() {
 			if (toString.call(id) === "[object Array]") {
