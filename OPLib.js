@@ -2697,13 +2697,20 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form = function(data) {
-		/*
+		/* data:
 		 * {
-		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, events, action},
-		 *  label: {id, html, fieldset, label, after, before, first, last, br, attr, events, action},
-		 * 	legend: {id, html, fieldset, after, before, first, last, br, attr, events, action},
-		 *  input: {id, html, type, fieldset, label, after, before, first, last, br, attr, events, action, options},
+		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, events, actions, state},
+		 *  label: {id, html, fieldset, label, after, before, first, last, br, attr, events, actions, state},
+		 * 	legend: {id, html, fieldset, after, before, first, last, br, attr, events, actions, state},
+		 *  input: {id, html, type, fieldset, label, after, before, first, last, br, attr, events, actions, state},
 		 * }
+		 *
+		 * actions:
+		 * {
+		 * 	OPLib-Function: Arguments
+		 * }
+		 *
+		 * state: shown|hidden|enabled|disabled
 		 */
 
 		if (!data) {
@@ -2830,6 +2837,36 @@ var oplib = (function() {
 			if (nodeData.html != undefined) {
 				$(node).html(nodeData.html);
 			}
+			//Set State
+			if (nodeData.state != undefined) {
+				switch (nodeData.state) {
+					case "shown":
+						if (nodeData.created) {
+							OPLib(node).show(0);
+						}
+						else {
+							OPLib(node).show();
+						}
+						break;
+					case "hidden":
+						if (nodeData.created) {
+							OPLib(node).hide(0);
+						}
+						else {
+							OPLib(node).hide();
+						}
+						break;
+					case "enabled":
+							OPLib(node).removeAttr("disabled");
+						break;
+					case "disabled":
+							OPLib(node).attr("disabled", "disabled");
+						break;
+					default:
+						console.log(".Form: State [" + nodeData.state + "] not recognized.");
+				}
+				nodeData.state = undefined;
+			}
 			//Apply Events
 			if (nodeData.events != undefined && typeof nodeData.events === "object") {
 				for (var e in nodeData.events) {
@@ -2846,7 +2883,15 @@ var oplib = (function() {
 				}
 				nodeData.events = undefined;
 			}
-
+			//Apply Actions
+			if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
+				for (var a in nodeData.actions) {
+					if (oplib.fn[a]) {
+						oplib.fn[a].apply(OPLib(node), nodeData.actions[a]);
+					}
+				}
+			}
+			nodeData.created = false;
 		}
 		for (var i = 0; i < nodeOrder.length; i++) {
 			var nodeData = nodeOrder[i].nodeData;
@@ -2915,7 +2960,7 @@ var oplib = (function() {
 
 	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
 		var node;
-		if (nodeData.created) {
+		if (nodeData.created == true) {
 			switch(type) {
 				case "fieldset":
 				case "label":
@@ -2928,7 +2973,7 @@ var oplib = (function() {
 				default:
 					console.log(".Form.updateData.createElement: Unknown Type: " + type);
 			}
-			nodeData.created = false;
+			nodeData.created = 2;
 		} else {
 			switch(type) {
 				case "fieldset":
