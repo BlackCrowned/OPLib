@@ -3071,6 +3071,28 @@ var oplib = (function() {
 		}
 	};
 
+	oplib.fn.FormAction = function(id, action) {
+		return this.each(function() {
+			if (toString.call(id) === "[object Array]") {
+				oplib.each(id, function(action, that) {
+					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
+					for (var a in action) {
+						if (oplib.fn[a]) {
+							oplib.fn[a].apply(OPLib(nodeOrderElem.node), action[a]);
+						}
+					}
+				}, [action, this]);
+			} else {
+				var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(this.oplib.Form.nodeOrder, "", id);
+				for (var a in action) {
+					if (oplib.fn[a]) {
+						oplib.fn[a].apply(OPLib(nodeOrderElem.node), action[a]);
+					}
+				}
+			}
+		}, [id, action]);
+	};
+
 	oplib.fn.Form.addData = function(type, data, elem) {
 		if (!elem.oplib.Form.data[type]) {
 			elem.oplib.data[type] = [];
