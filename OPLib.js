@@ -3117,6 +3117,23 @@ var oplib = (function() {
 		}, elems);
 	};
 
+	oplib.fn.Form.events = function(id, events, elems) {
+		return oplib.fn.Form.each(id, [events], function(events) {
+			for (var e in events) {
+				if (toString.call(events[e]) !== "[object Array]") {
+					events[e] = [events[e]];
+				}
+				for (var z = 0; z < events[e].length; z++) {
+					if ( typeof events[e][z] === "object") {
+
+					} else {
+						$(this.node).events(e, events[e][z]);
+					}
+				}
+			}
+		}, elems);
+	};
+
 	oplib.fn.Form.actions = function(id, actions, elems) {
 		return oplib.fn.Form.each(id, [actions], function(actions) {
 			for (var a in actions) {
