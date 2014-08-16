@@ -2860,7 +2860,7 @@ var oplib = (function() {
 			}
 			//Apply Actions
 			if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
-				oplib.fn.FormActions(nodeData.id, nodeData.actions);
+				OPLib(elem).FormActions(nodeData.id, nodeData.actions);
 			}
 			nodeData.created = false;
 		}
