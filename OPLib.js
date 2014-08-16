@@ -3070,6 +3070,12 @@ var oplib = (function() {
 		}, [id, args, fn]);
 	};
 
+	oplib.fn.Form.attr = function(id, attr, elems) {
+		return oplib.fn.Form.each(id, [attr], function(attr) {
+			$(this.node).attr(attr);
+		}, elems);
+	};
+	
 	oplib.fn.Form.state = function(id, state, elems) {
 		return oplib.fn.Form.each(id, [state], function(state) {
 			switch (state) {
