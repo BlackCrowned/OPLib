@@ -3082,6 +3082,12 @@ var oplib = (function() {
 		}, elems);
 	};
 	
+	oplib.fn.Form.html = function(id, html, elems) {
+		return oplib.fn.Form.each(id, [html], function(html) {
+			$(this.node).html(html);
+		}, elems);
+	};
+	
 	oplib.fn.Form.state = function(id, state, elems) {
 		return oplib.fn.Form.each(id, [state], function(state) {
 			switch (state) {
