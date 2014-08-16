@@ -2839,32 +2839,7 @@ var oplib = (function() {
 			}
 			//Set State
 			if (nodeData.state != undefined) {
-				switch (nodeData.state) {
-					case "shown":
-						if (nodeData.created) {
-							OPLib(node).show(0);
-						}
-						else {
-							OPLib(node).show();
-						}
-						break;
-					case "hidden":
-						if (nodeData.created) {
-							OPLib(node).hide(0);
-						}
-						else {
-							OPLib(node).hide();
-						}
-						break;
-					case "enabled":
-							OPLib(node).removeAttr("disabled");
-						break;
-					case "disabled":
-							OPLib(node).attr("disabled", "disabled");
-						break;
-					default:
-						console.log(".Form: State [" + nodeData.state + "] not recognized.");
-				}
+				OPLib(elem).FormState(nodeData.id, nodeData.state);
 				nodeData.state = undefined;
 			}
 			//Apply Events
