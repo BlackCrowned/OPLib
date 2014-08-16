@@ -2847,7 +2847,7 @@ var oplib = (function() {
 			}
 			//Apply Events
 			if (nodeData.events != undefined && typeof nodeData.events === "object") {
-				oplib.fn.Form.state(nodeData.id, nodeData.events, elem);
+				oplib.fn.Form.events(nodeData.id, nodeData.events, elem);
 				nodeData.events = undefined;
 			}
 			//Apply Actions
