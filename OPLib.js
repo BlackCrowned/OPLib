@@ -3137,86 +3137,28 @@ var oplib = (function() {
 		}, elems);
 	};
 
-	oplib.fn.FormActions = function(id, actions) {
-		return this.each(function() {
-			if (toString.call(id) === "[object Array]") {
-				oplib.each(id, function(action, that) {
-					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
-					for (var a in action) {
-						if (oplib.fn[a]) {
-							oplib.fn[a].apply(OPLib(nodeOrderElem.node), action[a]);
-						}
-					}
-				}, [action, this]);
-			} else {
-				var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(this.oplib.Form.nodeOrder, "", id);
-				for (var a in action) {
-					if (oplib.fn[a]) {
-						oplib.fn[a].apply(OPLib(nodeOrderElem.node), action[a]);
-					}
-				}
-			}
-		}, [id, action]);
+	oplib.fn.FormAttr = function(id, attr) {
+		return oplib.fn.Form.attr(id, attr, this);
+	};
+
+	oplib.fn.FormType = function(id, type) {
+		return oplib.fn.Form.type(id, type, this);
+	};
+
+	oplib.fn.FormHtml = function(id, html) {
+		return oplib.fn.Form.html(id, html, this);
 	};
 
 	oplib.fn.FormState = function(id, state) {
-		return this.each(function(id, state) {
-			if (toString.call(id) === "[object Array]") {
-				oplib.each(id, function(state, that) {
-					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
-					switch (state) {
-						case "shown":
-							if (nodeOrderElem.nodeData.created) {
-								OPLib(nodeOrderElem.node).show(0);
-							} else {
-								OPLib(nodeOrderElem.node).show();
-							}
-							break;
-						case "hidden":
-							if (nodeOrderElem.nodeData.created) {
-								OPLib(nodeOrderElem.node).hide(0);
-							} else {
-								OPLib(nodeOrderElem.node).hide();
-							}
-							break;
-						case "enabled":
-							OPLib(nodeOrderElem.node).removeAttr("disabled");
-							break;
-						case "disabled":
-							OPLib(nodeOrderElem.node).attr("disabled", "disabled");
-							break;
-						default:
-							console.log(".Form: State [" + state + "] not recognized.");
-					}
-				}, [state, this]);
-			} else {
-				var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(this.oplib.Form.nodeOrder, "", id);
-				switch (state) {
-					case "shown":
-						if (nodeOrderElem.nodeData.created) {
-							OPLib(nodeOrderElem.node).show(0);
-						} else {
-							OPLib(nodeOrderElem.node).show();
-						}
-						break;
-					case "hidden":
-						if (nodeOrderElem.nodeData.created) {
-							OPLib(nodeOrderElem.node).hide(0);
-						} else {
-							OPLib(nodeOrderElem.node).hide();
-						}
-						break;
-					case "enabled":
-						OPLib(nodeOrderElem.node).removeAttr("disabled");
-						break;
-					case "disabled":
-						OPLib(nodeOrderElem.node).attr("disabled", "disabled");
-						break;
-					default:
-						console.log(".Form: State [" + state + "] not recognized.");
-				}
-			}
-		}, [id, state]);
+		return oplib.fn.Form.state(id, state, this);
+	};
+	
+	oplib.fn.FormEvents = function(id, events) {
+		return oplib.fn.Form.events(id, events, this);
+	};
+
+	oplib.fn.FormActions = function(id, actions) {
+		return oplib.fn.Form.actions(id, actions, this);
 	};
 
 	oplib.fn.Form.addData = function(type, data, elem) {
