@@ -2885,7 +2885,7 @@ var oplib = (function() {
 			}
 			//Apply Actions
 			if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
-				oplib.fn.FormAction(nodeData.id, nodeData.actions);
+				oplib.fn.FormActions(nodeData.id, nodeData.actions);
 			}
 			nodeData.created = false;
 		}
@@ -3067,7 +3067,7 @@ var oplib = (function() {
 		}
 	};
 
-	oplib.fn.FormAction = function(id, action) {
+	oplib.fn.FormActions = function(id, actions) {
 		return this.each(function() {
 			if (toString.call(id) === "[object Array]") {
 				oplib.each(id, function(action, that) {
