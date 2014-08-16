@@ -3043,7 +3043,7 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.each = function(id, args, fn, elems) {
-		if (id == undefined || data == undefined || fn == undefined || elems == undefined) {
+		if (id == undefined || args == undefined || fn == undefined || elems == undefined) {
 			return false;
 		}
 		return this.each(elems, function(id, args, fn) {
