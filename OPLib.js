@@ -3042,6 +3042,30 @@ var oplib = (function() {
 		}
 	};
 
+	oplib.fn.Form.each = function(id, args, fn, elems) {
+		if (id == undefined || data == undefined || fn == undefined || elems == undefined) {
+			return false;
+		}
+		return this.each(elems, function(id, args, fn) {
+			if (toString.call(id) == "[object Array]") {
+				oplib.each(id, function(args, fn, that) {
+					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
+					if (nodeOrderElem == false) {
+						return;
+					} else {
+						fn.apply(nodeOrderElem, args);
+					}
+				}, [args, fn, this]);
+			} else {
+				var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(this.oplib.Form.nodeOrder, "", id);
+				if (nodeOrderElem == false) {
+					return;
+				} else {
+					fn.apply(nodeOrderElem, args);
+				}
+			}
+		}, [id, args, fn]);
+	};
 	oplib.fn.FormActions = function(id, actions) {
 		return this.each(function() {
 			if (toString.call(id) === "[object Array]") {
