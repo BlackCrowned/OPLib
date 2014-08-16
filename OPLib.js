@@ -3089,6 +3089,66 @@ var oplib = (function() {
 		}, [id, action]);
 	};
 
+	oplib.fn.FormState = function(id, state) {
+		return this.each(function(id, state) {
+			if (toString.call(id) === "[object Array]") {
+				oplib.each(id, function(state, that) {
+					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
+					switch (state) {
+						case "shown":
+							if (nodeOrderElem.nodeData.created) {
+								OPLib(nodeOrderElem.node).show(0);
+							} else {
+								OPLib(nodeOrderElem.node).show();
+							}
+							break;
+						case "hidden":
+							if (nodeOrderElem.nodeData.created) {
+								OPLib(nodeOrderElem.node).hide(0);
+							} else {
+								OPLib(nodeOrderElem.node).hide();
+							}
+							break;
+						case "enabled":
+							OPLib(nodeOrderElem.node).removeAttr("disabled");
+							break;
+						case "disabled":
+							OPLib(nodeOrderElem.node).attr("disabled", "disabled");
+							break;
+						default:
+							console.log(".Form: State [" + state + "] not recognized.");
+					}
+				}, [state, this]);
+			} else {
+				var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(this.oplib.Form.nodeOrder, "", id);
+				switch (state) {
+					case "shown":
+						if (nodeOrderElem.nodeData.created) {
+							OPLib(nodeOrderElem.node).show(0);
+						} else {
+							OPLib(nodeOrderElem.node).show();
+						}
+						break;
+					case "hidden":
+						if (nodeOrderElem.nodeData.created) {
+							OPLib(nodeOrderElem.node).hide(0);
+						} else {
+							OPLib(nodeOrderElem.node).hide();
+						}
+						break;
+					case "enabled":
+						OPLib(nodeOrderElem.node).removeAttr("disabled");
+						break;
+					case "disabled":
+						OPLib(nodeOrderElem.node).attr("disabled", "disabled");
+						break;
+					default:
+						console.log(".Form: State [" + state + "] not recognized.");
+				}
+			}
+		}, [id, state]);
+	};
+
 	oplib.fn.Form.addData = function(type, data, elem) {
 		if (!elem.oplib.Form.data[type]) {
 			elem.oplib.data[type] = [];
