@@ -2827,40 +2827,33 @@ var oplib = (function() {
 			}
 			//Apply type
 			if (nodeType == "input" && nodeData.type != undefined) {
-				$(node).attr("type", nodeData.type);
+				oplib.fn.Form.type(nodeData.id, nodeData.type, elem);
+				nodeData.type = undefined;
 			}
 			//Apply Attributes
 			if (nodeData.attr != undefined) {
-				$(node).attr(nodeData.attr);
+				oplib.fn.Form.attr(nodeData.id, nodeData.attr, elem);
+				nodeData.attr = undefined;
 			}
 			//Apply html
 			if (nodeData.html != undefined) {
-				$(node).html(nodeData.html);
+				oplib.fn.Form.html(nodeData.id, nodeData.html, elem);
+				nodeData.html = undefined;
 			}
 			//Set State
 			if (nodeData.state != undefined) {
-				OPLib(elem).FormState(nodeData.id, nodeData.state);
+				oplib.fn.Form.state(nodeData.id, nodeData.state, elem);
 				nodeData.state = undefined;
 			}
 			//Apply Events
 			if (nodeData.events != undefined && typeof nodeData.events === "object") {
-				for (var e in nodeData.events) {
-					if (toString.call(nodeData.events[e]) !== "[object Array]") {
-						nodeData.events[e] = [nodeData.events[e]];
-					}
-					for (var z = 0; z < nodeData.events[e].length; z++) {
-						if ( typeof nodeData.events[e][z] === "object") {
-
-						} else {
-							$(node).events(e, nodeData.events[e][z]);
-						}
-					}
-				}
+				oplib.fn.Form.state(nodeData.id, nodeData.events, elem);
 				nodeData.events = undefined;
 			}
 			//Apply Actions
 			if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
-				OPLib(elem).FormActions(nodeData.id, nodeData.actions);
+				oplib.fn.Form.actions(nodeData.id, nodeData.actions, elem);
+				nodeData.actions = undefined;
 			}
 			nodeData.created = false;
 		}
