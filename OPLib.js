@@ -3068,19 +3068,19 @@ var oplib = (function() {
 			$(this.node).attr("type", type);
 		}, elems);
 	};
-	
+
 	oplib.fn.Form.attr = function(id, attr, elems) {
 		return oplib.fn.Form.each(id, [attr], function(attr) {
 			$(this.node).attr(attr);
 		}, elems);
 	};
-	
+
 	oplib.fn.Form.html = function(id, html, elems) {
 		return oplib.fn.Form.each(id, [html], function(html) {
 			$(this.node).html(html);
 		}, elems);
 	};
-	
+
 	oplib.fn.Form.state = function(id, state, elems) {
 		return oplib.fn.Form.each(id, [state], function(state) {
 			switch (state) {
