@@ -3138,27 +3138,33 @@ var oplib = (function() {
 	};
 
 	oplib.fn.FormAttr = function(id, attr) {
-		return oplib.fn.Form.attr(id, attr, this);
+		oplib.fn.Form.attr(id, attr, this);
+		return this;
 	};
 
 	oplib.fn.FormType = function(id, type) {
-		return oplib.fn.Form.type(id, type, this);
+		oplib.fn.Form.type(id, type, this);
+		return this;
 	};
 
 	oplib.fn.FormHtml = function(id, html) {
-		return oplib.fn.Form.html(id, html, this);
+		oplib.fn.Form.html(id, html, this);
+		return this;
 	};
 
 	oplib.fn.FormState = function(id, state) {
-		return oplib.fn.Form.state(id, state, this);
+		oplib.fn.Form.state(id, state, this);
+		return this;
 	};
-	
+
 	oplib.fn.FormEvents = function(id, events) {
-		return oplib.fn.Form.events(id, events, this);
+		oplib.fn.Form.events(id, events, this);
+		return this;
 	};
 
 	oplib.fn.FormActions = function(id, actions) {
-		return oplib.fn.Form.actions(id, actions, this);
+		oplib.fn.Form.actions(id, actions, this);
+		return this;
 	};
 
 	oplib.fn.Form.addData = function(type, data, elem) {
