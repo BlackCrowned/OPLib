@@ -3039,7 +3039,7 @@ var oplib = (function() {
 		if (id == undefined || args == undefined || fn == undefined || elems == undefined) {
 			return false;
 		}
-		if (toString.call(elems) !== "[object Array]") {
+		if (toString.call(elems) !== "[object Array]" && !oplib.isOPLib(elems)) {
 			elems = [elems];
 		}
 		return oplib.each(elems, function(id, args, fn) {
