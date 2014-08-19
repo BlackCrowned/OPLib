@@ -3049,7 +3049,7 @@ var oplib = (function() {
 					if (nodeOrderElem == false) {
 						return;
 					} else {
-						fn.apply(nodeOrderElem, args);
+						fn.apply(nodeOrderElem, oplib.merge(args, [that]));
 					}
 				}, [args, fn, this]);
 			} else {
@@ -3057,7 +3057,7 @@ var oplib = (function() {
 				if (nodeOrderElem == false) {
 					return;
 				} else {
-					fn.apply(nodeOrderElem, args);
+					fn.apply(nodeOrderElem, oplib.merge(args, [this]));
 				}
 			}
 		}, [id, args, fn]);
