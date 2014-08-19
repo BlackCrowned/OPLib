@@ -3036,27 +3036,44 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.state = function(id, state, elems) {
-		return oplib.fn.Form.each(id, [state], function(state) {
+		return oplib.fn.Form.each(id, [state], function(state, elem) {
+			//State auch auf label, legend und Neue Zeilen anwenden
+			var nodes = [];
+			if (this.nodeData.label) {
+				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.label).node);
+			}
+			if (this.nodeData.br) {
+				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.br.id).node);
+			}
+			if (this.nodeData.legend) {
+				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.legend).node);
+			}
 			switch (state) {
 				case "shown":
 					if (this.nodeData.created) {
 						OPLib(this.node).show(0);
+						OPLib(nodes).show(0);
 					} else {
 						OPLib(this.node).show();
+						OPLib(nodes).show();
 					}
 					break;
 				case "hidden":
 					if (this.nodeData.created) {
 						OPLib(this.node).hide(0);
+						OPLib(nodes).hide(0);
 					} else {
 						OPLib(this.node).hide();
+						OPLib(nodes).hide();
 					}
 					break;
 				case "enabled":
 					OPLib(this.node).removeAttr("disabled");
+					OPLib(nodes).removeAttr("disabled");
 					break;
 				case "disabled":
 					OPLib(this.node).attr("disabled", "disabled");
+					OPLib(nodes).attr("disabled", "disabled");
 					break;
 				default:
 					console.log(".Form: State [" + state + "] not recognized.");
