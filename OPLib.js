@@ -2791,19 +2791,10 @@ var oplib = (function() {
 				if (nodeData[type]) {
 					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, node, ordered, type, nodeData[type]);
 				}
-				if (nodeData["label"]) {
-					var label = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.label);
-					label.nodeData.before = nodeData.id;
-				}
-				if (nodeData["legend"]) {
-					var legend = oplib.fn.Form.updateData.orderElems.getElems(ordered, "", nodeData.legend);
-					legend.nodeData.first = true;
-				}
 				if (nodeData["br"] && typeof nodeData["br"] !== "object") {
 					nodeData["br"] = {
 						id : "__OPLibFormBr" + oplib.ID.getUniqueRandomId(),
 						fieldset : nodeData.fieldset,
-						after : nodeData.id,
 						created : true,
 					};
 					elem.oplib.Form.nodeOrder.push({
@@ -2814,7 +2805,6 @@ var oplib = (function() {
 						parent : elem,
 					});
 				} else if (nodeData["br"]) {
-					nodeData["br"].after = nodeData.id;
 					elem.oplib.Form.nodeOrder.push({
 						node : oplib.fn.Form.updateData.createElement("br", nodeData["br"], elem),
 						nodeData : nodeData["br"],
@@ -2872,6 +2862,15 @@ var oplib = (function() {
 			}
 			if (nodeData.last) {
 				oplib.fn.Form.last(nodeData.id, elem, true);
+			}
+			if (nodeData.label) {
+				oplib.fn.Form.before(nodeData.label, nodeData.id, elem, true);
+			}
+			if (nodeData.br) {
+				oplib.fn.Form.after(nodeData.br.id, nodeData.id, elem, true);
+			}
+			if (nodeData.legend) {
+				oplib.fn.Form.first(nodeData.legend, elem, true);
 			}
 		}
 		elem.oplib.Form.nodeOrder = ordered;
