@@ -889,11 +889,10 @@ var oplib = (function() {
 		for (var i = 0; i < selectors.length; i++) {
 			switch (selectors[i].type) {
 				case "element":
-					if (!dontCheck && oplib.array.includes(useable, selectors[i].data) != -1) {
+					if (!dontCheck) {
 						var matched = selectors[i].data;
-						useable = [];
-						useable.push(matched);
 						elems.push(matched);
+						useable = elems;
 					} else if (dontCheck) {
 						var matched = selectors[i].data;
 						useable = [];
