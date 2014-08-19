@@ -3233,22 +3233,22 @@ var oplib = (function() {
 		return this;
 	};
 
-	oplib.fb.FormBefore = function(id, before) {
+	oplib.fn.FormBefore = function(id, before) {
 		oplib.fn.Form.before(id, before, this);
 		return this;
 	};
 
-	oplib.fb.FormAfter = function(id, after) {
+	oplib.fn.FormAfter = function(id, after) {
 		oplib.fn.Form.after(id, after, this);
 		return this;
 	};
 
-	oplib.fb.FormFirst = function(id) {
+	oplib.fn.FormFirst = function(id) {
 		oplib.fn.Form.first(id, this);
 		return this;
 	};
 
-	oplib.fb.FormLast = function(id) {
+	oplib.fn.FormLast = function(id) {
 		oplib.fn.Form.last(id, this);
 		return this;
 	};
