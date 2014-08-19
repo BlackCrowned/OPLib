@@ -616,7 +616,7 @@ var oplib = (function() {
 
 		}
 		//Ist selector eine NodeList?
-		else if ( selector instanceof NodeList) {
+		else if ( selector instanceof NodeList || toString.call(selector) === "[object Array]") {
 			for (var i = 0; i < selector.length; i++) {
 				parsedSelectors.push({
 					type : "element",
