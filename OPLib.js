@@ -3137,6 +3137,101 @@ var oplib = (function() {
 		}, elems);
 	};
 
+	oplib.fn.Form.before = function(id, before, elems, dontUpdate) {
+		oplib.fn.Form.each(id, [before, dontUpdate], function(before, dontUpdate, elem) {
+			if (dontUpdate) {
+				var nodeOrder = elem.oplib.Form.nodeOrder;
+				var nodeOrderBefore = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", before);
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var indexOfNode = nodeOrderParent.children.indexOf(this);
+				var indexOfBefore = nodeOrderParent.children.indexOf(nodeOrderBefore);
+				//Element entfernen
+				nodeOrderParent.children.splice(indexOfNode, 1);
+				//Elemente neu einsortieren
+				if (indexOfNode < indexOfBefore) {
+					indexOfBefore--;
+				}
+				if (indexOfBefore <= 0) {
+					nodeOrderParent.children.unshift(this);
+				} else {
+					nodeOrderParent.children.splice(indexOfBefore, 0, this);
+				}
+			} else {
+				this.nodeData.before = before;
+				this.nodeData.after = undefined;
+				oplib.fn.Form.updateData(elem);
+			}
+		}, elems);
+	};
+
+	oplib.fn.Form.after = function(id, after, elems, dontUpdate) {
+		oplib.fn.Form.each(id, [after, dontUpdate], function(after, dontUpdate, elem) {
+			if (dontUpdate) {
+				var nodeOrder = elem.oplib.Form.nodeOrder;
+				var nodeOrderAfter = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", after);
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var indexOfNode = nodeOrderParent.children.indexOf(this);
+				var indexOfAfter = nodeOrderParent.children.indexOf(nodeOrderAfter);
+				//Element entfernen
+				nodeOrderParent.children.splice(indexOfNode, 1);
+				//Elemente neu einsortieren
+				if (indexOfNode < indexOfAfter) {
+					indexOfAfter--;
+				}
+				if (indexOfAfter < -1) {
+					nodeOrderParent.children.push(this);
+				} else if (indexOfAfter == -1) {
+					nodeOrderParent.children.splice(indexOfAfter + 2, 0, this);
+				} else {
+					nodeOrderParent.children.splice(indexOfAfter + 1, 0, this);
+				}
+			} else {
+				this.nodeData.after = after;
+				this.nodeData.before = undefined;
+				oplib.fn.Form.updateData(elem);
+			}
+		}, elems);
+
+	};
+
+	oplib.fn.Form.first = function(id, elems, dontUpdate) {
+		oplib.fn.Form.each(id, [first, dontUpdate], function(first, dontUpdate, elem) {
+			if (dontUpdate) {
+				var nodeOrder = elem.oplib.Form.nodeOrder;
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var indexOfNode = nodeOrderParent.children.indexOf(this);
+				//Element entfernen
+				nodeOrderParent.children.splice(indexOfNode, 1);
+				//Element an den Anfang setzen
+				nodeOrderParent.children.unshift(this);
+			} else {
+				this.nodeData.first = true;
+				this.nodeData.last = undefined;
+				oplib.fn.Form.updateData(elem);
+			}
+		}, elems);
+
+	};
+
+	oplib.fn.Form.last = function(id, elems, dontUpdate) {
+		oplib.fn.Form.each(id, [last, dontUpdate], function(last, dontUpdate, elem) {
+			if (dontUpdate) {
+				var nodeOrder = elem.oplib.Form.nodeOrder;
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var indexOfNode = nodeOrderParent.children.indexOf(this);
+				//Element entfernen
+				nodeOrderParent.children.splice(indexOfNode, 1);
+				//Element an den Anfang setzen
+				nodeOrderParent.children.push(this);
+			} else {
+				this.nodeData.last = true;
+				this.nodeData.first = undefined;
+				oplib.fn.Form.updateData(elem);
+			}
+		}, elems);
+
+	};
+
 	oplib.fn.FormAttr = function(id, attr) {
 		oplib.fn.Form.attr(id, attr, this);
 		return this;
