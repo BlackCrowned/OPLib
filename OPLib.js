@@ -2695,7 +2695,7 @@ var oplib = (function() {
 		}, [elems]);
 	};
 
-	oplib.fn.Form = function(data) {
+	oplib.fn.Form = function(data, options) {
 		/* data:
 		 * {
 		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, events, actions, state},
@@ -2716,8 +2716,7 @@ var oplib = (function() {
 			return this;
 		}
 
-		return this.each(function(data) {
-			//TODO: ADD DEFAULTS
+		return this.each(function(data, settings) {
 			var options = ["fieldset", "label", "legend", "input"];
 			if (!this.oplib) {
 				this.oplib = {};
@@ -2728,6 +2727,10 @@ var oplib = (function() {
 			if (!this.oplib.Form.data) {
 				this.oplib.Form.data = {};
 			}
+			if (!this.oplib.Form.formSettings) {
+				this.oplib.Form.formSettings = {};
+			}
+			oplib.extend(this.oplib.Form.formSettings, oplib.defaults.get("formSettings"), this.oplib.Form.formSettings, settings);
 
 			for (var j = 0; j < options.length; j++) {
 				type = options[j];
@@ -2743,7 +2746,7 @@ var oplib = (function() {
 			oplib.fn.Form.updateData(this);
 			console.log(this.oplib.Form);
 
-		}, [data]);
+		}, [data, options]);
 
 	};
 
@@ -3039,11 +3042,15 @@ var oplib = (function() {
 		return oplib.fn.Form.each(id, [state], function(state, elem) {
 			//State auch auf label, legend und Neue Zeilen anwenden
 			var nodes = [];
+			var br = [];
+			var formSettings = elem.oplib.Form.formSettings;
+			var showAnimation = this.nodeType != "fieldset" ? formSettings.inputShowAnimation : formSettings.fieldsetShowAnimation;
+			var hideAnimation = this.nodeType != "fieldset" ? formSettings.inputHideAnimation : formSettings.fieldsetHideAnimation;
 			if (this.nodeData.label) {
 				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.label).node);
 			}
 			if (this.nodeData.br) {
-				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.br.id).node);
+				br = oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.br.id).node;
 			}
 			if (this.nodeData.legend) {
 				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.legend).node);
@@ -3051,20 +3058,24 @@ var oplib = (function() {
 			switch (state) {
 				case "shown":
 					if (this.nodeData.created) {
-						OPLib(this.node).show(0);
-						OPLib(nodes).show(0);
+						OPLib(br).removeCss("display");
+						OPLib(this.node).anim(showAnimation, 0);
+						OPLib(nodes).anim(showAnimation, 0);
 					} else {
-						OPLib(this.node).show();
-						OPLib(nodes).show();
+						OPLib(br).removeCss("display");
+						OPLib(this.node).anim(showAnimation, formSettings.showSpeed);
+						OPLib(nodes).anim(showAnimation, formSettings.showSpeed);
 					}
 					break;
 				case "hidden":
 					if (this.nodeData.created) {
-						OPLib(this.node).hide(0);
-						OPLib(nodes).hide(0);
+						OPLib(br).css("display", "none");
+						OPLib(this.node).anim(hideAnimation, 0);
+						OPLib(nodes).anim(hideAnimation, 0);
 					} else {
-						OPLib(this.node).hide();
-						OPLib(nodes).hide();
+						OPLib(br).css("display", "none");
+						OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed);
+						OPLib(nodes).anim(hideAnimation, formSettings.hideSpeed);
 					}
 					break;
 				case "enabled":
@@ -3501,6 +3512,48 @@ var oplib = (function() {
 			},
 			hideCallbacks : function() {
 			},
+		},
+		formSettings : {
+			inputShowAnimation : {
+				width : "show",
+				paddingRight : "show",
+				paddingLeft : "show",
+				marginRight : "show",
+				marginLeft : "show",
+				opacity : "show",
+			},
+			inputHideAnimation : {
+				width : "hide",
+				paddingRight : "hide",
+				paddingLeft : "hide",
+				marginRight : "hide",
+				marginLeft : "hide",
+				opacity : "hide",
+			},
+			fieldsetShowAnimation : {
+				height : "show",
+				paddingTop : "show",
+				paddingBottom : "show",
+				margingTop : "show",
+				marginBottom : "show",
+				opacity : "show",
+			},
+			fieldsetHideAnimation : {
+				height : "hide",
+				paddingTop : "hide",
+				paddingBottom : "hide",
+				marginTop : "hide",
+				marginBottom : "hide",
+				opacity : "hide",
+			},
+			labelShowAnimation : {
+				opacity : "show",
+			},
+			labelHideAnimation : {
+				opacity : "hide",
+			},
+			showSpeed : "fast",
+			hideSpeed : "fast",
 		},
 	});
 
