@@ -2811,39 +2811,7 @@ var oplib = (function() {
 						parent : elem,
 					});
 				}
-
 			}
-			//Apply type
-			if (nodeType == "input" && nodeData.type != undefined) {
-				oplib.fn.Form.type(nodeData.id, nodeData.type, elem);
-				nodeData.type = undefined;
-			}
-			//Apply Attributes
-			if (nodeData.attr != undefined) {
-				oplib.fn.Form.attr(nodeData.id, nodeData.attr, elem);
-				nodeData.attr = undefined;
-			}
-			//Apply html
-			if (nodeData.html != undefined) {
-				oplib.fn.Form.html(nodeData.id, nodeData.html, elem);
-				nodeData.html = undefined;
-			}
-			//Set State
-			if (nodeData.state != undefined) {
-				oplib.fn.Form.state(nodeData.id, nodeData.state, elem);
-				nodeData.state = undefined;
-			}
-			//Apply Events
-			if (nodeData.events != undefined && typeof nodeData.events === "object") {
-				oplib.fn.Form.events(nodeData.id, nodeData.events, elem);
-				nodeData.events = undefined;
-			}
-			//Apply Actions
-			if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
-				oplib.fn.Form.actions(nodeData.id, nodeData.actions, elem);
-				nodeData.actions = undefined;
-			}
-			nodeData.created = false;
 		}
 		for (var i = 0; i < nodeOrder.length; i++) {
 			var nodeData = nodeOrder[i].nodeData;
@@ -2873,6 +2841,7 @@ var oplib = (function() {
 		}
 		elem.oplib.Form.nodeOrder = ordered;
 		oplib.fn.Form.updateData.insertElem(ordered);
+		oplib.fn.Form.updateData.customizeElems(ordered, elem);
 	};
 
 	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
@@ -2929,6 +2898,96 @@ var oplib = (function() {
 		}
 		return false;
 	};
+
+	oplib.fn.Form.updateData.customizeElems = function(nodeOrder, elem) {
+		//Root
+		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
+			for (var i = 0; i < nodeOrder.length; i++) {
+				if (!nodeOrder[i].remove) {
+					oplib.fn.Form.updateData.customizeElems(nodeOrder[i], elem);
+					var nodeData = nodeOrder[i].nodeData;
+					var nodeType = nodeOrder[i].nodeType;
+					var node = nodeOrder[i].node;
+					//Apply type
+					if (nodeType == "input" && nodeData.type != undefined) {
+						oplib.fn.Form.type(nodeData.id, nodeData.type, elem);
+						nodeData.type = undefined;
+					}
+					//Apply Attributes
+					if (nodeData.attr != undefined) {
+						oplib.fn.Form.attr(nodeData.id, nodeData.attr, elem);
+						nodeData.attr = undefined;
+					}
+					//Apply html
+					if (nodeData.html != undefined) {
+						oplib.fn.Form.html(nodeData.id, nodeData.html, elem);
+						nodeData.html = undefined;
+					}
+					//Set State
+					if (nodeData.state != undefined) {
+						oplib.fn.Form.state(nodeData.id, nodeData.state, elem);
+						nodeData.state = undefined;
+					}
+					//Apply Events
+					if (nodeData.events != undefined && typeof nodeData.events === "object") {
+						oplib.fn.Form.events(nodeData.id, nodeData.events, elem);
+						nodeData.events = undefined;
+					}
+					//Apply Actions
+					if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
+						oplib.fn.Form.actions(nodeData.id, nodeData.actions, elem);
+						nodeData.actions = undefined;
+					}
+					nodeData.created = false;
+				}
+			}
+
+		}
+		//Children
+		else if (toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
+			for (var i = 0; i < nodeOrder.children.length; i++) {
+				if (!nodeOrder.children[i].remove) {
+					oplib.fn.Form.updateData.customizeElems(nodeOrder.children[i], elem);
+					var nodeData = nodeOrder.children[i].nodeData;
+					var nodeType = nodeOrder.children[i].nodeType;
+					var node = nodeOrder.children[i].node;
+					//Apply type
+					if (nodeType == "input" && nodeData.type != undefined) {
+						oplib.fn.Form.type(nodeData.id, nodeData.type, elem);
+						nodeData.type = undefined;
+					}
+					//Apply Attributes
+					if (nodeData.attr != undefined) {
+						oplib.fn.Form.attr(nodeData.id, nodeData.attr, elem);
+						nodeData.attr = undefined;
+					}
+					//Apply html
+					if (nodeData.html != undefined) {
+						oplib.fn.Form.html(nodeData.id, nodeData.html, elem);
+						nodeData.html = undefined;
+					}
+					//Set State
+					if (nodeData.state != undefined) {
+						oplib.fn.Form.state(nodeData.id, nodeData.state, elem);
+						nodeData.state = undefined;
+					}
+					//Apply Events
+					if (nodeData.events != undefined && typeof nodeData.events === "object") {
+						oplib.fn.Form.events(nodeData.id, nodeData.events, elem);
+						nodeData.events = undefined;
+					}
+					//Apply Actions
+					if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
+						oplib.fn.Form.actions(nodeData.id, nodeData.actions, elem);
+						nodeData.actions = undefined;
+					}
+					nodeData.created = false;
+				}
+			}
+		}
+		return false;
+	};
+
 	//DEPRECATED in updateData einfügen
 	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
 		var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, pType, pId);
