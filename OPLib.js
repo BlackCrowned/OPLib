@@ -3635,7 +3635,7 @@ var oplib = (function() {
 			hideSpeed : "fast",
 			inputSettings : {
 				state : ["shown", "enabled"],
-				br: true,
+				br : true,
 			},
 			fieldsetSettings : {
 				state : "shown",
