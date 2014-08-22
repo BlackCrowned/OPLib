@@ -3051,40 +3051,61 @@ var oplib = (function() {
 			if (this.nodeData.legend) {
 				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.legend).node);
 			}
-			switch (state) {
-				case "shown":
-					if (this.nodeData.created) {
-						OPLib(br).removeCss("display");
-						OPLib(this.node).anim(showAnimation, 0);
-						OPLib(nodes).anim(showAnimation, 0);
-					} else {
-						OPLib(br).removeCss("display");
-						OPLib(this.node).anim(showAnimation, formSettings.showSpeed);
-						OPLib(nodes).anim(showAnimation, formSettings.showSpeed);
-					}
-					break;
-				case "hidden":
-					if (this.nodeData.created) {
-						OPLib(br).css("display", "none");
-						OPLib(this.node).anim(hideAnimation, 0);
-						OPLib(nodes).anim(hideAnimation, 0);
-					} else {
-						OPLib(br).css("display", "none");
-						OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed);
-						OPLib(nodes).anim(hideAnimation, formSettings.hideSpeed);
-					}
-					break;
-				case "enabled":
-					OPLib(this.node).removeAttr("disabled");
-					OPLib(nodes).removeAttr("disabled");
-					break;
-				case "disabled":
-					OPLib(this.node).attr("disabled", "disabled");
-					OPLib(nodes).attr("disabled", "disabled");
-					break;
-				default:
-					console.log(".Form: State [" + state + "] not recognized.");
+			if (toString.call(state) !== "[object Array]") {
+				state = [state];
 			}
+			for (var i = 0; i < state.length; i++) {
+				switch (state[i]) {
+					case "shown":
+						OPLib(oplib.merge([], [this.node], nodes, [br])).stop(1);
+						if (this.nodeData.created && (formSettings.animateFirstShow || formSettings.animateFirst)) {
+							OPLib(this.node).anim(hideAnimation, 0);
+							OPLib(nodes).anim(formSettings.labelHideAnimation, 0);
+							OPLib(br).removeCss("display");
+							OPLib(this.node).anim(showAnimation, formSettings.showSpeed);
+							OPLib(nodes).anim(formSettings.labelShowAnimation, formSettings.showSpeed);
+						} else if (this.nodeData.created) {
+							OPLib(br).removeCss("display");
+							OPLib(this.node).hide(0).anim(showAnimation, 0);
+							OPLib(nodes).hide(0).anim(formSettings.labelShowAnimation, 0);
+						} else {
+							OPLib(br).removeCss("display");
+							OPLib(this.node).anim(showAnimation, formSettings.showSpeed);
+							OPLib(nodes).anim(formSettings.labelShowAnimation, formSettings.showSpeed);
+						}
+						break;
+					case "hidden":
+						OPLib(oplib.merge([], [this.node], nodes, [br])).stop(1);
+						if (this.nodeData.created && (formSettings.animateFirstHide || formSettings.animateFirst)) {
+							OPLib(br).removeCss("display");
+							OPLib(this.node).hide(0).anim(showAnimation, 0);
+							OPLib(nodes).hide(0).anim(formSettings.labelShowAnimation, 0);
+							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed);
+							OPLib(nodes).anim(formSettings.labelHideAnimation, formSettings.hideSpeed);
+							OPLib(br).anim(hideAnimation, formSettings.hideSpeed);
+						} else if (this.nodeData.created) {
+							OPLib(this.node).anim(hideAnimation, 0);
+							OPLib(nodes).anim(formSettings.labelHideAnimation, 0);
+							OPLib(br).anim(hideAnimation, 0);
+						} else {
+							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed);
+							OPLib(nodes).anim(formSettings.labelHideAnimation, formSettings.hideSpeed);
+							OPLib(br).anim(hideAnimation, formSettings.hideSpeed);
+						}
+						break;
+					case "enabled":
+						OPLib(this.node).removeAttr("disabled");
+						OPLib(nodes).removeAttr("disabled");
+						break;
+					case "disabled":
+						OPLib(this.node).attr("disabled", "disabled");
+						OPLib(nodes).attr("disabled", "disabled");
+						break;
+					default:
+						console.log(".Form: State [" + state[i] + "] not recognized.");
+				}
+			}
+
 		}, elems);
 	};
 
