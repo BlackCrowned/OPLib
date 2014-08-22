@@ -1,1 +1,1 @@
-java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --js OPLib.js --js_output_file OPLib.min.js
+java -jar compiler.jar --js OPLib.js --js_output_file OPLib.min.js
