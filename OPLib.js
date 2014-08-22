@@ -451,7 +451,7 @@ var oplib = (function() {
 		},
 		getDefaultComputedStyle : function(expression, styles) {
 			return oplib.getDefaultComputedStyle(expression, this[0], styles);
-		},
+		}
 	};
 
 	//Objecte zusammenführen
@@ -1057,7 +1057,7 @@ var oplib = (function() {
 						elem.innerHTML = text;
 					}, "", {
 						async : false,
-						content : "text",
+						content : "text"
 					});
 					useable = [];
 					useable.push(elem);
@@ -1562,7 +1562,7 @@ var oplib = (function() {
 					height : "hide",
 					opacity : "hide",
 					margin : "hide",
-					padding : "hide",
+					padding : "hide"
 				}, duration, interpolator, callbacks, scope);
 
 			}, [duration, interpolator, callbacks, scope || this]);
@@ -1574,7 +1574,7 @@ var oplib = (function() {
 					height : "show",
 					opacity : "show",
 					margin : "show",
-					padding : "show",
+					padding : "show"
 				}, duration, interpolator, callbacks, scope);
 			}, [duration, interpolator, callbacks, scope || this]);
 
@@ -1586,7 +1586,7 @@ var oplib = (function() {
 					marginTop : "hide",
 					paddingTop : "hide",
 					marginBottom : "hide",
-					paddingBottom : "hide",
+					paddingBottom : "hide"
 				}, duration, interpolator, callbacks, scope);
 
 			}, [duration, interpolator, callbacks, scope || this]);
@@ -1598,7 +1598,7 @@ var oplib = (function() {
 					marginTop : "show",
 					paddingTop : "show",
 					marginBottom : "show",
-					paddingBottom : "show",
+					paddingBottom : "show"
 				}, duration, interpolator, callbacks, scope);
 			}, [duration, interpolator, callbacks, scope || this]);
 
@@ -1610,7 +1610,7 @@ var oplib = (function() {
 					marginRight : "hide",
 					paddingRight : "hide",
 					marginLeft : "hide",
-					paddingLeft : "hide",
+					paddingLeft : "hide"
 				}, duration, interpolator, callbacks, scope);
 
 			}, [duration, interpolator, callbacks, scope || this]);
@@ -1622,7 +1622,7 @@ var oplib = (function() {
 					marginRight : "show",
 					paddingRight : "show",
 					marginLeft : "show",
-					paddingLeft : "show",
+					paddingLeft : "show"
 				}, duration, interpolator, callbacks, scope);
 			}, [duration, interpolator, callbacks, scope || this]);
 
@@ -1630,7 +1630,7 @@ var oplib = (function() {
 		fadeOut : function(duration, interpolator, callbacks, scope) {
 			return this.each(function(duration, interpolator, callbacks, scope) {
 				oplib.fx([this], {
-					opacity : "hide",
+					opacity : "hide"
 				}, duration, interpolator, callbacks, scope);
 
 			}, [duration, interpolator, callbacks, scope || this]);
@@ -1638,7 +1638,7 @@ var oplib = (function() {
 		fadeIn : function(duration, interpolator, callbacks, scope) {
 			return this.each(function(duration, interpolator, callbacks, scope) {
 				oplib.fx([this], {
-					opacity : "show",
+					opacity : "show"
 				}, duration, interpolator, callbacks, scope);
 			}, [duration, interpolator, callbacks, scope || this]);
 
@@ -1646,7 +1646,7 @@ var oplib = (function() {
 		fadeTo : function(to, duration, interpolator, callbacks, scope) {
 			return this.each(function(to, duration, interpolator, callbacks, scope) {
 				oplib.fx([this], {
-					opacity : to,
+					opacity : to
 				}, duration, interpolator, callbacks, scope);
 			}, [to, duration, interpolator, callbacks, scope || this]);
 		},
@@ -1660,7 +1660,7 @@ var oplib = (function() {
 					height : "toggle",
 					opacity : "toggle",
 					margin : "toggle",
-					padding : "toggle",
+					padding : "toggle"
 				}, duration, interpolator, callbacks, scope);
 			}, [duration, interpolator, callbacks, scope || this]);
 		}
@@ -1786,7 +1786,7 @@ var oplib = (function() {
 						duration : duration,
 						interpolator : interpolator,
 						callbacks : callbacks,
-						scope : scope,
+						scope : scope
 					});
 					oplib.fx.queue[j].callbacks = oplib.fx.addCallback(oplib.fx.queue[j].callbacks, callbackOptions, "done");
 					callbackAdded = true;
@@ -1959,7 +1959,7 @@ var oplib = (function() {
 				start_time : oplib.TIME.getCurrentTime(),
 				callbacks : callbacks,
 				scope : scope,
-				done : done,
+				done : done
 			});
 
 			//Overflow setzen:
@@ -2093,9 +2093,7 @@ var oplib = (function() {
 				linear : actualProgress,
 				decelerate : Math.sin(actualProgress * (Math.PI / 2)),
 				accelerate : 1 - Math.cos(actualProgress * (Math.PI / 2)),
-				//acceleratedecelerate: Math.sin(actualProgress*actualProgress *
-				// (Math.PI / 2)),
-				acceleratedecelerate : Math.sin(actualProgress * (Math.PI / 2)) * Math.sin(actualProgress * (Math.PI / 2)),
+				acceleratedecelerate : Math.sin(actualProgress * (Math.PI / 2)) * Math.sin(actualProgress * (Math.PI / 2))
 			};
 
 			if (!interpolators[interpolator]) {
@@ -2593,7 +2591,7 @@ var oplib = (function() {
 			return 0;
 		},
 		//Enthält, ob ein Element bereits bereit ist.
-		isReadyState : {},
+		isReadyState : {}
 		//Fügt handleList[elem] die auszuführende Funktion zu, etc.
 	});
 
@@ -2767,7 +2765,7 @@ var oplib = (function() {
 						nodeData : nodeData,
 						nodeType : type,
 						children : [],
-						parent : elem,
+						parent : elem
 					});
 				}
 			}
@@ -2793,14 +2791,14 @@ var oplib = (function() {
 					nodeData["br"] = {
 						id : "__OPLibFormBr" + oplib.ID.getUniqueRandomId(),
 						fieldset : nodeData.fieldset,
-						created : true,
+						created : true
 					};
 					elem.oplib.Form.nodeOrder.push({
 						node : oplib.fn.Form.updateData.createElement("br", nodeData["br"], elem),
 						nodeData : nodeData["br"],
 						nodeType : "br",
 						children : [],
-						parent : elem,
+						parent : elem
 					});
 				} else if (nodeData["br"]) {
 					elem.oplib.Form.nodeOrder.push({
@@ -2808,7 +2806,7 @@ var oplib = (function() {
 						nodeData : nodeData["br"],
 						nodeType : "br",
 						children : [],
-						parent : elem,
+						parent : elem
 					});
 				}
 			}
@@ -3004,7 +3002,7 @@ var oplib = (function() {
 				nodeData : nodeData,
 				nodeType : nodeType,
 				children : [],
-				parent : parent.node,
+				parent : parent.node
 			});
 		}
 	};
@@ -3430,7 +3428,7 @@ var oplib = (function() {
 				insert = "";
 			}
 			return str.slice(0, index) + insert + str.slice(index + count);
-		},
+		}
 	};
 
 	//Funktionen die mit Objects arbeiten
@@ -3466,7 +3464,7 @@ var oplib = (function() {
 				}
 			}
 			return newObj;
-		},
+		}
 	};
 
 	//Funktionen die mit RegExp arbeiten
@@ -3540,7 +3538,7 @@ var oplib = (function() {
 			cmToPx : 96 / 2.54,
 			mmToPx : 96 / 25.4,
 			emToPx : 16,
-			exToPx : 16 / 2,
+			exToPx : 16 / 2
 		},
 		animationSettings : {
 			frameTime : 16,
@@ -3550,7 +3548,7 @@ var oplib = (function() {
 			scope : window,
 			slow : 1000,
 			normal : 750,
-			fast : 500,
+			fast : 500
 		},
 		ajaxSettings : {
 			method : "get",
@@ -3563,7 +3561,7 @@ var oplib = (function() {
 			},
 			processing : function() {
 			},
-			args : [],
+			args : []
 		},
 		tooltipSettings : {
 			showDelay : 0,
@@ -3574,11 +3572,11 @@ var oplib = (function() {
 			dontHideWhileHoveringTooltip : false,
 			showAnimation : {
 				height : "show",
-				opacity : "show",
+				opacity : "show"
 			},
 			hideAnimation : {
 				height : "hide",
-				opacity : "hide",
+				opacity : "hide"
 			},
 			showSpeed : "fast",
 			hideSpeed : "fast",
@@ -3587,7 +3585,7 @@ var oplib = (function() {
 			showCallbacks : function() {
 			},
 			hideCallbacks : function() {
-			},
+			}
 		},
 		formSettings : {
 			animateFirst : false,
@@ -3599,7 +3597,7 @@ var oplib = (function() {
 				paddingLeft : "show",
 				marginRight : "show",
 				marginLeft : "show",
-				opacity : "show",
+				opacity : "show"
 			},
 			inputHideAnimation : {
 				width : "hide",
@@ -3607,7 +3605,7 @@ var oplib = (function() {
 				paddingLeft : "hide",
 				marginRight : "hide",
 				marginLeft : "hide",
-				opacity : "hide",
+				opacity : "hide"
 			},
 			fieldsetShowAnimation : {
 				height : "show",
@@ -3615,7 +3613,7 @@ var oplib = (function() {
 				paddingBottom : "show",
 				margingTop : "show",
 				marginBottom : "show",
-				opacity : "show",
+				opacity : "show"
 			},
 			fieldsetHideAnimation : {
 				height : "hide",
@@ -3623,29 +3621,29 @@ var oplib = (function() {
 				paddingBottom : "hide",
 				marginTop : "hide",
 				marginBottom : "hide",
-				opacity : "hide",
+				opacity : "hide"
 			},
 			labelShowAnimation : {
-				opacity : "show",
+				opacity : "show"
 			},
 			labelHideAnimation : {
-				opacity : "hide",
+				opacity : "hide"
 			},
 			showSpeed : "fast",
 			hideSpeed : "fast",
 			inputSettings : {
 				state : ["shown", "enabled"],
-				br : true,
+				br : true
 			},
 			fieldsetSettings : {
-				state : "shown",
+				state : "shown"
 			}
-		},
+		}
 	});
 
 	//Module, die nicht sofort initialisiert werden
 	oplib.modules = {
-		isHover : false,
+		isHover : false
 	};
 
 	//Debugging Console - Bugfix for IE
