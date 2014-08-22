@@ -1701,7 +1701,7 @@ var oplib = (function() {
 	//Animiert Objekte
 	oplib.fx = function(elems, options, duration, interpolator, callbacks, scope) {
 		if (duration == undefined) {
-			if (options.duration) {
+			if (options.duration != undefined) {
 				duration = options.duration;
 				delete options.duration;
 			} else {
@@ -1782,7 +1782,7 @@ var oplib = (function() {
 
 			for (var j = 0; j < oplib.fx.queue.length; j++) {
 				if (oplib.fx.queue[j].elem == elems[i]) {
-					var callbackOptions = oplib.extend(options, {
+					var callbackOptions = oplib.extend({}, options, {
 						duration : duration,
 						interpolator : interpolator,
 						callbacks : callbacks,
