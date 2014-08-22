@@ -2727,11 +2727,6 @@ var oplib = (function() {
 			if (!this.oplib.Form.data) {
 				this.oplib.Form.data = {};
 			}
-			if (!this.oplib.Form.formSettings) {
-				this.oplib.Form.formSettings = {};
-			}
-			oplib.extend(this.oplib.Form.formSettings, oplib.defaults.get("formSettings"), this.oplib.Form.formSettings, settings);
-
 			for (var j = 0; j < options.length; j++) {
 				type = options[j];
 				if (data[type]) {
@@ -2739,6 +2734,7 @@ var oplib = (function() {
 						data[type] = [data[type]];
 					}
 					for (var i = 0; i < data[type].length; i++) {
+						data[type][i] = oplib.extend({}, oplib.defaults.get("formSettings"), oplib.defaults.get("formSettings", type + "Settings"), settings, settings[type + "Settings"], data[type][i]);
 						oplib.fn.Form.changeData(type, data[type][i].id, data[type][i], this);
 					}
 				}
@@ -3043,7 +3039,7 @@ var oplib = (function() {
 			//State auch auf label, legend und Neue Zeilen anwenden
 			var nodes = [];
 			var br = [];
-			var formSettings = elem.oplib.Form.formSettings;
+			var formSettings = this.nodeData;
 			var showAnimation = this.nodeType != "fieldset" ? formSettings.inputShowAnimation : formSettings.fieldsetShowAnimation;
 			var hideAnimation = this.nodeType != "fieldset" ? formSettings.inputHideAnimation : formSettings.fieldsetHideAnimation;
 			if (this.nodeData.label) {
@@ -3514,6 +3510,9 @@ var oplib = (function() {
 			},
 		},
 		formSettings : {
+			animateFirst : false,
+			animateFirstShow : false,
+			animateFirstHide : false,
 			inputShowAnimation : {
 				width : "show",
 				paddingRight : "show",
@@ -3554,6 +3553,13 @@ var oplib = (function() {
 			},
 			showSpeed : "fast",
 			hideSpeed : "fast",
+			inputSettings : {
+				state : ["shown", "enabled"],
+				br: true,
+			},
+			fieldsetSettings : {
+				state : "shown",
+			}
 		},
 	});
 
