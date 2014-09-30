@@ -3137,17 +3137,19 @@ var oplib = (function() {
 							OPLib(br).removeCss("display");
 							OPLib(this.node).hide(0).anim(showAnimation, 0);
 							OPLib(nodes).hide(0).anim(formSettings.labelShowAnimation, 0);
-							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed);
+							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed, "", function() {
+								OPLib(this).css("display", "none");
+							}, br);
 							OPLib(nodes).anim(formSettings.labelHideAnimation, formSettings.hideSpeed);
-							OPLib(br).anim(hideAnimation, formSettings.hideSpeed);
 						} else if (this.nodeData.created) {
 							OPLib(this.node).anim(hideAnimation, 0);
 							OPLib(nodes).anim(formSettings.labelHideAnimation, 0);
 							OPLib(br).anim(hideAnimation, 0);
 						} else {
-							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed);
+							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed, "", function() {
+								OPLib(this).css("display", "none");
+							}, br);
 							OPLib(nodes).anim(formSettings.labelHideAnimation, formSettings.hideSpeed);
-							OPLib(br).anim(hideAnimation, formSettings.hideSpeed);
 						}
 						break;
 					case "enabled":
