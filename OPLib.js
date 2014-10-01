@@ -3361,6 +3361,10 @@ var oplib = (function() {
 		}
 		for (var i = 0; i < elem.oplib.Form.data[type].length; i++) {
 			if (elem.oplib.Form.data[type][i].id == id) {
+				//"br" wird intern bereits verwendet
+				if ( typeof elem.oplib.Form.data[type][i].br === "object" && data.br == true) {
+					data.br = elem.oplib.Form.data[type][i].br;
+				}
 				elem.oplib.Form.data[type][i].update = data;
 				return true;
 			}
