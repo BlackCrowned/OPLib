@@ -2713,6 +2713,9 @@ var oplib = (function() {
 		if (!data) {
 			return this;
 		}
+		if (!options) {
+			options = {};
+		}
 
 		return this.each(function(data, settings) {
 			var options = ["fieldset", "label", "legend", "input"];
