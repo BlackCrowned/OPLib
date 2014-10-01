@@ -454,7 +454,7 @@ var oplib = (function() {
 		}
 	};
 
-	//Objecte zusammenführen
+	//Arrays zusammenführen
 	oplib.merge = function(arr1, arr2) {
 		//For-schleife für alle Elemente in arr2
 		for (var a = 1; a <= arguments.length; a++) {
@@ -467,7 +467,7 @@ var oplib = (function() {
 
 	};
 
-	//Eine Funtion oder oplib.fn erweitern
+	//Ein Objekt erweitern
 	oplib.extend = function(obj, props) {
 		//Objecte zusammenführen und zurückgeben
 		for (var a = 1; a <= arguments.length; a++) {
