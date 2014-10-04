@@ -8,9 +8,9 @@ var oplib = (function() {
 
 	oplib.fn = oplib.prototype = {
 		constructor : oplib,
-		//Elemente auswählen
+		// Elemente auswählen
 		Init : function(selector, context) {
-			//Ausgewählte Elemente zuweisen
+			// Ausgewählte Elemente zuweisen
 			var elems = oplib.ElementSelection(selector, context);
 			for (var i = 0; i < elems.length; i++) {
 				this[i] = elems[i];
@@ -24,9 +24,9 @@ var oplib = (function() {
 
 			return this;
 		},
-		//Attribut setzen
+		// Attribut setzen
 		attr : function(name, property) {
-			//Wurde nur 'name' übergeben? - Attribut zurückgeben
+			// Wurde nur 'name' übergeben? - Attribut zurückgeben
 			if (arguments.length == 1 && typeof name !== "object") {
 				if (this.length != 0) {
 					return this[0][name] || this[0].getAttribute(name);
@@ -35,60 +35,60 @@ var oplib = (function() {
 				}
 			}
 
-			//Wurde ein Object mit den Attributen übergeben?
-			if ( typeof name === "object") {
-				for (var i in name) {
-					//Attribute setzen
+			// Wurde ein Object mit den Attributen übergeben?
+			if (typeof name === "object") {
+				for ( var i in name) {
+					// Attribute setzen
 					this.each(function(name, prop) {
 						this[name] = prop;
 						this.setAttribute(name, prop);
-					}, [i, name[i]]);
+					}, [ i, name[i] ]);
 				}
 			}
-			//Es wurde ein einzelnes Attribut übergeben
+			// Es wurde ein einzelnes Attribut übergeben
 			else {
-				//Attribut setzen
+				// Attribut setzen
 				this.each(function(name, prop) {
 					this[name] = prop;
 					this.setAttribute(name, prop);
-				}, [name, property]);
+				}, [ name, property ]);
 			}
 			return this;
 		},
-		//Attribut entfernen
+		// Attribut entfernen
 		removeAttr : function(name) {
-			//Wurde ein Object mit den Attributen übergeben?
-			if ( typeof name === "object") {
+			// Wurde ein Object mit den Attributen übergeben?
+			if (typeof name === "object") {
 				if (name.length != undefined) {
 					for (var i = 0; i < name.length; i++) {
-						//Attribute entfernen
+						// Attribute entfernen
 						this.each(function(name) {
 							this[name] = "";
 							this.removeAttribute(name);
-						}, [name[i]]);
+						}, [ name[i] ]);
 					}
 				} else {
-					for (var i in name) {
-						//Attribute entfernen
+					for ( var i in name) {
+						// Attribute entfernen
 						this.each(function(name) {
 							this[name] = "";
 							this.removeAttribute(name);
-						}, [i, name[i]]);
+						}, [ i, name[i] ]);
 					}
 				}
 
 			}
-			//Es wurde ein einzelnes Attribut übergeben
+			// Es wurde ein einzelnes Attribut übergeben
 			else {
-				//Attribut entfernen
+				// Attribut entfernen
 				this.each(function(name) {
 					this[name] = "";
 					this.removeAttribute(name);
-				}, [name]);
+				}, [ name ]);
 			}
 			return this;
 		},
-		//Klasse hinzufügen
+		// Klasse hinzufügen
 		addClass : function(name) {
 			return this.each(function(name) {
 				var classAttr = OPLib(this).attr("class");
@@ -96,17 +96,17 @@ var oplib = (function() {
 					classAttr = "";
 				}
 				var regex = new RegExp(name);
-				//Ist die Klasse bereits gesetzt?
+				// Ist die Klasse bereits gesetzt?
 				if (!regex.test(classAttr)) {
-					//1 Leerzeichen nach einer Klasse
+					// 1 Leerzeichen nach einer Klasse
 					var end = /\s*$/;
 					classAttr = classAttr.replace(end, " " + name);
 					OPLib(this).attr("class", classAttr);
 				}
-			}, [name]);
+			}, [ name ]);
 
 		},
-		//Klasse entfernen
+		// Klasse entfernen
 		removeClass : function(name) {
 			return this.each(function(name) {
 				var classAttr = OPLib(this).attr("class");
@@ -114,22 +114,22 @@ var oplib = (function() {
 					classAttr = "";
 				}
 				var regex = new RegExp(name);
-				//Ist die Klasse überhaupt gesetzt?
+				// Ist die Klasse überhaupt gesetzt?
 				if (regex.test(classAttr)) {
-					//1 Leerzeichen nach einer Klasse
+					// 1 Leerzeichen nach einer Klasse
 					var replace = new RegExp("[ ]*" + name, "g");
 					classAttr = classAttr.replace(replace, "");
 					OPLib(this).attr("class", classAttr);
 				}
-			}, [name]);
+			}, [ name ]);
 		},
-		//Klasse übeprüfen / zurückgeben
+		// Klasse übeprüfen / zurückgeben
 		hasClass : function(name) {
-			//Keine Klasse angegeben: alle Klassen zurückgeben
+			// Keine Klasse angegeben: alle Klassen zurückgeben
 			if (!name) {
 				return this.attr("class").split(" ");
 			}
-			//Klasse angegeben: überprüfen, ob sie vorhanden ist
+			// Klasse angegeben: überprüfen, ob sie vorhanden ist
 			else {
 				var classes = this.attr("class").split(" ");
 				for (var i = 0; i < classes.length; i++) {
@@ -140,15 +140,16 @@ var oplib = (function() {
 				return false;
 			}
 		},
-		//Css-Attribut hinzufügen/bearbeiten/auslesen
+		// Css-Attribut hinzufügen/bearbeiten/auslesen
 		css : function(name, value, args) {
-			//Werte abschließend anpassen
-			var finalizedExpressions = this.finalizeCssExpressions(name, value, args);
+			// Werte abschließend anpassen
+			var finalizedExpressions = this.finalizeCssExpressions(name, value,
+					args);
 			name = finalizedExpressions[0];
 			value = finalizedExpressions[1];
-			//Eigenschaften als Object übergeben
-			if ( typeof name === "object") {
-				//Array ohne Eigenschaften - EIGENSCHAFTEN AUSLESEN
+			// Eigenschaften als Object übergeben
+			if (typeof name === "object") {
+				// Array ohne Eigenschaften - EIGENSCHAFTEN AUSLESEN
 				if (name.length != undefined) {
 					var obj = {};
 					for (var i = 0; i < name.length; i++) {
@@ -156,59 +157,59 @@ var oplib = (function() {
 					}
 					return obj;
 				}
-				//Object mit Eigenschaften - CSS SETZEN
+				// Object mit Eigenschaften - CSS SETZEN
 				else {
-					for (var i in name) {
+					for ( var i in name) {
 						this.each(function(name, value) {
 							this["style"][i] = value;
-						}, [i, name[i]]);
+						}, [ i, name[i] ]);
 					}
 				}
 
 			}
-			//Kein Wert übergeben -> WERT AUSLESEN
+			// Kein Wert übergeben -> WERT AUSLESEN
 			else if (!value) {
 				return this[0]["style"][name];
 			}
-			//Name und Wert übergeben -> CSS SETZEN
+			// Name und Wert übergeben -> CSS SETZEN
 			else {
 				return this.each(function(name, value) {
 					this["style"][name] = value;
-				}, [name, value]);
+				}, [ name, value ]);
 			}
 			return this;
 		},
-		//Css-Attribute entfernen
+		// Css-Attribute entfernen
 		removeCss : function(name) {
-			//Mehrere Css Werte löschen
-			if ( typeof name === "object") {
-				//Als Array angegeben
+			// Mehrere Css Werte löschen
+			if (typeof name === "object") {
+				// Als Array angegeben
 				if (name.length != undefined) {
 					for (var i = 0; i < name.length; i++) {
 						this.each(function(name) {
 							this["style"][name] = "";
-						}, [name[i]]);
+						}, [ name[i] ]);
 					}
 				}
-				//Als Object angegeben
+				// Als Object angegeben
 				else {
-					for (var i in name) {
+					for ( var i in name) {
 						this.each(function(name) {
 							this["style"][name] = "";
-						}, [i]);
+						}, [ i ]);
 					}
 				}
 			}
-			//Nur ein Css Wert löschen
+			// Nur ein Css Wert löschen
 			else {
 				return this.each(function(name) {
 					this["style"][name] = "";
-				}, [name]);
+				}, [ name ]);
 			}
 			return this;
 		},
 
-		//Hängt Elemente an die übereinstimmenden Elemente am Ende an
+		// Hängt Elemente an die übereinstimmenden Elemente am Ende an
 		append : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(this, function(elems) {
@@ -216,33 +217,33 @@ var oplib = (function() {
 					this.appendChild(elems[i]);
 				}
 				return this;
-			}, [elems]);
+			}, [ elems ]);
 		},
-		//Hängt Elemente an die übereinstimmenden Elemente am Anfang an
+		// Hängt Elemente an die übereinstimmenden Elemente am Anfang an
 		prepend : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(this, function(elems) {
 				for (var i = 0; i < elems.length; i++) {
-					//Gibt es bereits untergeordnete Elemente?
+					// Gibt es bereits untergeordnete Elemente?
 					if (this.hasChildNodes()) {
-						//Node
+						// Node
 						if (this.childNodes && this.childNodes[0] != null) {
 							this.insertBefore(elems[i], this.childNodes[0]);
 						}
-						//NodeList
+						// NodeList
 						else if (this.item && this.item(0) != null) {
 							this.insertBefore(elems[i], this.item(0));
 						}
 					}
-					//Keine untergeordneten Element ==> .appendChild möglich
+					// Keine untergeordneten Element ==> .appendChild möglich
 					else {
 						this.appendChild(elems[i]);
 					}
 				}
 				return this;
-			}, [elems]);
+			}, [ elems ]);
 		},
-		//Hängt Elemente vor die übereinstimmenden Elemente an
+		// Hängt Elemente vor die übereinstimmenden Elemente an
 		before : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(this, function(elems) {
@@ -250,23 +251,24 @@ var oplib = (function() {
 					this.parentNode.insertBefore(elems[i], this);
 				}
 				return this;
-			}, [elems]);
+			}, [ elems ]);
 		},
-		//Hängt Elemente nach die übereinstimmenden Elemente an
+		// Hängt Elemente nach die übereinstimmenden Elemente an
 		after : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(this, function(elems) {
 				for (var i = 0; i < elems.length; i++) {
 					if (this.nextElementSibling != null) {
-						this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
+						this.nextElementSibling.parentNode.insertBefore(
+								elems[i], this.nextElementSibling);
 					} else {
 						this.parentNode.appendChild(elems[i]);
 					}
 				}
 				return this;
-			}, [elems]);
+			}, [ elems ]);
 		},
-		//Hängt übereinstimmende Elemente an Elemente an
+		// Hängt übereinstimmende Elemente an Elemente an
 		appendTo : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(elems, function(elems) {
@@ -274,33 +276,35 @@ var oplib = (function() {
 					elems[i] = this.appendChild(elems[i]);
 				}
 				return elems;
-			}, [this]);
+			}, [ this ]);
 		},
-		//Hängt übereinstimmende Elemente an die Elemente am Anfang an
+		// Hängt übereinstimmende Elemente an die Elemente am Anfang an
 		prependTo : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(elems, function(elems) {
 				for (var i = 0; i < elems.length; i++) {
-					//Gibt es bereits untergeordnete Elemente?
+					// Gibt es bereits untergeordnete Elemente?
 					if (this.hasChildNodes()) {
-						//Node
+						// Node
 						if (this.childNodes && this.childNodes[0] != null) {
-							elems[i] = this.insertBefore(elems[i], this.childNodes[0]);
+							elems[i] = this.insertBefore(elems[i],
+									this.childNodes[0]);
 						}
-						//NodeList
+						// NodeList
 						else if (this.item && this.item(0) != null) {
-							elems[i] = this.insertBefore(elems[i], this.item(0));
+							elems[i] = this
+									.insertBefore(elems[i], this.item(0));
 						}
 					}
-					//Keine untergeordneten Element ==> .appendChild möglich
+					// Keine untergeordneten Element ==> .appendChild möglich
 					else {
 						elems[i] = this.appendChild(elems[i]);
 					}
 				}
 				return elems;
-			}, [this]);
+			}, [ this ]);
 		},
-		//Hängt übereinstimmende Elemente vor Elemente an
+		// Hängt übereinstimmende Elemente vor Elemente an
 		insertBefore : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			return this.finalizeDOMManipulation(elems, function(elems) {
@@ -308,95 +312,98 @@ var oplib = (function() {
 					elems[i] = this.parentNode.insertBefore(elems[i], this);
 				}
 				return elems;
-			}, [this]);
+			}, [ this ]);
 		},
-		//Hängt übereinstimmende Elemente nach Elemente an
+		// Hängt übereinstimmende Elemente nach Elemente an
 		insertAfter : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
-			return this.finalizeDOMManipulation(elems, function(elems) {
-				for (var i = 0; i < elems.length; i++) {
-					if (this.nextElementSibling != null) {
-						elems[i] = this.nextElementSibling.parentNode.insertBefore(elems[i], this.nextElementSibling);
-					} else {
-						elems[i] = this.parentNode.appendChild(elems[i]);
-					}
-				}
-				return elems;
-			}, [this]);
+			return this.finalizeDOMManipulation(elems,
+					function(elems) {
+						for (var i = 0; i < elems.length; i++) {
+							if (this.nextElementSibling != null) {
+								elems[i] = this.nextElementSibling.parentNode
+										.insertBefore(elems[i],
+												this.nextElementSibling);
+							} else {
+								elems[i] = this.parentNode
+										.appendChild(elems[i]);
+							}
+						}
+						return elems;
+					}, [ this ]);
 		},
 		/*
 		 * Fügt dem Object untergeordnete Nodes der übereinstimmenden Elemente
-		 * hinzu
-		 * R: Rekursive suche möglich
-		 * O: Enthält auch eigene(s) Element(e)
+		 * hinzu R: Rekursive suche möglich O: Enthält auch eigene(s) Element(e)
 		 */
 		children : function(R, O) {
 			var children = oplib.ElementSelection.children(this, R);
 
-			//OPLib soll nur Child Nodes enthalten - Vorherige ELemente
-			//löschen
+			// OPLib soll nur Child Nodes enthalten - Vorherige ELemente
+			// löschen
 			if (!O) {
 				this.length = 0;
 			}
-			//OPlib hinzufügen
+			// OPlib hinzufügen
 			for (var i = 0; i < children.length; i++) {
 				this.push(children[i]);
 			}
 			return this;
 		},
-		/* Fügt dem Object die übergeordnete Node der übereinstimmenden Elemente
-		 * hinzu
-		 * R: Rekursive Suche möglich
-		 * rekursionLimit: Limit für rekursive Suche
-		 * O: Enthält auch eigene(s) Element(e)
+		/*
+		 * Fügt dem Object die übergeordnete Node der übereinstimmenden Elemente
+		 * hinzu R: Rekursive Suche möglich rekursionLimit: Limit für rekursive
+		 * Suche O: Enthält auch eigene(s) Element(e)
 		 */
 		parents : function(R, rekursionLimit, O) {
-			var Parents = oplib.ElementSelection.parents(this, R, rekursionLimit);
+			var Parents = oplib.ElementSelection.parents(this, R,
+					rekursionLimit);
 
-			//OPLib soll nur parentNodes enthalten - Vorherige ELemente
-			//löschen
+			// OPLib soll nur parentNodes enthalten - Vorherige ELemente
+			// löschen
 			if (!O) {
 				this.length = 0;
 			}
-			//Parents in OPLib speichern
+			// Parents in OPLib speichern
 			for (var i = 0; i < Parents.length; i++) {
 				this.push(Parents[i]);
 			}
 			return this;
 		},
-		/* Fügt dem Object die Geschwister/Nachbarnodes der übereinstimmenden
-		 * Elemente hinzu
-		 * N: Nur Nachbaren auswählen
-		 * O: Enthält auch eigene(s) Element(e)
+		/*
+		 * Fügt dem Object die Geschwister/Nachbarnodes der übereinstimmenden
+		 * Elemente hinzu N: Nur Nachbaren auswählen O: Enthält auch eigene(s)
+		 * Element(e)
 		 */
 		siblings : function(N, O) {
 			var Siblings = oplib.ElementSelection.siblings(this, N);
 
-			//OPLib soll nur siblings enthalten - Vorherige ELemente löschen
+			// OPLib soll nur siblings enthalten - Vorherige ELemente löschen
 			if (!O) {
 				this.length = 0;
 			}
-			//Siblings in OPLib speichern
+			// Siblings in OPLib speichern
 			for (var i = 0; i < Siblings.length; i++) {
 				this.push(Siblings[i]);
 			}
 			return this;
 		},
-		//Setzt .innerHTML für die ausgewählten Elemente
+		// Setzt .innerHTML für die ausgewählten Elemente
 		html : function(html) {
 			return this.each(function() {
 				this.innerHTML = html;
-			}, [html]);
+			}, [ html ]);
 		},
-		//Setzt .innerText für die ausgewählten Elemente
+		// Setzt .innerText für die ausgewählten Elemente
 		text : function(text) {
 			return this.each(function(text) {
 				this.textContent = text;
-			}, [text]);
+			}, [ text ]);
 		},
-		//Findet alle Elemente anhand den in options angegebenen Einschränkungen
-		//limitedTo: Darf nur Elemente aus limitedTo enthalten
-		//O: Enthält auch eigene(s) Element(e)
+		// Findet alle Elemente anhand den in options angegebenen
+		// Einschränkungen
+		// limitedTo: Darf nur Elemente aus limitedTo enthalten
+		// O: Enthält auch eigene(s) Element(e)
 		find : function(selector, O) {
 			var elems = oplib.ElementSelection.find(this, selector);
 			if (!O) {
@@ -408,7 +415,7 @@ var oplib = (function() {
 			}
 			return this;
 		},
-		//Läd eine Datei per AJAX in die übereinstimmenden Elemente
+		// Läd eine Datei per AJAX in die übereinstimmenden Elemente
 		load : function(url, header, options) {
 			if (!options) {
 				options = {};
@@ -419,10 +426,10 @@ var oplib = (function() {
 			oplib.AJAX(url, function(text, readyState, status, elems) {
 				oplib.each(elems, function(text) {
 					this.innerHTML = text;
-				}, [text]);
+				}, [ text ]);
 			}, header, options);
 		},
-		//Gibt Clones der ausgewählten Element zurück
+		// Gibt Clones der ausgewählten Element zurück
 		clone : function() {
 			var clones = oplib.fn.finalizeDOMManipulation.clone(this);
 			for (var i = 0; i < this.length; i++) {
@@ -430,7 +437,7 @@ var oplib = (function() {
 			}
 			return this;
 		},
-		//Ersetzt die ausgewähöten Elemente mit einem neuen Element
+		// Ersetzt die ausgewähöten Elemente mit einem neuen Element
 		replace : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			var replaced = oplib.ElementSelection.replace(elems, this);
@@ -442,7 +449,7 @@ var oplib = (function() {
 			}
 			return this;
 		},
-		//Gibt an ob die Elemente gehovert sind
+		// Gibt an ob die Elemente gehovert sind
 		isHover : function(selector, context) {
 			return oplib.ElementSelection.isHover(this);
 		},
@@ -454,24 +461,24 @@ var oplib = (function() {
 		}
 	};
 
-	//Arrays zusammenführen
+	// Arrays zusammenführen
 	oplib.merge = function(arr1, arr2) {
-		//For-schleife für alle Elemente in arr2
+		// For-schleife für alle Elemente in arr2
 		for (var a = 1; a <= arguments.length; a++) {
-			for (var i in arguments[a]) {
+			for ( var i in arguments[a]) {
 				arr1.push(arguments[a][i]);
 			}
 		}
-		//Zusammengeführtes Array zurückgeben
+		// Zusammengeführtes Array zurückgeben
 		return arr1;
 
 	};
 
-	//Ein Objekt erweitern
+	// Ein Objekt erweitern
 	oplib.extend = function(obj, props) {
-		//Objecte zusammenführen und zurückgeben
+		// Objecte zusammenführen und zurückgeben
 		for (var a = 1; a <= arguments.length; a++) {
-			for (var i in arguments[a]) {
+			for ( var i in arguments[a]) {
 				if (arguments[a][i] == undefined) {
 					continue;
 				}
@@ -482,17 +489,18 @@ var oplib = (function() {
 		return obj;
 	};
 
-	//Funktion in einem bestimmten Context mit verschiedenen Argumenten ausführen
+	// Funktion in einem bestimmten Context mit verschiedenen Argumenten
+	// ausführen
 	oplib.each = function(obj, fn, args) {
-		//Alle Argument für die Funktion durchgehen
+		// Alle Argument für die Funktion durchgehen
 		if (obj.length != undefined) {
 			for (var i = 0; i < obj.length; i++) {
 				fn.apply(obj[i], args);
 			}
 
 		} else {
-			for (var i in obj) {
-				//Funktion mit Argumenten in verschiedenen Contexten ausführen
+			for ( var i in obj) {
+				// Funktion mit Argumenten in verschiedenen Contexten ausführen
 				fn.apply(i, args);
 			}
 		}
@@ -503,7 +511,7 @@ var oplib = (function() {
 		return oplib.each(this, fn, args);
 	};
 
-	//Erstellt CamelCase
+	// Erstellt CamelCase
 	oplib.camelCase = function(text) {
 		text = text.replace(/-([a-z]|[A-Z])/g, function(match) {
 			return match[1].toUpperCase();
@@ -515,7 +523,7 @@ var oplib = (function() {
 		return text;
 	};
 
-	//Array Funktionen zugänglich machen
+	// Array Funktionen zugänglich machen
 	oplib.fn.concat = Array.prototype.concat;
 	oplib.fn.join = Array.prototype.join;
 	oplib.fn.pop = Array.prototype.pop;
@@ -527,95 +535,99 @@ var oplib = (function() {
 	oplib.fn.sort = Array.prototype.sort;
 	oplib.fn.unshift = Array.prototype.unshift;
 
-	//oplib.fn.Init besitzt den gleichen Prototyp wie oplib
+	// oplib.fn.Init besitzt den gleichen Prototyp wie oplib
 	oplib.fn.Init.prototype = oplib.fn;
-	//EscapeChar - Regex
+	// EscapeChar - Regex
 	oplib.fn.EscapeCharRegex = /\\/;
-	//Text - Regex
+	// Text - Regex
 	oplib.fn.TextRegex = /\w/;
-	//Universal - Regex
+	// Universal - Regex
 	oplib.fn.UniversalRegex = /\*/;
-	//ID - Regex
+	// ID - Regex
 	oplib.fn.IdRegex = /#/;
-	//Klassen - Regex
+	// Klassen - Regex
 	oplib.fn.ClassRegex = /\./;
-	//Child - Regex
+	// Child - Regex
 	oplib.fn.ChildRegex = />/;
-	//Descendant - Regex
+	// Descendant - Regex
 	oplib.fn.DescendantRegex = /\s/;
-	//Neighbour - Regex
+	// Neighbour - Regex
 	oplib.fn.NeighbourRegex = /\+/;
-	//Sibling - Regex
+	// Sibling - Regex
 	oplib.fn.SiblingRegex = /~/;
-	//Url - Regex
+	// Url - Regex
 	oplib.fn.UrlRegex = /url:/;
-	//Html - Regex
+	// Html - Regex
 	oplib.fn.HtmlRegex = /<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/;
-	//Html - Single Element - Regex
+	// Html - Single Element - Regex
 	oplib.fn.HtmlSingleElementRegex = /^<[\w\d\s=\-;:\/\.%&?"'`´]*>[^<>]*<\/[\w\s]*>$/;
-	//Html - Tag - Regex
+	// Html - Tag - Regex
 	oplib.fn.HtmlTagRegex = /<(\w|\s)*>/;
-	//Attribut - Start - Regex
+	// Attribut - Start - Regex
 	oplib.fn.AttributeStartRegex = /\[/;
-	//Attribut - End - Regex
+	// Attribut - End - Regex
 	oplib.fn.AttributeEndRegex = /\]/;
 
-	//Selectiert die entsprechenden Elemente
+	// Selectiert die entsprechenden Elemente
 	oplib.ElementSelection = function(selector, context) {
 		var elems;
-		//Context zuweisen //FIX #27 - Wenn kein Context angegeben sind alle
+		// Context zuweisen //FIX #27 - Wenn kein Context angegeben sind alle
 		// Elemente auswählbar
 		if (context) {
 			context = oplib.ElementSelection.DOMObjectFromSelector(context);
 		}
-		//Gewählte Elemente zuweisen
+		// Gewählte Elemente zuweisen
 		elems = oplib.ElementSelection.DOMObjectFromSelector(selector, context);
-		//Ausgewählte Elemente zurückgeben
+		// Ausgewählte Elemente zurückgeben
 		return elems;
 	};
 
-	//Wandelt einen Selector in ein DOMObject um
+	// Wandelt einen Selector in ein DOMObject um
 	oplib.ElementSelection.DOMObjectFromSelector = function(selector, context) {
 		var selectors = [];
 
-		//Wurde ein selector übergeben
+		// Wurde ein selector übergeben
 		if (!selector) {
-			//Standart Selector = document.body
+			// Standart Selector = document.body
 			selector = document.body;
 
 		}
 
-		//Wurde ein context übergeben //FIX #27 - Wenn kein Context angegeben
+		// Wurde ein context übergeben //FIX #27 - Wenn kein Context angegeben
 		// sind alle Elemente auswählbar
 
-		selectors = oplib.ElementSelection.DOMObjectFromSelector.ParseSelector(selector);
+		selectors = oplib.ElementSelection.DOMObjectFromSelector
+				.ParseSelector(selector);
 
-		return oplib.ElementSelection.DOMObjectFromParsedSelector(selectors, context);
+		return oplib.ElementSelection.DOMObjectFromParsedSelector(selectors,
+				context);
 
 	};
 
-	//Parst den Selector
-	oplib.ElementSelection.DOMObjectFromSelector.ParseSelector = function(selector) {
+	// Parst den Selector
+	oplib.ElementSelection.DOMObjectFromSelector.ParseSelector = function(
+			selector) {
 		var parsedSelectors = [];
-		//[{type, data}]
+		// [{type, data}]
 
-		//Wurde ein selector übergeben
+		// Wurde ein selector übergeben
 		if (!selector) {
-			//Standart Selector = document.body
+			// Standart Selector = document.body
 			selector = document.body;
 		}
 
-		//Ist selector bereits ein DOMObject?
-		if ( selector instanceof Node) {
-			//Element = Selector
+		// Ist selector bereits ein DOMObject?
+		if (selector instanceof Node) {
+			// Element = Selector
 			parsedSelectors.push({
 				type : "element",
 				data : selector
 			});
 
 		}
-		//Ist selector eine NodeList?
-		else if ( selector instanceof NodeList || toString.call(selector) === "[object Array]") {
+		// Ist selector eine NodeList?
+		else if (selector instanceof NodeList
+				|| toString.call(selector) === "[object Array]") {
 			for (var i = 0; i < selector.length; i++) {
 				parsedSelectors.push({
 					type : "element",
@@ -623,9 +635,9 @@ var oplib = (function() {
 				});
 			}
 		}
-		//Ist Selector ein String, um Regexausdrücke anzuwenden?
-		else if ( typeof selector === "string") {
-			//Url angegeben. Keine weiteren Selektoren erwartet
+		// Ist Selector ein String, um Regexausdrücke anzuwenden?
+		else if (typeof selector === "string") {
+			// Url angegeben. Keine weiteren Selektoren erwartet
 			if (oplib.isUrl(selector)) {
 				selector = selector.replace(oplib.fn.UrlRegex, "");
 				parsedSelectors.push({
@@ -633,14 +645,14 @@ var oplib = (function() {
 					data : selector
 				});
 			}
-			//Html angegeben, keine weiteren Selektoren erwartet
+			// Html angegeben, keine weiteren Selektoren erwartet
 			else if (oplib.isHtml(selector)) {
 				parsedSelectors.push({
 					type : "html",
 					data : selector
 				});
 			}
-			//Durch selector loopen und in einzelne Selektoren unterteilen
+			// Durch selector loopen und in einzelne Selektoren unterteilen
 			else {
 				var selector_type = "no selector";
 				var selector_start = 0;
@@ -649,68 +661,77 @@ var oplib = (function() {
 				for (var i = 0; i < selector.length; i++) {
 					selector_end = i;
 					if (oplib.fn.EscapeCharRegex.test(selector[i])) {
-						//Remove escape char
+						// Remove escape char
 						selector = oplib.string.splice(selector, i, 1);
-						//Skip escaped char
+						// Skip escaped char
 						continue;
 					}
 					if (oplib.fn.TextRegex.test(selector[i])) {
-						//Es darf kein anderer Selektor ausgewählt sein
-						//bzw. nur Kombinationsselektoren
+						// Es darf kein anderer Selektor ausgewählt sein
+						// bzw. nur Kombinationsselektoren
 						if (selector_type == "no selector") {
 							selector_type = "tag";
 							selector_start = i;
 						}
-						//Nach Kombinationsselektoren Kombinationsselektoren auch
+						// Nach Kombinationsselektoren Kombinationsselektoren
+						// auch
 						// parsen
-						if (selector_type == "children" || selector_type == "descendants" || selector_type == "neighbours" || selector_type == "siblings") {
+						if (selector_type == "children"
+								|| selector_type == "descendants"
+								|| selector_type == "neighbours"
+								|| selector_type == "siblings") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 							selector_type = "tag";
 							selector_start = i;
 						}
 					}
 					if (oplib.fn.UniversalRegex.test(selector[i])) {
-						//Vorherige Selectoren
+						// Vorherige Selectoren
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "universal";
 						selector_start = i + 1;
 					}
 					if (oplib.fn.IdRegex.test(selector[i])) {
-						//Vorherige Selectoren
+						// Vorherige Selectoren
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "id";
 						selector_start = i + 1;
 					}
 					if (oplib.fn.ClassRegex.test(selector[i])) {
-						//Vorherige Selectoren
+						// Vorherige Selectoren
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "class";
 						selector_start = i + 1;
 					}
 					if (oplib.fn.AttributeStartRegex.test(selector[i])) {
-						//Vorherige Selectoren
+						// Vorherige Selectoren
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "attribute";
@@ -723,21 +744,23 @@ var oplib = (function() {
 						while (!oplib.fn.AttributeEndRegex.test(selector[i])) {
 							i++;
 							selector_end = i;
-							//Prefix ~, |, ^. $, *
+							// Prefix ~, |, ^. $, *
 							if (/(~|\||\^|\$|\*|!)/.test(selector[i])) {
-								//Attribut Name
+								// Attribut Name
 								if (selector_type == "attribute") {
-									name = selector.slice(selector_start, selector_end);
+									name = selector.slice(selector_start,
+											selector_end);
 								}
 								selector_type = "no selector";
 								prefix = selector[i];
 								type = "value";
 							}
-							//Gleich
+							// Gleich
 							if (/=/.test(selector[i])) {
-								//Attribut Name
+								// Attribut Name
 								if (selector_type == "attribute") {
-									name = selector.slice(selector_start, selector_end);
+									name = selector.slice(selector_start,
+											selector_end);
 								}
 								selector_type = "attribute";
 								selector_start = i + 1;
@@ -745,17 +768,20 @@ var oplib = (function() {
 								type = "value";
 							}
 						}
-						//Attribut Name
+						// Attribut Name
 						if (selector_type == "attribute" && type == "name") {
 							name = selector.slice(selector_start, selector_end);
 						}
-						//Attribut Wert
-						else if (selector_type == "attribute" && type == "value") {
-							value = selector.slice(selector_start, selector_end);
+						// Attribut Wert
+						else if (selector_type == "attribute"
+								&& type == "value") {
+							value = selector
+									.slice(selector_start, selector_end);
 						}
-						//Selektor verarbeiten
+						// Selektor verarbeiten
 						selector_end++;
-						if (selector_start != selector_end && selector_type == "attribute") {
+						if (selector_start != selector_end
+								&& selector_type == "attribute") {
 							parsedSelectors.push({
 								type : selector_type,
 								data : {
@@ -769,79 +795,97 @@ var oplib = (function() {
 						selector_type = "no selector";
 					}
 					if (oplib.fn.DescendantRegex.test(selector[i])) {
-						//Lehrzeichen am Ende/Anfang ignorieren
-						if (selector[i + 1] != undefined && selector[i - 1] != undefined) {
-							//Vor kombinationsselektoren ignorieren + Keine
+						// Lehrzeichen am Ende/Anfang ignorieren
+						if (selector[i + 1] != undefined
+								&& selector[i - 1] != undefined) {
+							// Vor kombinationsselektoren ignorieren + Keine
 							// mehrfachen Leerzeichen
-							if (!(oplib.fn.DescendantRegex.test(selector[i + 1]) || oplib.fn.ChildRegex.test(selector[i + 1]) || oplib.fn.NeighbourRegex.test(selector[i + 1]) || oplib.fn.SiblingRegex.test(selector[i + 1]))) {
-								//Nach kombinationsselektoren ignorieren
-								if (selector_type != "children" && selector_type != "descendants" && selector_type != "neighbours" && selector_type != "siblings") {
-									//Vorherige Selectoren
+							if (!(oplib.fn.DescendantRegex
+									.test(selector[i + 1])
+									|| oplib.fn.ChildRegex
+											.test(selector[i + 1])
+									|| oplib.fn.NeighbourRegex
+											.test(selector[i + 1]) || oplib.fn.SiblingRegex
+									.test(selector[i + 1]))) {
+								// Nach kombinationsselektoren ignorieren
+								if (selector_type != "children"
+										&& selector_type != "descendants"
+										&& selector_type != "neighbours"
+										&& selector_type != "siblings") {
+									// Vorherige Selectoren
 									if (selector_type != "no selector") {
 										parsedSelectors.push({
 											type : selector_type,
-											data : selector.slice(selector_start, selector_end)
+											data : selector.slice(
+													selector_start,
+													selector_end)
 										});
 									}
-									//Leerzeichen entfernen
-									selector = oplib.string.splice(selector, i--, 1);
+									// Leerzeichen entfernen
+									selector = oplib.string.splice(selector,
+											i--, 1);
 									selector_type = "descendants";
 									selector_start = i + 1;
 									continue;
 								} else {
-									//Zu viele Leerzeichen entfernen
-									selector = oplib.string.splice(selector, i--, 1);
+									// Zu viele Leerzeichen entfernen
+									selector = oplib.string.splice(selector,
+											i--, 1);
 									continue;
 								}
 							} else {
-								//Zu viele Leerzeichen entfernen
-								selector = oplib.string.splice(selector, i--, 1);
+								// Zu viele Leerzeichen entfernen
+								selector = oplib.string
+										.splice(selector, i--, 1);
 								continue;
 							}
 						} else {
-							//Zu viele Leerzeichen entfernen
+							// Zu viele Leerzeichen entfernen
 							selector = oplib.string.splice(selector, i--, 1);
 							continue;
 						}
 					}
 					if (oplib.fn.ChildRegex.test(selector[i])) {
-						//Vorherige Selectoren
-						//FIXME: Keine Leerzeichen in Selektor data beinhalten
+						// Vorherige Selectoren
+						// FIXME: Keine Leerzeichen in Selektor data beinhalten
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "children";
 						selector_start = i;
 					}
 					if (oplib.fn.NeighbourRegex.test(selector[i])) {
-						//Vorherige Selectoren
-						//FIXME: Keine Leerzeichen in Selektor data beinhalten
+						// Vorherige Selectoren
+						// FIXME: Keine Leerzeichen in Selektor data beinhalten
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "neighbours";
 						selector_start = i;
 					}
 					if (oplib.fn.SiblingRegex.test(selector[i])) {
-						//Vorherige Selectoren
-						//FIXME: Keine Leerzeichen in Selektor data beinhalten
+						// Vorherige Selectoren
+						// FIXME: Keine Leerzeichen in Selektor data beinhalten
 						if (selector_type != "no selector") {
 							parsedSelectors.push({
 								type : selector_type,
-								data : selector.slice(selector_start, selector_end)
+								data : selector.slice(selector_start,
+										selector_end)
 							});
 						}
 						selector_type = "siblings";
 						selector_start = i;
 					}
 				}
-				//Übrige Selektoren verarbeiten
+				// Übrige Selektoren verarbeiten
 				selector_end++;
 				if (selector_type != "no selector") {
 					parsedSelectors.push({
@@ -851,7 +895,7 @@ var oplib = (function() {
 				}
 			}
 
-		} else if ( typeof selector === "object") {
+		} else if (typeof selector === "object") {
 			if (oplib.isOPLib(selector)) {
 				parsedSelectors.push({
 					type : "OPLib",
@@ -868,9 +912,10 @@ var oplib = (function() {
 		return parsedSelectors;
 	};
 
-	//Wandelt geparste Selektoren in DOMObjecte um
-	oplib.ElementSelection.DOMObjectFromParsedSelector = function(selectors, context) {
-		//Muss im context vorkommen.
+	// Wandelt geparste Selektoren in DOMObjecte um
+	oplib.ElementSelection.DOMObjectFromParsedSelector = function(selectors,
+			context) {
+		// Muss im context vorkommen.
 		var elems = [];
 		var useable;
 		var dontCheck = false;
@@ -884,250 +929,278 @@ var oplib = (function() {
 			}
 		}
 
-		//Selectoren auswerten
+		// Selectoren auswerten
 		for (var i = 0; i < selectors.length; i++) {
 			switch (selectors[i].type) {
-				case "element":
-					if (!dontCheck) {
-						var matched = selectors[i].data;
-						elems.push(matched);
-						useable = elems;
-					} else if (dontCheck) {
-						var matched = selectors[i].data;
-						useable = [];
-						useable.push(matched);
-						elems.push(matched);
-						dontCheck = false;
-					}
+			case "element":
+				if (!dontCheck) {
+					var matched = selectors[i].data;
+					elems.push(matched);
+					useable = elems;
+				} else if (dontCheck) {
+					var matched = selectors[i].data;
+					useable = [];
+					useable.push(matched);
+					elems.push(matched);
+					dontCheck = false;
+				}
 
-					break;
-				case "universal":
-					var matched = useable;
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
-					}
-					break;
-				case "tag":
-					var matched;
-					if (!dontCheck) {
-						matched = useable = oplib.array.sameElements(oplib.ElementSelection.find.tag(selectors[i].data), useable);
-					} else {
-						matched = useable = oplib.ElementSelection.find.tag(selectors[i].data);
-						dontCheck = false;
-					}
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
-					}
-					break;
-				case "id":
-					if (!dontCheck && oplib.array.includes(useable, oplib.ElementSelection.find.id(selectors[i].data)) != -1) {
-						var matched = oplib.ElementSelection.find.id(selectors[i].data);
-						useable = [];
-						useable.push(matched);
-						elems.push(matched);
-					} else if (dontCheck) {
-						var matched = oplib.ElementSelection.find.id(selectors[i].data);
-						useable = [];
-						useable.push(matched);
-						elems.push(matched);
-						dontCheck = false;
-					}
-					break;
-				case "class":
-					var matched;
-					if (!dontCheck) {
-						matched = useable = oplib.array.sameElements(oplib.ElementSelection.find.className(selectors[i].data), useable);
-					} else {
-						matched = useable = oplib.ElementSelection.find.className(selectors[i].data);
-						dontCheck = false;
-					}
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
-					}
-					break;
-				case "attribute":
-					var matched = [];
-					if (selectors[i].data.equals) {
-						switch (selectors[i].data.prefix) {
-							//Kein Prefix
-							case "":
-								for (var j = 0; j < useable.length; j++) {
-									if (useable[j].getAttribute(selectors[i].data.name) == selectors[i].data.value) {
-										matched.push(useable[j]);
-										elems.push(useable[j]);
-									}
-								}
-								break;
-							case "~":
-								for (var j = 0; j < useable.length; j++) {
-									var attr = useable[j].getAttribute(selectors[i].data.name);
-									attr = attr ? attr.split(" ") : [];
-									for (var x = 0; x < attr.length; x++) {
-										if (attr[x] == selectors[i].data.value) {
-											matched.push(useable[j]);
-											elems.push(useable[j]);
-											break;
-										}
-									}
-								}
-								break;
-							case "|":
-								for (var j = 0; j < useable.length; j++) {
-									var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
-									if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-										matched.push(useable[j]);
-										elems.push(useable[j]);
-									}
-								}
-								break;
-							case "^":
-								for (var j = 0; j < useable.length; j++) {
-									var regexp = new RegExp("^" + oplib.regexp.quote(selectors[i].data.value));
-									if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-										matched.push(useable[j]);
-										elems.push(useable[j]);
-									}
-								}
-								break;
-							case "$":
-								for (var j = 0; j < useable.length; j++) {
-									var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value) + "$");
-									if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-										matched.push(useable[j]);
-										elems.push(useable[j]);
-									}
-								}
-								break;
-							case "*":
-								for (var j = 0; j < useable.length; j++) {
-									var regexp = new RegExp(oplib.regexp.quote(selectors[i].data.value));
-									if (regexp.test(useable[j].getAttribute(selectors[i].data.name))) {
-										matched.push(useable[j]);
-										elems.push(useable[j]);
-									}
-								}
-								break;
-							case "!":
-								for (var j = 0; j < useable.length; j++) {
-									if (useable[j].getAttribute(selectors[i].data.name) != selectors[i].data.value) {
-										matched.push(useable[j]);
-										elems.push(useable[j]);
-									}
-								}
-								break;
-						}
-					} else {
+				break;
+			case "universal":
+				var matched = useable;
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "tag":
+				var matched;
+				if (!dontCheck) {
+					matched = useable = oplib.array.sameElements(
+							oplib.ElementSelection.find.tag(selectors[i].data),
+							useable);
+				} else {
+					matched = useable = oplib.ElementSelection.find
+							.tag(selectors[i].data);
+					dontCheck = false;
+				}
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "id":
+				if (!dontCheck
+						&& oplib.array.includes(useable,
+								oplib.ElementSelection.find
+										.id(selectors[i].data)) != -1) {
+					var matched = oplib.ElementSelection.find
+							.id(selectors[i].data);
+					useable = [];
+					useable.push(matched);
+					elems.push(matched);
+				} else if (dontCheck) {
+					var matched = oplib.ElementSelection.find
+							.id(selectors[i].data);
+					useable = [];
+					useable.push(matched);
+					elems.push(matched);
+					dontCheck = false;
+				}
+				break;
+			case "class":
+				var matched;
+				if (!dontCheck) {
+					matched = useable = oplib.array.sameElements(
+							oplib.ElementSelection.find
+									.className(selectors[i].data), useable);
+				} else {
+					matched = useable = oplib.ElementSelection.find
+							.className(selectors[i].data);
+					dontCheck = false;
+				}
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "attribute":
+				var matched = [];
+				if (selectors[i].data.equals) {
+					switch (selectors[i].data.prefix) {
+					// Kein Prefix
+					case "":
 						for (var j = 0; j < useable.length; j++) {
-							if (useable[j].getAttribute(selectors[i].data.name)) {
+							if (useable[j].getAttribute(selectors[i].data.name) == selectors[i].data.value) {
 								matched.push(useable[j]);
 								elems.push(useable[j]);
 							}
 						}
+						break;
+					case "~":
+						for (var j = 0; j < useable.length; j++) {
+							var attr = useable[j]
+									.getAttribute(selectors[i].data.name);
+							attr = attr ? attr.split(" ") : [];
+							for (var x = 0; x < attr.length; x++) {
+								if (attr[x] == selectors[i].data.value) {
+									matched.push(useable[j]);
+									elems.push(useable[j]);
+									break;
+								}
+							}
+						}
+						break;
+					case "|":
+						for (var j = 0; j < useable.length; j++) {
+							var regexp = new RegExp("^"
+									+ oplib.regexp
+											.quote(selectors[i].data.value));
+							if (regexp.test(useable[j]
+									.getAttribute(selectors[i].data.name))) {
+								matched.push(useable[j]);
+								elems.push(useable[j]);
+							}
+						}
+						break;
+					case "^":
+						for (var j = 0; j < useable.length; j++) {
+							var regexp = new RegExp("^"
+									+ oplib.regexp
+											.quote(selectors[i].data.value));
+							if (regexp.test(useable[j]
+									.getAttribute(selectors[i].data.name))) {
+								matched.push(useable[j]);
+								elems.push(useable[j]);
+							}
+						}
+						break;
+					case "$":
+						for (var j = 0; j < useable.length; j++) {
+							var regexp = new RegExp(oplib.regexp
+									.quote(selectors[i].data.value)
+									+ "$");
+							if (regexp.test(useable[j]
+									.getAttribute(selectors[i].data.name))) {
+								matched.push(useable[j]);
+								elems.push(useable[j]);
+							}
+						}
+						break;
+					case "*":
+						for (var j = 0; j < useable.length; j++) {
+							var regexp = new RegExp(oplib.regexp
+									.quote(selectors[i].data.value));
+							if (regexp.test(useable[j]
+									.getAttribute(selectors[i].data.name))) {
+								matched.push(useable[j]);
+								elems.push(useable[j]);
+							}
+						}
+						break;
+					case "!":
+						for (var j = 0; j < useable.length; j++) {
+							if (useable[j].getAttribute(selectors[i].data.name) != selectors[i].data.value) {
+								matched.push(useable[j]);
+								elems.push(useable[j]);
+							}
+						}
+						break;
 					}
-					useable = matched;
-					break;
-				case "descendants":
-					var matched = useable = oplib.ElementSelection.children(useable, 1);
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
+				} else {
+					for (var j = 0; j < useable.length; j++) {
+						if (useable[j].getAttribute(selectors[i].data.name)) {
+							matched.push(useable[j]);
+							elems.push(useable[j]);
+						}
 					}
-					break;
-				case "children":
-					var matched = useable = oplib.ElementSelection.children(useable, 0);
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
-					}
-					break;
-				case "neighbours":
-					var matched = useable = oplib.ElementSelection.siblings(useable, 1);
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
-					}
-					break;
-				case "siblings":
-					var matched = useable = oplib.ElementSelection.siblings(useable, 0);
-					for (var j = 0; j < matched.length; j++) {
-						elems.push(matched[j]);
-					}
-					break;
-				case "url":
-					var elem = document.createElement("div");
-					oplib.AJAX(selectors[i].data, function(text) {
-						elem.innerHTML = text;
-					}, "", {
-						async : false,
-						content : "text"
-					});
-					useable = [];
-					useable.push(elem);
-					elems.push(elem);
-					break;
-				case "html":
-					var dom = oplib.fn.createDOMObject(selectors[i].data);
+				}
+				useable = matched;
+				break;
+			case "descendants":
+				var matched = useable = oplib.ElementSelection.children(
+						useable, 1);
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "children":
+				var matched = useable = oplib.ElementSelection.children(
+						useable, 0);
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "neighbours":
+				var matched = useable = oplib.ElementSelection.siblings(
+						useable, 1);
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "siblings":
+				var matched = useable = oplib.ElementSelection.siblings(
+						useable, 0);
+				for (var j = 0; j < matched.length; j++) {
+					elems.push(matched[j]);
+				}
+				break;
+			case "url":
+				var elem = document.createElement("div");
+				oplib.AJAX(selectors[i].data, function(text) {
+					elem.innerHTML = text;
+				}, "", {
+					async : false,
+					content : "text"
+				});
+				useable = [];
+				useable.push(elem);
+				elems.push(elem);
+				break;
+			case "html":
+				var dom = oplib.fn.createDOMObject(selectors[i].data);
 
-					useable = [];
+				useable = [];
 
-					for (var j = 0; j < dom.length; j++) {
-						elems.push(dom[j]);
-						useable.push(dom[j]);
-					}
+				for (var j = 0; j < dom.length; j++) {
+					elems.push(dom[j]);
+					useable.push(dom[j]);
+				}
 
-					// var matched = oplib.fn.createDOMObject(selectors[i].data);
-					// useable = [];
-					// useable.push(matched);
-					// elems.push(matched);
-					break;
-				case "OPLib":
-					useable = [];
-					for (var j = 0; j < selectors[i].data.length; j++) {
-						useable.push(selectors[i].data[j]);
-						elems.push(selectors[i].data[j]);
-					}
-					break;
-				case "window":
-					useable = [selectors[i].data];
-					elems = [selectors[i].data];
-					break;
-				default:
-					console.log("Couldn't analyze parsed Selector:");
-					console.log(selectors[i]);
+				// var matched = oplib.fn.createDOMObject(selectors[i].data);
+				// useable = [];
+				// useable.push(matched);
+				// elems.push(matched);
+				break;
+			case "OPLib":
+				useable = [];
+				for (var j = 0; j < selectors[i].data.length; j++) {
+					useable.push(selectors[i].data[j]);
+					elems.push(selectors[i].data[j]);
+				}
+				break;
+			case "window":
+				useable = [ selectors[i].data ];
+				elems = [ selectors[i].data ];
+				break;
+			default:
+				console.log("Couldn't analyze parsed Selector:");
+				console.log(selectors[i]);
 			}
 		}
 
-		//Elemente müssen in useable vorkommen
+		// Elemente müssen in useable vorkommen
 		elems = oplib.array.sameElements(elems, useable);
 
-		//Elemente dürfen nur einmal vorkommen
+		// Elemente dürfen nur einmal vorkommen
 		elems = oplib.array.unique(elems);
 
 		return elems;
 	};
 
 	/*
-	 * Findet untergeordnete Nodes für die Elemente
-	 * R: Rekursive Suche möglich
+	 * Findet untergeordnete Nodes für die Elemente R: Rekursive Suche möglich
 	 */
 	oplib.ElementSelection.children = function(parents, R) {
 		var children = [];
 
-		//Erwartet ein Array;
-		if ( parents instanceof Node) {
-			parents = [parents];
+		// Erwartet ein Array;
+		if (parents instanceof Node) {
+			parents = [ parents ];
 		}
 
-		//Funktion die alle untergeordneten Nodes findet
+		// Funktion die alle untergeordneten Nodes findet
 		var getChildren = function(parents, children, R) {
 			for (var i = 0; i < parents.length; i++) {
 				if (!parents[i].children) {
 					continue;
 				}
 				for (var j = 0; j < parents[i].children.length; j++) {
-					if (oplib.fn.array.includes(children, parents[i].children[j]) == -1) {
+					if (oplib.fn.array.includes(children,
+							parents[i].children[j]) == -1) {
 						children.push(parents[i].children[j]);
-						//Rekursiv?
+						// Rekursiv?
 						if (R) {
 							if (parents[i].children[j].children.length != 0) {
-								children = getChildren([parents[i].children[j]], children, R);
+								children = getChildren(
+										[ parents[i].children[j] ], children, R);
 							}
 						}
 					}
@@ -1141,8 +1214,8 @@ var oplib = (function() {
 		return getChildren(parents, children, R);
 	};
 
-	/* Findet übergeordnete Nodes für die Elemente
-	 * R: Rekursive Suche möglich
+	/*
+	 * Findet übergeordnete Nodes für die Elemente R: Rekursive Suche möglich
 	 * rekursionLimit: Limit für rekursive Suche
 	 */
 	oplib.ElementSelection.parents = function(children, R, rekursionLimit) {
@@ -1150,9 +1223,9 @@ var oplib = (function() {
 		var Parents = [];
 		var topLimit;
 
-		//Erwartet ein Array
-		if ( children instanceof Node) {
-			children = [children];
+		// Erwartet ein Array
+		if (children instanceof Node) {
+			children = [ children ];
 		}
 
 		if (rekursionLimit && rekursionLimit.parentNode) {
@@ -1161,50 +1234,54 @@ var oplib = (function() {
 			topLimit = document.body;
 		}
 
-		//Für alle übereinstimmenden Elemente parentNodes (rekursiv) finden.
+		// Für alle übereinstimmenden Elemente parentNodes (rekursiv) finden.
 		var getParents = function(children, parents, R) {
 			for (var i = 0; i < children.length; i++) {
-				//topLimit ist die höchste Ebene, falls rekursiv gesucht wird
+				// topLimit ist die höchste Ebene, falls rekursiv gesucht wird
 				if (!(!children[i].parentNode || (children[i].parentNode == topLimit && R))) {
-					//Keine doppelten parentNodes.
-					if (oplib.fn.array.includes(parents, children[i].parentNode) == -1) {
-						//parentNode gefunden
+					// Keine doppelten parentNodes.
+					if (oplib.fn.array
+							.includes(parents, children[i].parentNode) == -1) {
+						// parentNode gefunden
 						parents.push(children[i].parentNode);
-						//Rekursive Suche??
+						// Rekursive Suche??
 						if (R) {
-							parents = getParents([children[i].parentNode], parents, R);
+							parents = getParents([ children[i].parentNode ],
+									parents, R);
 						}
 					}
 				}
 
 			}
-			//Ergebnis der Suche zurückgeben
+			// Ergebnis der Suche zurückgeben
 			return parents;
 		};
-		//Ergebnis der Suche
+		// Ergebnis der Suche
 		return getParents(children, Parents, R);
 	};
 
-	/* Findet gleichgeordnete Nodes für die Elemente
-	 * N: Nur Nachbaren einschließen
+	/*
+	 * Findet gleichgeordnete Nodes für die Elemente N: Nur Nachbaren
+	 * einschließen
 	 */
 	oplib.ElementSelection.siblings = function(elems, N) {
-		//Erwartet ein Array
-		if ( elems instanceof Node) {
-			elems = [elems];
+		// Erwartet ein Array
+		if (elems instanceof Node) {
+			elems = [ elems ];
 		}
-		//Alle Siblings gefordert
+		// Alle Siblings gefordert
 		if (!N) {
 			var parents = oplib.ElementSelection.parents(elems);
 			var siblings = oplib.ElementSelection.children(parents, 0);
 			for (var i = 0; i < elems.length; i++) {
 				if (oplib.array.includes(siblings, elems[i]) != -1) {
-					siblings.splice(oplib.array.includes(siblings, elems[i]), 1);
+					siblings
+							.splice(oplib.array.includes(siblings, elems[i]), 1);
 				}
 			}
 			return siblings;
 		}
-		//Nur Nachbaren gefordert
+		// Nur Nachbaren gefordert
 		else {
 			var neighbours = [];
 			for (var i = 0; i < elems.length; i++) {
@@ -1220,33 +1297,35 @@ var oplib = (function() {
 
 	};
 
-	//Tauscht Elemente mit anderen Elementen aus
+	// Tauscht Elemente mit anderen Elementen aus
 	oplib.ElementSelection.replace = function(newElems, oldElems) {
-		//Erwartet ein Array
-		if ( oldElems instanceof Node) {
-			oldElems = [oldElems];
+		// Erwartet ein Array
+		if (oldElems instanceof Node) {
+			oldElems = [ oldElems ];
 		}
-		if ( newElems instanceof Node) {
-			newElems = [newElems];
+		if (newElems instanceof Node) {
+			newElems = [ newElems ];
 		}
 		for (var i = 0; i < oldElems.length; i++) {
 			for (var j = 0; j < newElems.length; j++) {
-				//Benötigt .parentNode
+				// Benötigt .parentNode
 				if (!oldElems[i].parentNode) {
 					document.body.appendChild(oldElems[i]);
-					oldElems[i] = oldElems[i].parentNode.replaceChild(newElems[j], oldElems[i]);
+					oldElems[i] = oldElems[i].parentNode.replaceChild(
+							newElems[j], oldElems[i]);
 					document.body.removeChild(oldElems[i]);
 				} else {
-					oldElems[i] = oldElems[i].parentNode.replaceChild(newElems[j], oldElems[i]);
+					oldElems[i] = oldElems[i].parentNode.replaceChild(
+							newElems[j], oldElems[i]);
 				}
 			}
 		}
 		return oldElems;
 	};
 
-	//Überprüft ob das Element gehovert ist
+	// Überprüft ob das Element gehovert ist
 	oplib.ElementSelection.isHover = function(elems) {
-		//Globaler Handler schon gesetzt?
+		// Globaler Handler schon gesetzt?
 		if (!oplib.modules.isHover) {
 			oplib.fn.events.addEvent("mouseover", function(e) {
 				var elem = e.target;
@@ -1283,7 +1362,7 @@ var oplib = (function() {
 			return false;
 		}
 
-		if ( elems instanceof Node) {
+		if (elems instanceof Node) {
 			if (!elems.oplib) {
 				elems.oplib = {};
 			}
@@ -1313,29 +1392,29 @@ var oplib = (function() {
 
 	};
 
-	/* Findet entsprechende Elemente
-	 * selector: Selectors
+	/*
+	 * Findet entsprechende Elemente selector: Selectors
 	 */
 	oplib.ElementSelection.find = function(elems, selector) {
 		return oplib.ElementSelection(selector, elems);
 	};
 
-	//Findet das Element mit dem angebenen ID
+	// Findet das Element mit dem angebenen ID
 	oplib.ElementSelection.find.id = function(id) {
 		return document.getElementById(id);
 	};
 
-	//Findet die Elemente mit den angebenen Klassennamen
+	// Findet die Elemente mit den angebenen Klassennamen
 	oplib.ElementSelection.find.className = function(className) {
 		return document.getElementsByClassName(className);
 	};
 
-	//Findet Elemente mit dem angebenen Tag
+	// Findet Elemente mit dem angebenen Tag
 	oplib.ElementSelection.find.tag = function(tag) {
 		return document.getElementsByTagName(tag);
 	};
 
-	//Überprüft ob es sich um ein OPObject Handelt
+	// Überprüft ob es sich um ein OPObject Handelt
 	oplib.isOPLib = function(obj) {
 		if (!obj) {
 			return false;
@@ -1347,22 +1426,22 @@ var oplib = (function() {
 		}
 	};
 
-	//Überprüft ob es sich um HTML handelt
+	// Überprüft ob es sich um HTML handelt
 	oplib.isHtml = function(html) {
 		return oplib.fn.HtmlRegex.test(html);
 	};
 
-	//Überprüft ob es sich um eine URL handelt
+	// Überprüft ob es sich um eine URL handelt
 	oplib.isUrl = function(url) {
 		return oplib.fn.UrlRegex.test(url);
 	};
 
-	//Überprüft ob das Element gehovert ist
+	// Überprüft ob das Element gehovert ist
 	oplib.isHover = oplib.ElementSelection.isHover;
 
-	//Gibt den errechneten Wert des Css-Ausdrucks zurück
+	// Gibt den errechneten Wert des Css-Ausdrucks zurück
 	oplib.getComputedStyle = function(expression, elem, styles) {
-		var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+		var clone = oplib.fn.finalizeDOMManipulation.clone([ elem ])[0];
 		var value;
 		oplib.extend(clone.style, styles);
 		document.body.appendChild(clone);
@@ -1371,9 +1450,9 @@ var oplib = (function() {
 		return value;
 	};
 
-	//Gibt den Standartwert des errechneten Wert des Css-Ausdrucks zurück
+	// Gibt den Standartwert des errechneten Wert des Css-Ausdrucks zurück
 	oplib.getDefaultComputedStyle = function(expression, elem, styles) {
-		var clone = oplib.fn.finalizeDOMManipulation.clone([elem])[0];
+		var clone = oplib.fn.finalizeDOMManipulation.clone([ elem ])[0];
 		var value;
 		clone.style.cssText = "";
 		oplib.extend(clone.style, styles);
@@ -1383,9 +1462,9 @@ var oplib = (function() {
 		return value;
 	};
 
-	//Erstellt ein DOMObject anhand eines Strings
+	// Erstellt ein DOMObject anhand eines Strings
 	oplib.fn.createDOMObject = function(text) {
-		//HTML als XML Parsen
+		// HTML als XML Parsen
 		var dom = oplib.DOM(text, "text/html");
 		var nodes = dom.getElementsByTagName("body")[0].children;
 		var elems = [];
@@ -1401,34 +1480,35 @@ var oplib = (function() {
 		return elems;
 	};
 
-	//Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor")
+	// Css Ausdrücke (10 -> "10px" "background-color" -> "backgroundColor")
 	// entsprechend anpassen
 	oplib.fn.finalizeCssExpressions = function(expression, value, args) {
-		//Expression
-		//Bereits ein String
-		if ( typeof expression === "string") {
-			//Bindestriche entfernen und folgendes Zeichen großschreiben
+		// Expression
+		// Bereits ein String
+		if (typeof expression === "string") {
+			// Bindestriche entfernen und folgendes Zeichen großschreiben
 			expression = expression.replace(/-([a-z]|[A-Z])/g, function(match) {
 				return match[1].toUpperCase();
 			});
 		}
 
-		//Wert
-		//Bereits ein String
-		if ( typeof value === "string") {
-			//Bindestriche entfernen und folgendes Zeichen großschreiben
+		// Wert
+		// Bereits ein String
+		if (typeof value === "string") {
+			// Bindestriche entfernen und folgendes Zeichen großschreiben
 			expression = oplib.camelCase(expression);
-		} else if ( typeof value === "number") {
+		} else if (typeof value === "number") {
 			value = value.toString();
-			//"width" -> Einheit benötigt
-			if (expression.search(/(width|height|position|origin|size|padding|margin|spacing|gap)/i) != -1) {
+			// "width" -> Einheit benötigt
+			if (expression
+					.search(/(width|height|position|origin|size|padding|margin|spacing|gap)/i) != -1) {
 				if (!args) {
 					value += oplib.defaults.get("cssUnit");
 				} else {
 					value += args;
 				}
 			}
-			//"top" -> Einheit benötigt
+			// "top" -> Einheit benötigt
 			else if (expression.search(/^(top|bottom|left|rigth|flex-?basis)/i) != -1) {
 				if (!args) {
 					value += oplib.defaults.get("cssUnit");
@@ -1437,18 +1517,18 @@ var oplib = (function() {
 				}
 			}
 		}
-		return [expression, value];
+		return [ expression, value ];
 	};
 
-	//Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
+	// Wandelt Css-Werte in verrechenbare Werte um ("10px" -> 10 "100%" [width])
 	oplib.fn.floatCssValue = function(value) {
 		return parseFloat(value);
 	};
 
-	//Ermittelt die Einheit eines Css-Wertes
+	// Ermittelt die Einheit eines Css-Wertes
 	oplib.fn.getCssUnit = function(value) {
 		var unit = "";
-		if ( typeof value === "string") {
+		if (typeof value === "string") {
 			if (value.search(/[\d\.]/g) == -1) {
 				unit = oplib.defaults.get("cssUnit");
 			} else {
@@ -1459,58 +1539,63 @@ var oplib = (function() {
 		return unit.toLowerCase();
 	};
 
-	//Setzt die Einheit eines Css-Wertes
+	// Setzt die Einheit eines Css-Wertes
 	oplib.fn.setCssUnit = function(value, unit) {
-		//Alte Einheit entfernen
+		// Alte Einheit entfernen
 		value = value.replace(oplib.fn.getCssUnit(value), "");
-		//Neue Einheit anfügen
+		// Neue Einheit anfügen
 		return value += unit;
 	};
 
-	//Konvertiert Einheiten eines Css-Wertes
+	// Konvertiert Einheiten eines Css-Wertes
 	oplib.fn.convertCssUnit = function(value, unit, expression, elem) {
 		var oldUnit = oplib.fn.getCssUnit(value);
 		var valueInPx;
 		var conversionFactor;
-		//In Pixel umrechnen
+		// In Pixel umrechnen
 		if (oldUnit == "px") {
 			conversionFactor = 1;
 		} else if (oldUnit == "%") {
-			conversionFactor = oplib.fn.floatCssValue(oplib.getComputedStyle(expression, elem.parentNode || document.body)) / 100;
+			conversionFactor = oplib.fn.floatCssValue(oplib.getComputedStyle(
+					expression, elem.parentNode || document.body)) / 100;
 		} else {
-			conversionFactor = oplib.defaults.get("cssConversions", oldUnit + "ToPx");
+			conversionFactor = oplib.defaults.get("cssConversions", oldUnit
+					+ "ToPx");
 		}
 		valueInPx = oplib.fn.floatCssValue(value) * conversionFactor;
-		//In neue Einheit umrechnen
+		// In neue Einheit umrechnen
 		if (unit == "%") {
-			conversionFactor = 100 / oplib.fn.floatCssValue(oplib.getComputedStyle(expression, elem.parentNode || document.body));
+			conversionFactor = 100 / oplib.fn.floatCssValue(oplib
+					.getComputedStyle(expression, elem.parentNode
+							|| document.body));
 		} else if (unit == "px") {
 			conversionFactor = 1;
 		} else {
-			conversionFactor = oplib.defaults.get("cssConversions", oplib.camelCase("px-to-" + unit));
+			conversionFactor = oplib.defaults.get("cssConversions", oplib
+					.camelCase("px-to-" + unit));
 		}
 		return (valueInPx * conversionFactor).toString() + unit;
 	};
 
-	//Klont Elemente, etc...
+	// Klont Elemente, etc...
 	oplib.fn.finalizeDOMManipulation = function(obj, fn, args) {
 		var returns = [];
 		if (obj.length <= 1) {
 			oplib.each(obj, function(fn, elems) {
-				returns.push(fn.apply(this, [elems]));
-			}, [fn, args[0]]);
+				returns.push(fn.apply(this, [ elems ]));
+			}, [ fn, args[0] ]);
 		} else {
 			oplib.each(obj, function(fn, elems) {
 				var clones = oplib.fn.finalizeDOMManipulation.clone(elems);
-				returns.push(fn.apply(this, [clones]));
-			}, [fn, args[0]]);
+				returns.push(fn.apply(this, [ clones ]));
+			}, [ fn, args[0] ]);
 
-			//Element löschen
+			// Element löschen
 			oplib.each(args[0], function() {
 				if (this.parentNode) {
 					this.parentNode.removeChild(this);
 				}
-				//Element muss in DOM eingeordnet werden
+				// Element muss in DOM eingeordnet werden
 				else {
 					document.body.appendChild(this);
 					document.body.removeChild(this);
@@ -1518,10 +1603,10 @@ var oplib = (function() {
 			}, []);
 		}
 
-		//Alte Elemente entfernen und durch neue ersetzen
+		// Alte Elemente entfernen und durch neue ersetzen
 		this.length = 0;
 		for (var i = 0; i < returns.length; i++) {
-			//Falls returns[i] ein Array (.appendTo,...) ist, das Array
+			// Falls returns[i] ein Array (.appendTo,...) ist, das Array
 			// durchgehen
 			if (toString.call(returns[i]) === "[object Array]") {
 				for (var j = 0; j < returns[i].length; j++) {
@@ -1535,9 +1620,9 @@ var oplib = (function() {
 		return this;
 
 	};
-	//Klont Elemente
+	// Klont Elemente
 	oplib.fn.finalizeDOMManipulation.clone = function(elems) {
-		if ( typeof elems === "object") {
+		if (typeof elems === "object") {
 			var clones = [];
 			for (var i = 0; i < elems.length; i++) {
 				var clone = elems[i].cloneNode(true);
@@ -1548,138 +1633,140 @@ var oplib = (function() {
 		} else {
 			var clone = elems.cloneNode(true);
 			oplib.fn.events.copyEvents(clone, elems);
-			return [clone];
+			return [ clone ];
 		}
 	};
 
-	//Abkürzungen für allgemeine Animationen
+	// Abkürzungen für allgemeine Animationen
 	oplib.extend(oplib.fn, {
 		hide : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					width : "hide",
-					height : "hide",
-					opacity : "hide",
-					margin : "hide",
-					padding : "hide"
-				}, duration, interpolator, callbacks, scope);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							width : "hide",
+							height : "hide",
+							opacity : "hide",
+							margin : "hide",
+							padding : "hide"
+						}, duration, interpolator, callbacks, scope);
 
-			}, [duration, interpolator, callbacks, scope || this]);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 		},
 		show : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					width : "show",
-					height : "show",
-					opacity : "show",
-					margin : "show",
-					padding : "show"
-				}, duration, interpolator, callbacks, scope);
-			}, [duration, interpolator, callbacks, scope || this]);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							width : "show",
+							height : "show",
+							opacity : "show",
+							margin : "show",
+							padding : "show"
+						}, duration, interpolator, callbacks, scope);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 
 		},
 		slideUp : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					height : "hide",
-					marginTop : "hide",
-					paddingTop : "hide",
-					marginBottom : "hide",
-					paddingBottom : "hide"
-				}, duration, interpolator, callbacks, scope);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							height : "hide",
+							marginTop : "hide",
+							paddingTop : "hide",
+							marginBottom : "hide",
+							paddingBottom : "hide"
+						}, duration, interpolator, callbacks, scope);
 
-			}, [duration, interpolator, callbacks, scope || this]);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 		},
 		slideDown : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					height : "show",
-					marginTop : "show",
-					paddingTop : "show",
-					marginBottom : "show",
-					paddingBottom : "show"
-				}, duration, interpolator, callbacks, scope);
-			}, [duration, interpolator, callbacks, scope || this]);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							height : "show",
+							marginTop : "show",
+							paddingTop : "show",
+							marginBottom : "show",
+							paddingBottom : "show"
+						}, duration, interpolator, callbacks, scope);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 
 		},
 		slideLeft : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					width : "hide",
-					marginRight : "hide",
-					paddingRight : "hide",
-					marginLeft : "hide",
-					paddingLeft : "hide"
-				}, duration, interpolator, callbacks, scope);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							width : "hide",
+							marginRight : "hide",
+							paddingRight : "hide",
+							marginLeft : "hide",
+							paddingLeft : "hide"
+						}, duration, interpolator, callbacks, scope);
 
-			}, [duration, interpolator, callbacks, scope || this]);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 		},
 		slideRight : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					width : "show",
-					marginRight : "show",
-					paddingRight : "show",
-					marginLeft : "show",
-					paddingLeft : "show"
-				}, duration, interpolator, callbacks, scope);
-			}, [duration, interpolator, callbacks, scope || this]);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							width : "show",
+							marginRight : "show",
+							paddingRight : "show",
+							marginLeft : "show",
+							paddingLeft : "show"
+						}, duration, interpolator, callbacks, scope);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 
 		},
 		fadeOut : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					opacity : "hide"
-				}, duration, interpolator, callbacks, scope);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							opacity : "hide"
+						}, duration, interpolator, callbacks, scope);
 
-			}, [duration, interpolator, callbacks, scope || this]);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 		},
 		fadeIn : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
-					opacity : "show"
-				}, duration, interpolator, callbacks, scope);
-			}, [duration, interpolator, callbacks, scope || this]);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						oplib.fx([ this ], {
+							opacity : "show"
+						}, duration, interpolator, callbacks, scope);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 
 		},
 		fadeTo : function(to, duration, interpolator, callbacks, scope) {
-			return this.each(function(to, duration, interpolator, callbacks, scope) {
-				oplib.fx([this], {
+			return this.each(function(to, duration, interpolator, callbacks,
+					scope) {
+				oplib.fx([ this ], {
 					opacity : to
 				}, duration, interpolator, callbacks, scope);
-			}, [to, duration, interpolator, callbacks, scope || this]);
+			}, [ to, duration, interpolator, callbacks, scope || this ]);
 		},
 		toggle : function(duration, interpolator, callbacks, scope) {
-			return this.each(function(duration, interpolator, callbacks, scope) {
-				if (!this.oplib) {
-					this.oplib = {};
-				}
-				oplib.fx([this], {
-					width : "toggle",
-					height : "toggle",
-					opacity : "toggle",
-					margin : "toggle",
-					padding : "toggle"
-				}, duration, interpolator, callbacks, scope);
-			}, [duration, interpolator, callbacks, scope || this]);
+			return this.each(
+					function(duration, interpolator, callbacks, scope) {
+						if (!this.oplib) {
+							this.oplib = {};
+						}
+						oplib.fx([ this ], {
+							width : "toggle",
+							height : "toggle",
+							opacity : "toggle",
+							margin : "toggle",
+							padding : "toggle"
+						}, duration, interpolator, callbacks, scope);
+					}, [ duration, interpolator, callbacks, scope || this ]);
 		}
 	});
 
-	/* Animiert die übereinstimmenden Elemente
-	 * options:
-	 *  width|height|position|origin|size|padding|margin|spacing|gap
-	 *  top|bottom|left|rigth|flex-?basis
-	 *  opacity
-	 *  duration:
-	 *  interpolator:
-	 * duration:
-	 *  "slow"|"normal"|"fast"|number
-	 * interpolator:
-	 *  "linear"|"accelerate"|"decelerate|acceleratedecelerate"
-	 * callbacks:
-	 *  function|{done: function}|{done: object}
-	 * scope:
-	 *  Scope
+	/*
+	 * Animiert die übereinstimmenden Elemente options:
+	 * width|height|position|origin|size|padding|margin|spacing|gap
+	 * top|bottom|left|rigth|flex-?basis opacity duration: interpolator:
+	 * duration: "slow"|"normal"|"fast"|number interpolator:
+	 * "linear"|"accelerate"|"decelerate|acceleratedecelerate" callbacks:
+	 * function|{done: function}|{done: object} scope: Scope
 	 */
 	oplib.fn.anim = function(options, duration, interpolator, callbacks, scope) {
 		if (!options) {
@@ -1694,11 +1781,12 @@ var oplib = (function() {
 	oplib.fn.stop = function(stopAll, finish) {
 		return this.each(function(stopAll, finish) {
 			oplib.fx.stop(this, stopAll, finish);
-		}, [stopAll, finish]);
+		}, [ stopAll, finish ]);
 	};
 
-	//Animiert Objekte
-	oplib.fx = function(elems, options, duration, interpolator, callbacks, scope) {
+	// Animiert Objekte
+	oplib.fx = function(elems, options, duration, interpolator, callbacks,
+			scope) {
 		if (duration == undefined) {
 			if (options.duration != undefined) {
 				duration = options.duration;
@@ -1712,7 +1800,8 @@ var oplib = (function() {
 				interpolator = options.interpolator;
 				delete options.interpolator;
 			} else {
-				interpolator = oplib.defaults.get("animationSettings", "interpolator");
+				interpolator = oplib.defaults.get("animationSettings",
+						"interpolator");
 			}
 		}
 		if (!callbacks) {
@@ -1720,7 +1809,8 @@ var oplib = (function() {
 				callbacks = options.callbacks;
 				delete options.callbacks;
 			} else {
-				callbacks = oplib.defaults.get("animationSettings", "callbacks");
+				callbacks = oplib.defaults
+						.get("animationSettings", "callbacks");
 			}
 		}
 		if (!scope) {
@@ -1747,7 +1837,7 @@ var oplib = (function() {
 			delete options.scope;
 		}
 
-		//Argumente interpretieren
+		// Argumente interpretieren
 		if (duration == "normal") {
 			duration = oplib.defaults.get("animationSettings", "normal");
 		}
@@ -1758,7 +1848,7 @@ var oplib = (function() {
 			duration = oplib.defaults.get("animationSettings", "slow");
 		}
 
-		//Firefox hat Probleme mit padding/margin #42
+		// Firefox hat Probleme mit padding/margin #42
 		if (options.padding) {
 			options.paddingTop = options.padding;
 			options.paddingBottom = options.padding;
@@ -1775,7 +1865,8 @@ var oplib = (function() {
 		}
 
 		for (var i = 0; i < elems.length; i++) {
-			//Wird das Element bereits aniemiert, dann als Callback "done" daran
+			// Wird das Element bereits aniemiert, dann als Callback "done"
+			// daran
 			// anhägen
 			var callbackAdded = false;
 
@@ -1787,419 +1878,532 @@ var oplib = (function() {
 						callbacks : callbacks,
 						scope : scope
 					});
-					oplib.fx.queue[j].callbacks = oplib.fx.addCallback(oplib.fx.queue[j].callbacks, callbackOptions, "done");
+					oplib.fx.queue[j].callbacks = oplib.fx.addCallback(
+							oplib.fx.queue[j].callbacks, callbackOptions,
+							"done");
 					callbackAdded = true;
 				}
 			}
 			if (!callbackAdded) {
-				oplib.fx.init(elems[i], options, duration, interpolator, callbacks, scope);
+				oplib.fx.init(elems[i], options, duration, interpolator,
+						callbacks, scope);
 			}
 
 		}
 	};
 
-	oplib.extend(oplib.fx, {
-		init : function(elem, options, duration, interpolator, callbacks, scope) {
+	oplib
+			.extend(
+					oplib.fx,
+					{
+						init : function(elem, options, duration, interpolator,
+								callbacks, scope) {
 
-			//Optionen interpretieren
-			var cssSettings = {};
-			var callbacks = callbacks || {};
-			var done = false;
-			var optionsCount = 0;
-			var optionsEqual = 0;
-			for (var i in options) {
-				//Auf callbacks reagieren
-				if (i == "callbacks") {
-					callbacks = options[i];
-					continue;
-				}
-				//Auf interpolator reagieren
-				if (i == "interpolator") {
-					interpolator = options[i];
-					continue;
-				}
-				//Auf scope reagieren
-				if (i == "scope") {
-					scope = options[i];
-					continue;
-				}
-				//Status des Elements festhalten
-				if (!elem.oplib) {
-					elem.oplib = {};
-				}
-				if (!elem.oplib.stylesChanged) {
-					elem.oplib.stylesChanged = [];
-				}
-				if (options[i] == "toggle") {
-					if (elem.style.display == "none") {
-						options[i] = "show";
-					} else if (elem.style.display != "none") {
-						options[i] = "hide";
-					}
-				}
-				if (options[i] == "show") {
-					if (elem.style.display == "none" || elem.oplib.state != "shown") {
-						if (!elem.oplib.state) {
-							if (elem.style.display == "none") {
-								elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem, {
-									display : ""
-								});
-								if (elem.oplib.oldDisplay == oplib.getDefaultComputedStyle("display", elem)) {
-									elem.oplib.oldDisplay = "";
+							// Optionen interpretieren
+							var cssSettings = {};
+							var callbacks = callbacks || {};
+							var done = false;
+							var optionsCount = 0;
+							var optionsEqual = 0;
+							for ( var i in options) {
+								// Auf callbacks reagieren
+								if (i == "callbacks") {
+									callbacks = options[i];
+									continue;
 								}
-							} else {
-								elem.oplib.oldDisplay = oplib.getComputedStyle("display", elem);
+								// Auf interpolator reagieren
+								if (i == "interpolator") {
+									interpolator = options[i];
+									continue;
+								}
+								// Auf scope reagieren
+								if (i == "scope") {
+									scope = options[i];
+									continue;
+								}
+								// Status des Elements festhalten
+								if (!elem.oplib) {
+									elem.oplib = {};
+								}
+								if (!elem.oplib.stylesChanged) {
+									elem.oplib.stylesChanged = [];
+								}
+								if (options[i] == "toggle") {
+									if (elem.style.display == "none") {
+										options[i] = "show";
+									} else if (elem.style.display != "none") {
+										options[i] = "hide";
+									}
+								}
+								if (options[i] == "show") {
+									if (elem.style.display == "none"
+											|| elem.oplib.state != "shown") {
+										if (!elem.oplib.state) {
+											if (elem.style.display == "none") {
+												elem.oplib.oldDisplay = oplib
+														.getComputedStyle(
+																"display",
+																elem,
+																{
+																	display : ""
+																});
+												if (elem.oplib.oldDisplay == oplib
+														.getDefaultComputedStyle(
+																"display", elem)) {
+													elem.oplib.oldDisplay = "";
+												}
+											} else {
+												elem.oplib.oldDisplay = oplib
+														.getComputedStyle(
+																"display", elem);
+											}
+
+											elem.oplib.oldStyle = {};
+										}
+										elem.oplib.stylesChanged.push(i);
+										elem.oplib.state = "showing";
+
+										cssSettings[i] = {};
+										// Annehmen, dass das Element ganz
+										// versteckt ist
+										if (elem.style.display == "none") {
+											cssSettings[i].old = 0;
+										}
+										// Ansonsten Wert direkt berechnen
+										else {
+											cssSettings[i].old = oplib.fn
+													.floatCssValue(oplib
+															.getComputedStyle(
+																	i, elem));
+										}
+										var styles = oplib.extend({},
+												elem.oplib.oldStyle);
+										styles.display = elem.oplib.oldDisplay;
+										cssSettings[i].aim = oplib.fn
+												.floatCssValue(oplib
+														.getDefaultComputedStyle(
+																i, elem, styles));
+									}
+
+								} else if (options[i] == "hide") {
+									if (elem.style.display != "none"
+											|| elem.oplib.state != "hidden") {
+										if (elem.oplib.state != "hiding"
+												&& elem.oplib.state != "showing") {
+											elem.oplib.oldStyle = oplib.extend(
+													{}, elem.style);
+											elem.oplib.oldDisplay = elem.style.display;
+										}
+										elem.oplib.stylesChanged.push(i);
+										elem.oplib.state = "hiding";
+
+										cssSettings[i] = {};
+										cssSettings[i].old = oplib.fn
+												.floatCssValue(oplib
+														.getComputedStyle(i,
+																elem));
+										cssSettings[i].current = oplib.fn
+												.floatCssValue(oplib
+														.getComputedStyle(i,
+																elem));
+										cssSettings[i].aim = 0;
+									}
+
+								} else {
+									cssSettings[i] = {};
+									cssSettings[i].unit = oplib.fn
+											.getCssUnit(options[i]);
+
+									cssSettings[i].old = oplib.fn
+											.floatCssValue(oplib.fn
+													.convertCssUnit(
+															oplib
+																	.getComputedStyle(
+																			i,
+																			elem),
+															cssSettings[i].unit,
+															i, elem));
+									cssSettings[i].current = oplib.fn
+											.floatCssValue(oplib.fn
+													.convertCssUnit(
+															oplib
+																	.getComputedStyle(
+																			i,
+																			elem),
+															cssSettings[i].unit,
+															i, elem));
+									cssSettings[i].aim = oplib.fn
+											.floatCssValue(oplib.fn
+													.convertCssUnit(
+															options[i],
+															cssSettings[i].unit,
+															i, elem));
+
+									// Make sure to apply all style changes
+									// afterwards #30
+									elem.oplib.aim = {};
+									elem.oplib.unit = {};
+									elem.oplib.aim[i] = cssSettings[i].aim;
+									elem.oplib.unit[i] = cssSettings[i].unit;
+								}
+
+								// Auf gleiche Optionen untersuchen, Keine
+								// sinnlosen Animationen
+								optionsCount++;
+								if (!cssSettings[i]
+										|| cssSettings[i].old == cssSettings[i].aim) {
+									optionsEqual++;
+								}
+
 							}
 
-							elem.oplib.oldStyle = {};
-						}
-						elem.oplib.stylesChanged.push(i);
-						elem.oplib.state = "showing";
+							// Annehmen, dass Callbacks "done" gemeint ist
+							if (typeof callbacks === "function") {
+								callbacks = {
+									done : callbacks
+								};
+							}
+							// Benötigte Callbacks:
+							if (elem.oplib.state == "showing") {
+								callbacks = oplib.fx
+										.addCallback(
+												callbacks,
+												function(elem) {
+													elem.style.display = elem.oplib.oldDisplay;
+												}, "OPstart");
+								callbacks = oplib.fx
+										.addCallback(
+												callbacks,
+												function(elem) {
+													for (var i = 0; i < elem.oplib.stylesChanged.length; i++) {
+														elem.style[elem.oplib.stylesChanged[i]] = elem.oplib.oldStyle[elem.oplib.stylesChanged[i]];
+													}
+													elem.oplib.stylesChanged.length = 0;
+													elem.style.overflow = elem.oplib.oldOverflow;
+													elem.oplib.state = "shown";
+												}, "OPdone");
+							} else if (elem.oplib.state == "hiding") {
+								callbacks = oplib.fx
+										.addCallback(
+												callbacks,
+												function(elem) {
+													for (var i = 0; i < elem.oplib.stylesChanged.length; i++) {
+														elem.style[elem.oplib.stylesChanged[i]] = elem.oplib.oldStyle[elem.oplib.stylesChanged[i]];
+													}
+													elem.oplib.stylesChanged.length = 0;
+													elem.style.display = "none";
+													elem.style.overflow = elem.oplib.oldOverflow;
+													elem.oplib.state = "hidden";
+												}, "OPdone");
+							}
+							// Make sure to apply all changes afterwards #30
+							callbacks = oplib.fx.addCallback(callbacks,
+									function(elem) {
+										for ( var i in elem.oplib.aim) {
+											elem.style[i] = elem.oplib.aim[i]
+													+ elem.oplib.unit[i];
+										}
+									}, "OPdone");
 
-						cssSettings[i] = {};
-						//Annehmen, dass das Element ganz versteckt ist
-						if (elem.style.display == "none") {
-							cssSettings[i].old = 0;
-						}
-						//Ansonsten Wert direkt berechnen
-						else {
-							cssSettings[i].old = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
-						}
-						var styles = oplib.extend({}, elem.oplib.oldStyle);
-						styles.display = elem.oplib.oldDisplay;
-						cssSettings[i].aim = oplib.fn.floatCssValue(oplib.getDefaultComputedStyle(i, elem, styles));
-					}
+							// Alle Optionen gleich --> Animation ist fertig
+							if (optionsEqual / optionsCount == 1) {
+								done = true;
+							}
 
-				} else if (options[i] == "hide") {
-					if (elem.style.display != "none" || elem.oplib.state != "hidden") {
-						if (elem.oplib.state != "hiding" && elem.oplib.state != "showing") {
-							elem.oplib.oldStyle = oplib.extend({}, elem.style);
-							elem.oplib.oldDisplay = elem.style.display;
-						}
-						elem.oplib.stylesChanged.push(i);
-						elem.oplib.state = "hiding";
+							oplib.fx.queue.push({
+								elem : elem,
+								options : cssSettings,
+								duration : duration,
+								interpolator : interpolator,
+								start_time : oplib.TIME.getCurrentTime(),
+								callbacks : callbacks,
+								scope : scope,
+								done : done
+							});
 
-						cssSettings[i] = {};
-						cssSettings[i].old = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
-						cssSettings[i].current = oplib.fn.floatCssValue(oplib.getComputedStyle(i, elem));
-						cssSettings[i].aim = 0;
-					}
+							// Overflow setzen:
+							if (!elem.oplib) {
+								elem.oplib = {};
+							}
+							elem.oplib.oldOverflow = elem.style.overflow;
+							elem.style.overflow = "hidden";
 
-				} else {
-					cssSettings[i] = {};
-					cssSettings[i].unit = oplib.fn.getCssUnit(options[i]);
+							if (!oplib.fx.animatorRunning) {
+								oplib.fx.animatorId = setTimeout(
+										oplib.fx.animate, oplib.defaults.get(
+												"animationSettings",
+												"frameTime"));
+								oplib.fx.animatorRunning = true;
+							}
+						},
+						end : function(i, elem, callbacks, scope) {
+							oplib.fx.queue.splice(i, 1);
 
-					cssSettings[i].old = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
-					cssSettings[i].current = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(oplib.getComputedStyle(i, elem), cssSettings[i].unit, i, elem));
-					cssSettings[i].aim = oplib.fn.floatCssValue(oplib.fn.convertCssUnit(options[i], cssSettings[i].unit, i, elem));
+							// Overflow zurücksetzen
+							elem.style.overflow = elem.oplib.oldOverflow;
 
-					//Make sure to apply all style changes afterwards #30
-					elem.oplib.aim = {};
-					elem.oplib.unit = {};
-					elem.oplib.aim[i] = cssSettings[i].aim;
-					elem.oplib.unit[i] = cssSettings[i].unit;
-				}
+							// Callbacks "OPdone" aufrufen
+							callbacks = oplib.fx.callback(elem, callbacks,
+									"OPdone", scope);
+							// Callbacks "done" aufrufen
+							callbacks = oplib.fx.callback(elem, callbacks,
+									"done", scope);
 
-				//Auf gleiche Optionen untersuchen, Keine sinnlosen Animationen
-				optionsCount++;
-				if (!cssSettings[i] || cssSettings[i].old == cssSettings[i].aim) {
-					optionsEqual++;
-				}
+							if (!oplib.fx.queue.length) {
+								clearTimeout(oplib.fx.animatorId);
+								oplib.fx.animatorRunning = false;
+							}
+							return oplib.fx.animatorId;
+						},
+						stop : function(elem, stopAll, finish) {
+							for (var i = 0; i < oplib.fx.queue.length; i++) {
+								// Alle anderen Animationen löschen. --- Es
+								// werden keine
+								// Funktionen gelöscht
+								if (oplib.fx.queue[i].elem == elem) {
+									if (stopAll) {
+										if (!oplib.fx.queue[i].callbacks) {
+											oplib.fx.queue[i].callbacks = {};
+										}
+										if (oplib.fx.queue[i].callbacks.done
+												&& toString
+														.call(oplib.fx.queue[i].callbacks.done === "[Object array]")) {
+											for (var j = 0; j < oplib.fx.queue[i].callbacks.done.length; j++) {
+												if (typeof oplib.fx.queue[i].callbacks.done[j] === "object") {
+													oplib.fx.queue[i].callbacks.done
+															.splice(j--, 1);
+												}
+											}
+										} else if (oplib.fx.queue[i].callbacks.done
+												&& typeof oplib.fx.queue[i].callbacks.done === "object") {
+											delete oplib.fx.queue[i].callbacks.done;
+										}
+									}
 
-			}
+									// Die laufende Animation beenden
+									if (finish) {
+										oplib.fx.queue[i].duration = 1;
+									}
 
-			//Annehmen, dass Callbacks "done" gemeint ist
-			if ( typeof callbacks === "function") {
-				callbacks = {
-					done : callbacks
-				};
-			}
-			//Benötigte Callbacks:
-			if (elem.oplib.state == "showing") {
-				callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-					elem.style.display = elem.oplib.oldDisplay;
-				}, "OPstart");
-				callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-					for (var i = 0; i < elem.oplib.stylesChanged.length; i++) {
-						elem.style[elem.oplib.stylesChanged[i]] = elem.oplib.oldStyle[elem.oplib.stylesChanged[i]];
-					}
-					elem.oplib.stylesChanged.length = 0;
-					elem.style.overflow = elem.oplib.oldOverflow;
-					elem.oplib.state = "shown";
-				}, "OPdone");
-			} else if (elem.oplib.state == "hiding") {
-				callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-					for (var i = 0; i < elem.oplib.stylesChanged.length; i++) {
-						elem.style[elem.oplib.stylesChanged[i]] = elem.oplib.oldStyle[elem.oplib.stylesChanged[i]];
-					}
-					elem.oplib.stylesChanged.length = 0;
-					elem.style.display = "none";
-					elem.style.overflow = elem.oplib.oldOverflow;
-					elem.oplib.state = "hidden";
-				}, "OPdone");
-			}
-			//Make sure to apply all changes afterwards #30
-			callbacks = oplib.fx.addCallback(callbacks, function(elem) {
-				for (var i in elem.oplib.aim) {
-					elem.style[i] = elem.oplib.aim[i] + elem.oplib.unit[i];
-				}
-			}, "OPdone");
-
-			//Alle Optionen gleich  --> Animation ist fertig
-			if (optionsEqual / optionsCount == 1) {
-				done = true;
-			}
-
-			oplib.fx.queue.push({
-				elem : elem,
-				options : cssSettings,
-				duration : duration,
-				interpolator : interpolator,
-				start_time : oplib.TIME.getCurrentTime(),
-				callbacks : callbacks,
-				scope : scope,
-				done : done
-			});
-
-			//Overflow setzen:
-			if (!elem.oplib) {
-				elem.oplib = {};
-			}
-			elem.oplib.oldOverflow = elem.style.overflow;
-			elem.style.overflow = "hidden";
-
-			if (!oplib.fx.animatorRunning) {
-				oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.defaults.get("animationSettings", "frameTime"));
-				oplib.fx.animatorRunning = true;
-			}
-		},
-		end : function(i, elem, callbacks, scope) {
-			oplib.fx.queue.splice(i, 1);
-
-			//Overflow zurücksetzen
-			elem.style.overflow = elem.oplib.oldOverflow;
-
-			//Callbacks "OPdone" aufrufen
-			callbacks = oplib.fx.callback(elem, callbacks, "OPdone", scope);
-			//Callbacks "done" aufrufen
-			callbacks = oplib.fx.callback(elem, callbacks, "done", scope);
-
-			if (!oplib.fx.queue.length) {
-				clearTimeout(oplib.fx.animatorId);
-				oplib.fx.animatorRunning = false;
-			}
-			return oplib.fx.animatorId;
-		},
-		stop : function(elem, stopAll, finish) {
-			for (var i = 0; i < oplib.fx.queue.length; i++) {
-				//Alle anderen Animationen löschen. --- Es werden keine
-				// Funktionen gelöscht
-				if (oplib.fx.queue[i].elem == elem) {
-					if (stopAll) {
-						if (!oplib.fx.queue[i].callbacks) {
-							oplib.fx.queue[i].callbacks = {};
-						}
-						if (oplib.fx.queue[i].callbacks.done && toString.call(oplib.fx.queue[i].callbacks.done === "[Object array]")) {
-							for (var j = 0; j < oplib.fx.queue[i].callbacks.done.length; j++) {
-								if ( typeof oplib.fx.queue[i].callbacks.done[j] === "object") {
-									oplib.fx.queue[i].callbacks.done.splice(j--, 1);
+									// Die laufende Animation stoppen
+									if (!finish
+											&& oplib.fx.queue[i].callbacks.OPdone) {
+										// Kein display:none when Animationen
+										// gestoppt werden
+										delete oplib.fx.queue[i].callbacks.OPdone;
+									}
+									oplib.fx.queue[i].done = true;
 								}
 							}
-						} else if (oplib.fx.queue[i].callbacks.done && typeof oplib.fx.queue[i].callbacks.done === "object") {
-							delete oplib.fx.queue[i].callbacks.done;
+						},
+						// Enthält zu animerende Elemente mit ihren
+						// Eigenschaften
+						queue : [],
+						// Wird .animate() bereits ausgeführt
+						animatorRunning : false,
+						// setIntervar() ID um .animator() zu stoppen
+						animatorId : 0,
+						// Animiert Objekte für Zeit t;
+						animate : function() {
+							var currentTime = oplib.TIME.getCurrentTime();
+							var actualProgress;
+							var animationProgress;
+
+							var elem, options, duration, interpolator, start_time, actual_time, callbacks, scope;
+
+							var done = [];
+
+							for (var i = 0; i < oplib.fx.queue.length; i++) {
+								elem = oplib.fx.queue[i].elem;
+								options = oplib.fx.queue[i].options;
+								duration = oplib.fx.queue[i].duration;
+								interpolator = oplib.fx.queue[i].interpolator;
+								start_time = oplib.fx.queue[i].start_time;
+								actual_time = currentTime - start_time;
+								callbacks = oplib.fx.queue[i].callbacks;
+								scope = oplib.fx.queue[i].scope;
+								actualProgress = actual_time / duration;
+
+								if (actualProgress > 1.0) {
+									actualProgress = 1.0;
+								}
+								animationProgress = oplib.fx.interpolate(
+										interpolator, actualProgress);
+
+								// Callbacks "OPstart" aufrufen
+								callbacks = oplib.fx.callback(elem, callbacks,
+										"OPstart", scope);
+								// Callbacks "start" aufrufen
+								callbacks = oplib.fx.callback(elem, callbacks,
+										"start", scope);
+								// Callbacks "update" aufrufen
+								oplib.fx.callback(elem, callbacks, "update",
+										scope);
+
+								for ( var j in options) {
+									options[j].current = options[j].old
+											+ (options[j].aim - options[j].old)
+											* animationProgress;
+									var apply = oplib.fn
+											.finalizeCssExpressions(j,
+													options[j].current,
+													options[j].unit);
+									elem.style[apply[0]] = apply[1];
+								}
+
+								if (actualProgress == 1.0
+										|| oplib.fx.queue[i].done) {
+									done.push(i);
+								}
+
+								// Queue updaten
+								oplib.fx.queue[i].callbacks = callbacks;
+
+							}
+
+							for (var i = 0; i < done.length; i++) {
+								oplib.fx.end(done[i] - i,
+										oplib.fx.queue[done[i] - i].elem,
+										oplib.fx.queue[done[i] - i].callbacks,
+										oplib.fx.queue[done[i] - i].scope);
+							}
+
+							if (oplib.fx.animatorRunning) {
+								oplib.fx.animatorId = setTimeout(
+										oplib.fx.animate, oplib.defaults.get(
+												"animationSettings",
+												"frameTime"));
+							}
+						},
+						// Wendet einen interpolator auf actualProgress an
+						interpolate : function(interpolator, actualProgress) {
+							interpolators = {
+								linear : actualProgress,
+								decelerate : Math.sin(actualProgress
+										* (Math.PI / 2)),
+								accelerate : 1 - Math.cos(actualProgress
+										* (Math.PI / 2)),
+								acceleratedecelerate : Math.sin(actualProgress
+										* (Math.PI / 2))
+										* Math.sin(actualProgress
+												* (Math.PI / 2))
+							};
+
+							if (!interpolators[interpolator]) {
+								interpolator = oplib.defaults.get(
+										"animationSettings", "interpolator");
+							}
+							return interpolators[interpolator];
+						},
+						// Callbackfunktion
+						callback : function(elem, callbacks, action, scope) {
+							if (!callbacks) {
+								return callbacks;
+							}
+							if (!callbacks[action]) {
+								return callbacks;
+							}
+							// Falls callbacks in Array-Form angegeben wurden:
+							if (callbacks[action]
+									&& toString.call(callbacks[action]) === "[object Array]") {
+								for ( var i in callbacks[action]) {
+									if (typeof callbacks[action][i] === "function") {
+										callbacks[action][i].apply(scope,
+												[ elem ]);
+										delete callbacks[action][i];
+									} else if (typeof callbacks[action][i] === "object") {
+										// Zusätzliche animationen enthalten
+										oplib
+												.fx([ elem ],
+														callbacks[action][i]);
+										delete callbacks[action][i];
+									}
+								}
+							} else if (callbacks[action]
+									&& typeof callbacks[action] === "function") {
+								callbacks[action].apply(scope, [ elem ]);
+								delete callbacks[action];
+							} else if (callbacks[action]
+									&& typeof callbacks[action] === "object") {
+								// Zusätzliche animationen enthalten
+								oplib.fx([ elem ], callbacks[action]);
+								delete callbacks[action];
+							}
+
+							return callbacks;
+						},
+						// Fügt Elementen in oplib.fx.queue callbacks hinzu.
+						addCallback : function(callbacksBase, callbacks, action) {
+							if (!callbacks) {
+								return;
+							}
+
+							if (!callbacksBase) {
+								callbacksBase = {};
+								callbacksBase[action] = [];
+							}
+
+							if (!callbacksBase[action]) {
+								callbacksBase[action] = [];
+							}
+
+							if (callbacksBase[action]
+									&& toString.call(callbacksBase[action]) === "[object Array]") {
+								if (toString.call(callbacks) === "[object Array]") {
+									for ( var i in callbacks) {
+										callbacksBase[action]
+												.push(callbacks[i]);
+									}
+								} else {
+									callbacksBase[action].push(callbacks);
+								}
+							} else if (callbacksBase[action]) {
+								callbacksBase[action] = [ callbacksBase[action] ];
+								if (toString.call(callbacks) === "[object Array]") {
+									for ( var i in callbacks) {
+										callbacksBase[action]
+												.push(callbacks[i]);
+									}
+								} else {
+									callbacksBase[action].push(callbacks);
+								}
+							}
+							return callbacksBase;
 						}
-					}
+					});
 
-					//Die laufende Animation beenden
-					if (finish) {
-						oplib.fx.queue[i].duration = 1;
-					}
-
-					//Die laufende Animation stoppen
-					if (!finish && oplib.fx.queue[i].callbacks.OPdone) {
-						//Kein display:none when Animationen gestoppt werden
-						delete oplib.fx.queue[i].callbacks.OPdone;
-					}
-					oplib.fx.queue[i].done = true;
-				}
-			}
-		},
-		//Enthält zu animerende Elemente mit ihren Eigenschaften
-		queue : [],
-		//Wird .animate() bereits ausgeführt
-		animatorRunning : false,
-		//setIntervar() ID um .animator() zu stoppen
-		animatorId : 0,
-		//Animiert Objekte für Zeit t;
-		animate : function() {
-			var currentTime = oplib.TIME.getCurrentTime();
-			var actualProgress;
-			var animationProgress;
-
-			var elem, options, duration, interpolator, start_time, actual_time, callbacks, scope;
-
-			var done = [];
-
-			for (var i = 0; i < oplib.fx.queue.length; i++) {
-				elem = oplib.fx.queue[i].elem;
-				options = oplib.fx.queue[i].options;
-				duration = oplib.fx.queue[i].duration;
-				interpolator = oplib.fx.queue[i].interpolator;
-				start_time = oplib.fx.queue[i].start_time;
-				actual_time = currentTime - start_time;
-				callbacks = oplib.fx.queue[i].callbacks;
-				scope = oplib.fx.queue[i].scope;
-				actualProgress = actual_time / duration;
-
-				if (actualProgress > 1.0) {
-					actualProgress = 1.0;
-				}
-				animationProgress = oplib.fx.interpolate(interpolator, actualProgress);
-
-				//Callbacks "OPstart" aufrufen
-				callbacks = oplib.fx.callback(elem, callbacks, "OPstart", scope);
-				//Callbacks "start" aufrufen
-				callbacks = oplib.fx.callback(elem, callbacks, "start", scope);
-				//Callbacks "update" aufrufen
-				oplib.fx.callback(elem, callbacks, "update", scope);
-
-				for (var j in options) {
-					options[j].current = options[j].old + (options[j].aim - options[j].old) * animationProgress;
-					var apply = oplib.fn.finalizeCssExpressions(j, options[j].current, options[j].unit);
-					elem.style[apply[0]] = apply[1];
-				}
-
-				if (actualProgress == 1.0 || oplib.fx.queue[i].done) {
-					done.push(i);
-				}
-
-				//Queue updaten
-				oplib.fx.queue[i].callbacks = callbacks;
-
-			}
-
-			for (var i = 0; i < done.length; i++) {
-				oplib.fx.end(done[i] - i, oplib.fx.queue[done[i] - i].elem, oplib.fx.queue[done[i] - i].callbacks, oplib.fx.queue[done[i] - i].scope);
-			}
-
-			if (oplib.fx.animatorRunning) {
-				oplib.fx.animatorId = setTimeout(oplib.fx.animate, oplib.defaults.get("animationSettings", "frameTime"));
-			}
-		},
-		//Wendet einen interpolator auf actualProgress an
-		interpolate : function(interpolator, actualProgress) {
-			interpolators = {
-				linear : actualProgress,
-				decelerate : Math.sin(actualProgress * (Math.PI / 2)),
-				accelerate : 1 - Math.cos(actualProgress * (Math.PI / 2)),
-				acceleratedecelerate : Math.sin(actualProgress * (Math.PI / 2)) * Math.sin(actualProgress * (Math.PI / 2))
-			};
-
-			if (!interpolators[interpolator]) {
-				interpolator = oplib.defaults.get("animationSettings", "interpolator");
-			}
-			return interpolators[interpolator];
-		},
-		//Callbackfunktion
-		callback : function(elem, callbacks, action, scope) {
-			if (!callbacks) {
-				return callbacks;
-			}
-			if (!callbacks[action]) {
-				return callbacks;
-			}
-			//Falls callbacks in Array-Form angegeben wurden:
-			if (callbacks[action] && toString.call(callbacks[action]) === "[object Array]") {
-				for (var i in callbacks[action]) {
-					if ( typeof callbacks[action][i] === "function") {
-						callbacks[action][i].apply(scope, [elem]);
-						delete callbacks[action][i];
-					} else if ( typeof callbacks[action][i] === "object") {
-						//Zusätzliche animationen enthalten
-						oplib.fx([elem], callbacks[action][i]);
-						delete callbacks[action][i];
-					}
-				}
-			} else if (callbacks[action] && typeof callbacks[action] === "function") {
-				callbacks[action].apply(scope, [elem]);
-				delete callbacks[action];
-			} else if (callbacks[action] && typeof callbacks[action] === "object") {
-				//Zusätzliche animationen enthalten
-				oplib.fx([elem], callbacks[action]);
-				delete callbacks[action];
-			}
-
-			return callbacks;
-		},
-		//Fügt Elementen in oplib.fx.queue callbacks hinzu.
-		addCallback : function(callbacksBase, callbacks, action) {
-			if (!callbacks) {
-				return;
-			}
-
-			if (!callbacksBase) {
-				callbacksBase = {};
-				callbacksBase[action] = [];
-			}
-
-			if (!callbacksBase[action]) {
-				callbacksBase[action] = [];
-			}
-
-			if (callbacksBase[action] && toString.call(callbacksBase[action]) === "[object Array]") {
-				if (toString.call(callbacks) === "[object Array]") {
-					for (var i in callbacks) {
-						callbacksBase[action].push(callbacks[i]);
-					}
-				} else {
-					callbacksBase[action].push(callbacks);
-				}
-			} else if (callbacksBase[action]) {
-				callbacksBase[action] = [callbacksBase[action]];
-				if (toString.call(callbacks) === "[object Array]") {
-					for (var i in callbacks) {
-						callbacksBase[action].push(callbacks[i]);
-					}
-				} else {
-					callbacksBase[action].push(callbacks);
-				}
-			}
-			return callbacksBase;
-		}
-	});
-
-	//Parses JSON Data
+	// Parses JSON Data
 	oplib.JSON = function(json) {
 		return oplib.JSON.parse(json);
 	};
 	oplib.JSON.parse = function(json) {
-		//Use native Broswser Parser
+		// Use native Broswser Parser
 		return JSON.parse(json);
 	};
 	oplib.JSON.stringify = function(obj) {
-		//Use native Broswser Stringifier
+		// Use native Broswser Stringifier
 		return JSON.stringify(obj);
 	};
 
-	//Parses DOM
+	// Parses DOM
 	oplib.DOM = function(dom, mimetype) {
 		return oplib.DOM.parse(dom, mimetype);
 	};
 	oplib.DOM.parse = function(dom, mimetype) {
 		if (!mimetype) {
-			//XML annehmen
+			// XML annehmen
 			mimetype = "text/xml";
 		}
 		var parser = new DOMParser();
 		return parser.parseFromString(dom, mimetype);
 	};
 
-	//Handles Ajax-Calls
+	// Handles Ajax-Calls
 	oplib.AJAX = function(url, fn, header, settings) {
 		var xmlhttp = new XMLHttpRequest();
 		var ajaxSettings = oplib.defaults.get("ajaxSettings");
 
-		//Other settings than default?
+		// Other settings than default?
 		if (settings) {
 			if (settings.method) {
 				ajaxSettings.method = settings.method;
@@ -2227,7 +2431,8 @@ var oplib = (function() {
 			}
 		}
 
-		xmlhttp = oplib.AJAX.request[ajaxSettings.method](xmlhttp, url, fn, header, ajaxSettings);
+		xmlhttp = oplib.AJAX.request[ajaxSettings.method](xmlhttp, url, fn,
+				header, ajaxSettings);
 		if (ajaxSettings.async == true) {
 			xmlhttp = oplib.AJAX.response.async(xmlhttp, fn, ajaxSettings);
 		} else {
@@ -2240,16 +2445,16 @@ var oplib = (function() {
 		get : function(xmlhttp, url, fn, header, ajaxSettings) {
 			var parsedHeader = "";
 			if (header) {
-				if ( typeof header === "string") {
+				if (typeof header === "string") {
 					if (header[0] != '?' || header[0] != '&') {
 						header = "?" + header;
 					}
 					parsedHeader = header;
 				} else {
-					for (var i in header) {
-						//Objecte in JSON umwandeln um AJAX-Request möglich zu
+					for ( var i in header) {
+						// Objecte in JSON umwandeln um AJAX-Request möglich zu
 						// machen
-						if ( typeof header[i] === "object") {
+						if (typeof header[i] === "object") {
 							header[i] = oplib.JSON.stringify(header[i]);
 						}
 						if (!parsedHeader) {
@@ -2271,16 +2476,16 @@ var oplib = (function() {
 			var parsedHeader = "";
 
 			if (header) {
-				if ( typeof header === "string") {
+				if (typeof header === "string") {
 					if (header[0] == '?') {
 						header = header.slice(1, header.length - 1);
 					}
 					parsedHeader = header;
 				} else {
-					for (var i in header) {
-						//Objecte in JSON umwandeln um AJAX-Request möglich zu
+					for ( var i in header) {
+						// Objecte in JSON umwandeln um AJAX-Request möglich zu
 						// machen
-						if ( typeof header[i] === "object") {
+						if (typeof header[i] === "object") {
 							header[i] = oplib.JSON.stringify(header[i]);
 						}
 						if (!parsedHeader) {
@@ -2305,61 +2510,83 @@ var oplib = (function() {
 			if (ajaxSettings.content == "text") {
 				xmlhttp.onreadystatechange = function() {
 					if (xmlhttp.readyState == 1) {
-						ajaxSettings.connected.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.connected.apply(this, [
+								xmlhttp.readyState, ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 2) {
-						ajaxSettings.received.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.received.apply(this, [ xmlhttp.readyState,
+								ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 3) {
-						ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.processing.apply(this, [
+								xmlhttp.readyState, ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 4) {
-						fn.apply(this, [xmlhttp.responseText, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+						fn.apply(this, [ xmlhttp.responseText,
+								xmlhttp.readystate, xmlhttp.status,
+								ajaxSettings.args ]);
 					}
 				};
 			} else if (ajaxSettings.content == "xml") {
 				xmlhttp.onreadystatechange = function() {
 					if (xmlhttp.readyState == 1) {
-						ajaxSettings.connected.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.connected.apply(this, [
+								xmlhttp.readyState, ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 2) {
-						ajaxSettings.received.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.received.apply(this, [ xmlhttp.readyState,
+								ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 3) {
-						ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.processing.apply(this, [
+								xmlhttp.readyState, ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 4) {
-						fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+						fn.apply(this, [ xmlhttp.responseXML,
+								xmlhttp.readystate, xmlhttp.status,
+								ajaxSettings.args ]);
 					}
 				};
 			} else if (ajaxSettings.content == "json") {
 				xmlhttp.onreadystatechange = function() {
 					if (xmlhttp.readyState == 1) {
-						ajaxSettings.connected.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.connected.apply(this, [
+								xmlhttp.readyState, ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 2) {
-						ajaxSettings.received.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.received.apply(this, [ xmlhttp.readyState,
+								ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 3) {
-						ajaxSettings.processing.apply(this, [xmlhttp.readyState, ajaxSettings.args]);
+						ajaxSettings.processing.apply(this, [
+								xmlhttp.readyState, ajaxSettings.args ]);
 					} else if (xmlhttp.readyState == 4) {
-						fn.apply(this, [oplib.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+						fn.apply(this, [ oplib.JSON(xmlhttp.responseText),
+								xmlhttp.readystate, xmlhttp.status,
+								ajaxSettings.args ]);
 					}
 				};
 			} else {
-				console.log(ajaxSettings.content + ": is not a valid contentType");
+				console.log(ajaxSettings.content
+						+ ": is not a valid contentType");
 			}
 
 			return xmlhttp;
 		},
 		sync : function(xmlhttp, fn, ajaxSettings) {
 			if (ajaxSettings.content == "text") {
-				fn.apply(this, [xmlhttp.responseText, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+				fn.apply(this, [ xmlhttp.responseText, xmlhttp.readystate,
+						xmlhttp.status, ajaxSettings.args ]);
 			} else if (ajaxSettings.content == "xml") {
-				fn.apply(this, [xmlhttp.responseXML, xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+				fn.apply(this, [ xmlhttp.responseXML, xmlhttp.readystate,
+						xmlhttp.status, ajaxSettings.args ]);
 			} else if (ajaxSettings.content == "json") {
-				fn.apply(this, [oplib.JSON(xmlhttp.responseText), xmlhttp.readystate, xmlhttp.status, ajaxSettings.args]);
+				fn
+						.apply(this, [ oplib.JSON(xmlhttp.responseText),
+								xmlhttp.readystate, xmlhttp.status,
+								ajaxSettings.args ]);
 			} else {
-				console.log(ajaxSettings.content + ": is not a valid contentType");
+				console.log(ajaxSettings.content
+						+ ": is not a valid contentType");
 			}
 
 			return xmlhttp;
 		}
 	};
 
-	//Abkürzungen für events
+	// Abkürzungen für events
 	oplib.extend(oplib.fn, {
 		click : function(fn) {
 			return this.events("click", fn);
@@ -2394,318 +2621,404 @@ var oplib = (function() {
 		}
 	});
 
-	//Adds Events | Dispatches Events
+	// Adds Events | Dispatches Events
 	oplib.fn.events = function(type, fn, args) {
 		if (!fn) {
 			return this.each(function(type) {
 				oplib.fn.events.dispatchEvent(type, this);
-			}, [type]);
+			}, [ type ]);
 		} else {
 			return this.each(function(type, fn) {
 				oplib.fn.events.addEvent(type, fn, this, args);
-			}, [type, fn, args]);
+			}, [ type, fn, args ]);
 		}
 
 	};
 
-	//Removes Events
+	// Removes Events
 	oplib.fn.removeEvents = function(type, fn) {
 		return this.each(function(type, fn) {
 			oplib.fn.events.removeEvent(type, fn, this);
-		}, [type, fn]);
+		}, [ type, fn ]);
 	};
 
-	//Event Klasse
-	oplib.extend(oplib.fn.events, {
-		//Wurde der GLOBALE Handler bereits für dieses Event gesetzt? DARF NUR
-		// EINMAL GESTZT WERDEN
-		handleAttached : {},
-		//Listener dem globalen handler hinzufügen
-		addEvent : function(type, fn, elem, args) {
-			//handleAttached überprüfen
-			if (this.handleAttached[type] == undefined) {
-				this.handleAttached[type] = [];
-			}
-			for (var i = 0; i < this.handleAttached[type]; i++) {
-				if (this.handleAttached[type][i]["elem"] == elem && this.handleAttached[type][i]["attached"] == true) {
-					return oplib.fn.handler.addListener(type, fn, elem, args);
-				}
-			}
-			this.handleAttached[type].push({
-				elem : elem,
-				attached : true
-			});
-			elem.addEventListener(type, oplib.fn.handler, false);
-			return oplib.fn.handler.addListener(type, fn, elem, args);
+	// Event Klasse
+	oplib
+			.extend(
+					oplib.fn.events,
+					{
+						// Wurde der GLOBALE Handler bereits für dieses Event
+						// gesetzt? DARF NUR
+						// EINMAL GESTZT WERDEN
+						handleAttached : {},
+						// Listener dem globalen handler hinzufügen
+						addEvent : function(type, fn, elem, args) {
+							// handleAttached überprüfen
+							if (this.handleAttached[type] == undefined) {
+								this.handleAttached[type] = [];
+							}
+							for (var i = 0; i < this.handleAttached[type]; i++) {
+								if (this.handleAttached[type][i]["elem"] == elem
+										&& this.handleAttached[type][i]["attached"] == true) {
+									return oplib.fn.handler.addListener(type,
+											fn, elem, args);
+								}
+							}
+							this.handleAttached[type].push({
+								elem : elem,
+								attached : true
+							});
+							elem
+									.addEventListener(type, oplib.fn.handler,
+											false);
+							return oplib.fn.handler.addListener(type, fn, elem,
+									args);
 
-		},
-		//Listener dem globalen Handler entfernen
-		removeEvent : function(type, fn, elem) {
-			return oplib.fn.handler.removeListener(type, fn, elem);
-		},
-		//Events kopieren
-		copyEvents : function(copyTo, copyFrom) {
-			for (var type in oplib.fn.handler.handleList) {
-				if (oplib.fn.handler.handleList[type]) {
-					for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
-						if (oplib.fn.handler.handleList[type][i] && oplib.fn.handler.handleList[type][i].elem == copyFrom) {
-							oplib.fn.events.addEvent(type, oplib.fn.handler.handleList[type][i].fn, copyTo, oplib.fn.handler.handleList[type][i].args);
+						},
+						// Listener dem globalen Handler entfernen
+						removeEvent : function(type, fn, elem) {
+							return oplib.fn.handler.removeListener(type, fn,
+									elem);
+						},
+						// Events kopieren
+						copyEvents : function(copyTo, copyFrom) {
+							for ( var type in oplib.fn.handler.handleList) {
+								if (oplib.fn.handler.handleList[type]) {
+									for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
+										if (oplib.fn.handler.handleList[type][i]
+												&& oplib.fn.handler.handleList[type][i].elem == copyFrom) {
+											oplib.fn.events
+													.addEvent(
+															type,
+															oplib.fn.handler.handleList[type][i].fn,
+															copyTo,
+															oplib.fn.handler.handleList[type][i].args);
+										}
+									}
+								}
+							}
+						},
+						// Event ausführen
+						dispatchEvent : function(e, elem) {
+							if (typeof e === "string") {
+								e = new Event(e);
+							}
+							return elem.dispatchEvent(e);
 						}
-					}
-				}
-			}
-		},
-		//Event ausführen
-		dispatchEvent : function(e, elem) {
-			if ( typeof e === "string") {
-				e = new Event(e);
-			}
-			return elem.dispatchEvent(e);
-		}
-	});
+					});
 
-	//Verarbeitet Event-Listener
+	// Verarbeitet Event-Listener
 	oplib.fn.handler = function(e) {
 		elem = e.target;
 		type = e.type;
 
-		//Entsprechenden Listener ausführen
+		// Entsprechenden Listener ausführen
 		return oplib.fn.handler.dispatchListener(type, elem, e);
 
 	};
 
-	//Handler Klasse
-	oplib.extend(oplib.fn.handler, {
-		//Aufbau: handleList.element[...].type[...].{function, text, enabled}
-		handleList : {},
+	// Handler Klasse
+	oplib
+			.extend(
+					oplib.fn.handler,
+					{
+						// Aufbau: handleList.element[...].type[...].{function,
+						// text, enabled}
+						handleList : {},
 
-		//Der HandleList einen neuen Listener hinzufügen
-		addListener : function(type, listener, elem, args) {
-			if (this.handleList[type] == undefined) {
-				this.handleList[type] = [];
-			}
-			return (this.handleList[type].push({
-				elem : elem,
-				fn : listener,
-				text : listener.toString(),
-				args : args,
-				enabled : true
-			}) - 1);
-		},
-		//Disabled einen Listener durch setzen deaktivieren des enabled-flags
-		removeListener : function(type, listener, elem) {
-			if (!elem) {
-				elem = listener;
-			}
-			if ( typeof listner === "number") {
-				this.handleList[type][listener]["enabled"] = false;
-				return 1;
-			} else {
-				var listenerId = [];
-				if (listener != undefined) {
-					for (var i = 0; i < this.handleList[type].length; i++) {
-						if (this.handleList[type][i]["elem"] == elem && this.handleList[type][i]["text"] == listener.toString()) {
-							listenerId.push(i);
+						// Der HandleList einen neuen Listener hinzufügen
+						addListener : function(type, listener, elem, args) {
+							if (this.handleList[type] == undefined) {
+								this.handleList[type] = [];
+							}
+							return (this.handleList[type].push({
+								elem : elem,
+								fn : listener,
+								text : listener.toString(),
+								args : args,
+								enabled : true
+							}) - 1);
+						},
+						// Disabled einen Listener durch setzen deaktivieren des
+						// enabled-flags
+						removeListener : function(type, listener, elem) {
+							if (!elem) {
+								elem = listener;
+							}
+							if (typeof listner === "number") {
+								this.handleList[type][listener]["enabled"] = false;
+								return 1;
+							} else {
+								var listenerId = [];
+								if (listener != undefined) {
+									for (var i = 0; i < this.handleList[type].length; i++) {
+										if (this.handleList[type][i]["elem"] == elem
+												&& this.handleList[type][i]["text"] == listener
+														.toString()) {
+											listenerId.push(i);
+										}
+									}
+								} else {
+									for (var i = 0; i < this.handleList[type].length; i++) {
+										if (this.handleList[type][i]["elem"] == elem) {
+											listenerId.push(i);
+										}
+									}
+								}
+								for (var i = 0; i < listenerId.length; i++) {
+									this.handleList[type][listenerId[i]]["enabled"] = false;
+								}
+								return listenerId;
+							}
+						},
+						// Listeners aufrufen
+						dispatchListener : function(type, elem, e) {
+							for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
+								var enabled = oplib.fn.handler.handleList[type][i]["enabled"];
+								var elementMatch = oplib.fn.handler.handleList[type][i]["elem"] == e.currentTarget;
+								var windowMatch = oplib.fn.handler.handleList[type][i]["elem"] == window;
+								if (enabled && (elementMatch || windowMatch)) {
+									oplib.fn.handler.handleList[type][i]["fn"]
+											.apply(
+													e.currentTarget,
+													oplib
+															.merge(
+																	[ e ],
+																	oplib.fn.handler.handleList[type][i]["args"]));
+									if (!elem.oplib) {
+										elem.oplib = {};
+									}
+									if (!elem.oplib.events) {
+										elem.oplib.events = {};
+									}
+									if (!elem.oplib.events.queue) {
+										elem.oplib.events.queue = [];
+									}
+									elem.oplib.events.queue.push(type);
+									elem.oplib.events.lastEvent = type;
+								}
+							}
+
 						}
-					}
-				} else {
-					for (var i = 0; i < this.handleList[type].length; i++) {
-						if (this.handleList[type][i]["elem"] == elem) {
-							listenerId.push(i);
-						}
-					}
-				}
-				for (var i = 0; i < listenerId.length; i++) {
-					this.handleList[type][listenerId[i]]["enabled"] = false;
-				}
-				return listenerId;
-			}
-		},
-		//Listeners aufrufen
-		dispatchListener : function(type, elem, e) {
-			for (var i = 0; i < oplib.fn.handler.handleList[type].length; i++) {
-				var enabled = oplib.fn.handler.handleList[type][i]["enabled"];
-				var elementMatch = oplib.fn.handler.handleList[type][i]["elem"] == e.currentTarget;
-				var windowMatch = oplib.fn.handler.handleList[type][i]["elem"] == window;
-				if (enabled && (elementMatch || windowMatch)) {
-					oplib.fn.handler.handleList[type][i]["fn"].apply(e.currentTarget, oplib.merge([e], oplib.fn.handler.handleList[type][i]["args"]));
-					if (!elem.oplib) {
-						elem.oplib = {};
-					}
-					if (!elem.oplib.events) {
-						elem.oplib.events = {};
-					}
-					if (!elem.oplib.events.queue) {
-						elem.oplib.events.queue = [];
-					}
-					elem.oplib.events.queue.push(type);
-					elem.oplib.events.lastEvent = type;
-				}
-			}
+					});
 
-		}
-	});
-
-	//Führt fn aus, sobald das ausgewählte Element bereit/geladen ist
+	// Führt fn aus, sobald das ausgewählte Element bereit/geladen ist
 	oplib.fn.ready = function(fn) {
 		return this.each(function(fn) {
 			if (oplib.fn.ready.isReadyState[this]) {
-				//Element bereits geladen, funktion direkt ausführen
+				// Element bereits geladen, funktion direkt ausführen
 				fn.apply();
 			}
-			//DOMContentLoaded-Event verpasst?
+			// DOMContentLoaded-Event verpasst?
 			else if (oplib.fn.ready.readyState === "complete") {
 				oplib.fn.ready.isReadyState[this] = true;
 				fn.apply();
 			} else {
-				oplib.fn.events.addEvent("DOMContentLoaded", oplib.fn.ready.handler, this);
+				oplib.fn.events.addEvent("DOMContentLoaded",
+						oplib.fn.ready.handler, this);
 				oplib.fn.events.addEvent("load", oplib.fn.ready.handler, this);
 				oplib.fn.events.addEvent("OPready", fn, this);
 			}
-		}, [fn]);
+		}, [ fn ]);
 	};
-	//Entfernt fn aus der Handler Liste des ausgewählten Elements.
+	// Entfernt fn aus der Handler Liste des ausgewählten Elements.
 	oplib.fn.unready = function(fn) {
 		return this.each(function(fn) {
 			oplib.fn.events.removeEvent("OPready", fn, this);
-		}, [fn]);
+		}, [ fn ]);
 	};
 	oplib.extend(oplib.fn.ready, {
-		//Globaler .ready() Handler
+		// Globaler .ready() Handler
 		handler : function(e) {
 			if (oplib.fn.ready.isReadyState[e.target]) {
-				oplib.fn.events.removeEvent("DOMContentLoaded", oplib.fn.ready.handler, e.target);
-				oplib.fn.events.removeEvent("load", oplib.fn.ready.handler, e.target);
+				oplib.fn.events.removeEvent("DOMContentLoaded",
+						oplib.fn.ready.handler, e.target);
+				oplib.fn.events.removeEvent("load", oplib.fn.ready.handler,
+						e.target);
 				return 1;
 			}
 			oplib.fn.events.dispatchEvent("OPready", e.target);
 
-			//isReadyList[e.target] = true setzen
+			// isReadyList[e.target] = true setzen
 			oplib.fn.ready.isReadyState[e.target] = true;
 
-			//Handler von e.target entfernen.
-			oplib.fn.events.removeEvent("DOMContentLoaded", oplib.fn.ready.handler, e.target);
-			oplib.fn.events.removeEvent("load", oplib.fn.ready.handler, e.target);
+			// Handler von e.target entfernen.
+			oplib.fn.events.removeEvent("DOMContentLoaded",
+					oplib.fn.ready.handler, e.target);
+			oplib.fn.events.removeEvent("load", oplib.fn.ready.handler,
+					e.target);
 
 			return 0;
 		},
-		//Enthält, ob ein Element bereits bereit ist.
+		// Enthält, ob ein Element bereits bereit ist.
 		isReadyState : {}
-		//Fügt handleList[elem] die auszuführende Funktion zu, etc.
+	// Fügt handleList[elem] die auszuführende Funktion zu, etc.
 	});
 
-	//Tooltips
+	// Tooltips
 	oplib.fn.Tooltip = function(selector, context, options) {
 		if (!options) {
 			options = {};
 		}
-		options.showDelay = options.showDelay || oplib.defaults.get("tooltipSettings", "showDelay");
-		options.hideDelay = options.hideDelay || oplib.defaults.get("tooltipSettings", "hideDelay");
-		options.delayUpdateTime = options.delayUpdateTime || oplib.defaults.get("tooltipSettings", "delayUpdateTime");
-		options.xDistance = options.xDistance || oplib.defaults.get("tooltipSettings", "xDistance");
-		options.yDistance = options.yDistance || oplib.defaults.get("tooltipSettings", "yDistance");
-		options.dontHideWhileHoveringTooltip = options.dontHideWhileHoveringTooltip || oplib.defaults.get("tooltipSettings", "dontHideWhileHoveringTooltip");
-		options.showAnimation = options.showAnimation || oplib.defaults.get("tooltipSettings", "showAnimation");
-		options.hideAnimation = options.hideAnimation || oplib.defaults.get("tooltipSettings", "hideAnimation");
-		options.showSpeed = options.showSpeed || oplib.defaults.get("tooltipSettings", "showSpeed");
-		options.hideSpeed = options.hideSpeed || oplib.defaults.get("tooltipSettings", "hideSpeed");
-		options.showInterpolator = options.showInterpolator || oplib.defaults.get("tooltipSettings", "showInterpolator");
-		options.hideInterpolator = options.hideInterpolator || oplib.defaults.get("tooltipSettings", "hideInterpolator");
-		options.showCallbacks = options.showCallbacks || oplib.defaults.get("tooltipSettings", "showCallbacks");
-		options.hideCallbacks = options.hideCallbacks || oplib.defaults.get("tooltipSettings", "hideCallbacks");
+		options.showDelay = options.showDelay
+				|| oplib.defaults.get("tooltipSettings", "showDelay");
+		options.hideDelay = options.hideDelay
+				|| oplib.defaults.get("tooltipSettings", "hideDelay");
+		options.delayUpdateTime = options.delayUpdateTime
+				|| oplib.defaults.get("tooltipSettings", "delayUpdateTime");
+		options.xDistance = options.xDistance
+				|| oplib.defaults.get("tooltipSettings", "xDistance");
+		options.yDistance = options.yDistance
+				|| oplib.defaults.get("tooltipSettings", "yDistance");
+		options.dontHideWhileHoveringTooltip = options.dontHideWhileHoveringTooltip
+				|| oplib.defaults.get("tooltipSettings",
+						"dontHideWhileHoveringTooltip");
+		options.showAnimation = options.showAnimation
+				|| oplib.defaults.get("tooltipSettings", "showAnimation");
+		options.hideAnimation = options.hideAnimation
+				|| oplib.defaults.get("tooltipSettings", "hideAnimation");
+		options.showSpeed = options.showSpeed
+				|| oplib.defaults.get("tooltipSettings", "showSpeed");
+		options.hideSpeed = options.hideSpeed
+				|| oplib.defaults.get("tooltipSettings", "hideSpeed");
+		options.showInterpolator = options.showInterpolator
+				|| oplib.defaults.get("tooltipSettings", "showInterpolator");
+		options.hideInterpolator = options.hideInterpolator
+				|| oplib.defaults.get("tooltipSettings", "hideInterpolator");
+		options.showCallbacks = options.showCallbacks
+				|| oplib.defaults.get("tooltipSettings", "showCallbacks");
+		options.hideCallbacks = options.hideCallbacks
+				|| oplib.defaults.get("tooltipSettings", "hideCallbacks");
 		options.showTimeout = [];
 		options.hideTimeout = [];
 
 		var elems = oplib.ElementSelection(selector, context);
-		return this.finalizeDOMManipulation(this, function(elems) {
-			function showTooltips(options, self, delay) {
-				//Muss ununterbrochen gehovert sein
-				if (oplib.isHover(self)) {
-					delay -= options.delayUpdateTime;
-					if (delay <= 0) {
-						for (var i = 0; i < elems.length; i++) {
-							oplib.fx.stop(elems[i], 1, 0);
-							oplib.fx([elems[i]], options.showAnimation, options.showSpeed, options.showInterpolator, options.showCallbacks, elems[i]);
-						}
-					} else {
-						setTimeout(showTooltips, options.delayUpdateTime, options, self, delay);
-					}
-				}
-			};
-			function hideTooltips(options, self, delay) {
-				//Darf nicht wieder gehovert werden
-				if (!oplib.isHover(self)) {
-					if (!options.dontHideWhileHoveringTooltip || oplib.isHover(elems).length == 0) {
-						delay -= options.delayUpdateTime;
-						if (delay <= 0) {
-							for (var i = 0; i < elems.length; i++) {
-								oplib.fx.stop(elems[i], 1, 0);
-								oplib.fx([elems[i]], options.hideAnimation, options.hideSpeed, options.hideInterpolator, options.hideCallbacks, elems[i]);
+		return this
+				.finalizeDOMManipulation(
+						this,
+						function(elems) {
+							function showTooltips(options, self, delay) {
+								// Muss ununterbrochen gehovert sein
+								if (oplib.isHover(self)) {
+									delay -= options.delayUpdateTime;
+									if (delay <= 0) {
+										for (var i = 0; i < elems.length; i++) {
+											oplib.fx.stop(elems[i], 1, 0);
+											oplib.fx([ elems[i] ],
+													options.showAnimation,
+													options.showSpeed,
+													options.showInterpolator,
+													options.showCallbacks,
+													elems[i]);
+										}
+									} else {
+										setTimeout(showTooltips,
+												options.delayUpdateTime,
+												options, self, delay);
+									}
+								}
 							}
-						} else {
-							setTimeout(hideTooltips, options.delayUpdateTime, options, self, delay);
-						}
-					} else {
-						setTimeout(hideTooltips, options.delayUpdateTime, options, self, options.hideDelay);
-					}
-				}
-			};
-			function moveTooltips(e, options, self) {
-				for (var i = 0; i < elems.length; i++) {
-					elems[i].style.position = "absolute";
-					var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", elems[i]));
-					var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", elems[i]));
-					var left = e.pageX + options.xDistance;
-					var top = e.pageY + options.yDistance;
-					if (left + width >= window.innerWidth + window.pageXOffset) {
-						left = e.pageX - options.xDistance - width;
-					}
-					if (top + height >= window.innerHeight + window.pageYOffset) {
-						top = e.pageY - options.yDistance - height;
-					}
-					elems[i].style.left = oplib.fn.finalizeCssExpressions("left", left)[1];
-					elems[i].style.top = oplib.fn.finalizeCssExpressions("top", top)[1];
-				}
-			};
+							;
+							function hideTooltips(options, self, delay) {
+								// Darf nicht wieder gehovert werden
+								if (!oplib.isHover(self)) {
+									if (!options.dontHideWhileHoveringTooltip
+											|| oplib.isHover(elems).length == 0) {
+										delay -= options.delayUpdateTime;
+										if (delay <= 0) {
+											for (var i = 0; i < elems.length; i++) {
+												oplib.fx.stop(elems[i], 1, 0);
+												oplib
+														.fx(
+																[ elems[i] ],
+																options.hideAnimation,
+																options.hideSpeed,
+																options.hideInterpolator,
+																options.hideCallbacks,
+																elems[i]);
+											}
+										} else {
+											setTimeout(hideTooltips,
+													options.delayUpdateTime,
+													options, self, delay);
+										}
+									} else {
+										setTimeout(hideTooltips,
+												options.delayUpdateTime,
+												options, self,
+												options.hideDelay);
+									}
+								}
+							}
+							;
+							function moveTooltips(e, options, self) {
+								for (var i = 0; i < elems.length; i++) {
+									elems[i].style.position = "absolute";
+									var width = oplib.fn
+											.floatCssValue(oplib
+													.getComputedStyle("width",
+															elems[i]));
+									var height = oplib.fn.floatCssValue(oplib
+											.getComputedStyle("height",
+													elems[i]));
+									var left = e.pageX + options.xDistance;
+									var top = e.pageY + options.yDistance;
+									if (left + width >= window.innerWidth
+											+ window.pageXOffset) {
+										left = e.pageX - options.xDistance
+												- width;
+									}
+									if (top + height >= window.innerHeight
+											+ window.pageYOffset) {
+										top = e.pageY - options.yDistance
+												- height;
+									}
+									elems[i].style.left = oplib.fn
+											.finalizeCssExpressions("left",
+													left)[1];
+									elems[i].style.top = oplib.fn
+											.finalizeCssExpressions("top", top)[1];
+								}
+							}
+							;
 
-			for (var i = 0; i < elems.length; i++) {
-				if (this.parentNode) {
-					elems[i] = this.parentNode.appendChild(elems[i]);
-				} else {
-					elems[i] = document.body.appendChild(elems[i]);
-				}
-			}
-			oplib.fx(elems, {
-				opacity : "hide"
-			}, 0);
-			oplib.fn.events.addEvent("mouseover", function(e) {
-				showTooltips(options, this, options.showDelay);
-			}, this);
-			oplib.fn.events.addEvent("mouseout", function(e) {
-				hideTooltips(options, this, options.hideDelay);
-			}, this);
-			oplib.fn.events.addEvent("mousemove", function(e) {
-				moveTooltips(e, options, this);
-			}, this);
+							for (var i = 0; i < elems.length; i++) {
+								if (this.parentNode) {
+									elems[i] = this.parentNode
+											.appendChild(elems[i]);
+								} else {
+									elems[i] = document.body
+											.appendChild(elems[i]);
+								}
+							}
+							oplib.fx(elems, {
+								opacity : "hide"
+							}, 0);
+							oplib.fn.events.addEvent("mouseover", function(e) {
+								showTooltips(options, this, options.showDelay);
+							}, this);
+							oplib.fn.events.addEvent("mouseout", function(e) {
+								hideTooltips(options, this, options.hideDelay);
+							}, this);
+							oplib.fn.events.addEvent("mousemove", function(e) {
+								moveTooltips(e, options, this);
+							}, this);
 
-			return this;
-		}, [elems]);
+							return this;
+						}, [ elems ]);
 	};
 
 	oplib.fn.Form = function(data, options) {
-		/* data:
-		 * {
-		 * 	fieldset: {id, fieldset, label, legend, after, before, first, last, br, attr, events, actions, state},
-		 *  label: {id, html, fieldset, label, after, before, first, last, br, attr, events, actions, state},
-		 * 	legend: {id, html, fieldset, after, before, first, last, br, attr, events, actions, state},
-		 *  input: {id, html, type, fieldset, label, after, before, first, last, br, attr, events, actions, state},
-		 * }
-		 *
-		 * actions:
-		 * {
-		 * 	OPLib-Function: Arguments
-		 * }
-		 *
+		/*
+		 * data: { fieldset: {id, fieldset, label, legend, after, before, first,
+		 * last, br, attr, events, actions, state}, label: {id, html, fieldset,
+		 * label, after, before, first, last, br, attr, events, actions, state},
+		 * legend: {id, html, fieldset, after, before, first, last, br, attr,
+		 * events, actions, state}, input: {id, html, type, fieldset, label,
+		 * after, before, first, last, br, attr, events, actions, state}, }
+		 * 
+		 * actions: { OPLib-Function: Arguments }
+		 * 
 		 * state: shown|hidden|enabled|disabled
 		 */
 
@@ -2717,7 +3030,7 @@ var oplib = (function() {
 		}
 
 		return this.each(function(data, settings) {
-			var options = ["fieldset", "label", "legend", "input"];
+			var options = [ "fieldset", "label", "legend", "input" ];
 			if (!this.oplib) {
 				this.oplib = {};
 			}
@@ -2731,25 +3044,30 @@ var oplib = (function() {
 				type = options[j];
 				if (data[type]) {
 					if (toString.call(data[type]) != "[object Array]") {
-						data[type] = [data[type]];
+						data[type] = [ data[type] ];
 					}
 					for (var i = 0; i < data[type].length; i++) {
-						data[type][i] = oplib.extend({}, oplib.defaults.get("formSettings"), oplib.defaults.get("formSettings", type + "Settings"), settings, settings[type + "Settings"], data[type][i]);
-						oplib.fn.Form.changeData(type, data[type][i].id, data[type][i], this);
+						data[type][i] = oplib.extend({}, oplib.defaults
+								.get("formSettings"), oplib.defaults.get(
+								"formSettings", type + "Settings"), settings,
+								settings[type + "Settings"], data[type][i]);
+						oplib.fn.Form.changeData(type, data[type][i].id,
+								data[type][i], this);
 					}
 				}
 			}
 			oplib.fn.Form.updateData(this);
 			console.log(this.oplib.Form);
 
-		}, [data, options]);
+		}, [ data, options ]);
 
 	};
 
 	oplib.fn.Form.updateData = function(elem) {
-		//Falls kein vorausgehendes Element angegeben ist. Position #1 annehmen;
+		// Falls kein vorausgehendes Element angegeben ist. Position #1
+		// annehmen;
 		var data = elem.oplib.Form.data;
-		var options = ["fieldset", "label", "legend", "input"];
+		var options = [ "fieldset", "label", "legend", "input" ];
 		var nodeOrder = elem.oplib.Form.nodeOrder = [];
 
 		for (var j = 0; j < options.length; j++) {
@@ -2757,9 +3075,10 @@ var oplib = (function() {
 			if (data[type]) {
 				for (var i = 0; i < data[type].length; i++) {
 					var nodeData = data[type][i];
-					var node = oplib.fn.Form.updateData.createElement(type, nodeData, elem);
+					var node = oplib.fn.Form.updateData.createElement(type,
+							nodeData, elem);
 					if (nodeData.update) {
-						//Eventuell noch auf alte actions-achten
+						// Eventuell noch auf alte actions-achten
 						oplib.extend(nodeData, nodeData.update);
 					}
 					elem.oplib.Form.nodeOrder.push({
@@ -2773,21 +3092,20 @@ var oplib = (function() {
 			}
 		}
 		/*
-		 * [
-		 * {id: ID, type: String, children: Array}
-		 * ]
+		 * [ {id: ID, type: String, children: Array} ]
 		 */
 		var ordered = oplib.merge([], nodeOrder);
 		for (var i = 0; i < nodeOrder.length; i++) {
-			var containers = ["fieldset"];
+			var containers = [ "fieldset" ];
 			var nodeData = nodeOrder[i].nodeData;
 			var nodeType = nodeOrder[i].nodeType;
 			var node = nodeOrder[i].node;
-			//Order Elements
+			// Order Elements
 			for (var j = 0; j < containers.length; j++) {
 				var type = containers[j];
 				if (nodeData[type]) {
-					oplib.fn.Form.updateData.orderElems(nodeData, nodeType, node, ordered, type, nodeData[type]);
+					oplib.fn.Form.updateData.orderElems(nodeData, nodeType,
+							node, ordered, type, nodeData[type]);
 				}
 				if (nodeData["br"] && typeof nodeData["br"] !== "object") {
 					nodeData["br"] = {
@@ -2796,7 +3114,8 @@ var oplib = (function() {
 						created : true
 					};
 					elem.oplib.Form.nodeOrder.push({
-						node : oplib.fn.Form.updateData.createElement("br", nodeData["br"], elem),
+						node : oplib.fn.Form.updateData.createElement("br",
+								nodeData["br"], elem),
 						nodeData : nodeData["br"],
 						nodeType : "br",
 						children : [],
@@ -2804,7 +3123,8 @@ var oplib = (function() {
 					});
 				} else if (nodeData["br"]) {
 					elem.oplib.Form.nodeOrder.push({
-						node : oplib.fn.Form.updateData.createElement("br", nodeData["br"], elem),
+						node : oplib.fn.Form.updateData.createElement("br",
+								nodeData["br"], elem),
 						nodeData : nodeData["br"],
 						nodeType : "br",
 						children : [],
@@ -2847,37 +3167,39 @@ var oplib = (function() {
 	oplib.fn.Form.updateData.createElement = function(type, nodeData, elem) {
 		var node;
 		if (nodeData.created == true) {
-			switch(type) {
-				case "fieldset":
-				case "label":
-				case "legend":
-				case "br":
-				case "input":
-					node = document.createElement(type);
-					$(node).addClass("OPForm" + type + nodeData.id);
-					break;
-				default:
-					console.log(".Form.updateData.createElement: Unknown Type: " + type);
+			switch (type) {
+			case "fieldset":
+			case "label":
+			case "legend":
+			case "br":
+			case "input":
+				node = document.createElement(type);
+				$(node).addClass("OPForm" + type + nodeData.id);
+				break;
+			default:
+				console.log(".Form.updateData.createElement: Unknown Type: "
+						+ type);
 			}
 			nodeData.created = 2;
 		} else {
-			switch(type) {
-				case "fieldset":
-				case "label":
-				case "legend":
-				case "br":
-				case "input":
-					node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
-					break;
-				default:
-					console.log(".Form.updateData.createElement: Unknown Type: " + type);
+			switch (type) {
+			case "fieldset":
+			case "label":
+			case "legend":
+			case "br":
+			case "input":
+				node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
+				break;
+			default:
+				console.log(".Form.updateData.createElement: Unknown Type: "
+						+ type);
 			}
 		}
 		return node;
 	};
 
 	oplib.fn.Form.updateData.insertElem = function(nodeOrder) {
-		//Root
+		// Root
 		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
 			for (var i = 0; i < nodeOrder.length; i++) {
 				if (!nodeOrder[i].remove) {
@@ -2887,12 +3209,14 @@ var oplib = (function() {
 			}
 
 		}
-		//Children
-		else if (toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
+		// Children
+		else if (toString.call(nodeOrder.children) == "[object Array]"
+				&& nodeOrder.children.length) {
 			for (var i = 0; i < nodeOrder.children.length; i++) {
 				if (!nodeOrder.children[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder.children[i]);
-					$(nodeOrder.children[i].parent).append(nodeOrder.children[i].node);
+					$(nodeOrder.children[i].parent).append(
+							nodeOrder.children[i].node);
 				}
 			}
 		}
@@ -2900,7 +3224,7 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.updateData.customizeElems = function(nodeOrder, elem) {
-		//Root
+		// Root
 		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
 			for (var i = 0; i < nodeOrder.length; i++) {
 				if (!nodeOrder[i].remove) {
@@ -2908,34 +3232,38 @@ var oplib = (function() {
 					var nodeData = nodeOrder[i].nodeData;
 					var nodeType = nodeOrder[i].nodeType;
 					var node = nodeOrder[i].node;
-					//Apply type
+					// Apply type
 					if (nodeType == "input" && nodeData.type != undefined) {
 						oplib.fn.Form.type(nodeData.id, nodeData.type, elem);
 						nodeData.type = undefined;
 					}
-					//Apply Attributes
+					// Apply Attributes
 					if (nodeData.attr != undefined) {
 						oplib.fn.Form.attr(nodeData.id, nodeData.attr, elem);
 						nodeData.attr = undefined;
 					}
-					//Apply html
+					// Apply html
 					if (nodeData.html != undefined) {
 						oplib.fn.Form.html(nodeData.id, nodeData.html, elem);
 						nodeData.html = undefined;
 					}
-					//Set State
+					// Set State
 					if (nodeData.state != undefined) {
 						oplib.fn.Form.state(nodeData.id, nodeData.state, elem);
 						nodeData.state = undefined;
 					}
-					//Apply Events
-					if (nodeData.events != undefined && typeof nodeData.events === "object") {
-						oplib.fn.Form.events(nodeData.id, nodeData.events, elem);
+					// Apply Events
+					if (nodeData.events != undefined
+							&& typeof nodeData.events === "object") {
+						oplib.fn.Form
+								.events(nodeData.id, nodeData.events, elem);
 						nodeData.events = undefined;
 					}
-					//Apply Actions
-					if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
-						oplib.fn.Form.actions(nodeData.id, nodeData.actions, elem);
+					// Apply Actions
+					if (nodeData.actions != undefined
+							&& typeof nodeData.actions === "object") {
+						oplib.fn.Form.actions(nodeData.id, nodeData.actions,
+								elem);
 						nodeData.actions = undefined;
 					}
 					nodeData.created = false;
@@ -2943,42 +3271,48 @@ var oplib = (function() {
 			}
 
 		}
-		//Children
-		else if (toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
+		// Children
+		else if (toString.call(nodeOrder.children) == "[object Array]"
+				&& nodeOrder.children.length) {
 			for (var i = 0; i < nodeOrder.children.length; i++) {
 				if (!nodeOrder.children[i].remove) {
-					oplib.fn.Form.updateData.customizeElems(nodeOrder.children[i], elem);
+					oplib.fn.Form.updateData.customizeElems(
+							nodeOrder.children[i], elem);
 					var nodeData = nodeOrder.children[i].nodeData;
 					var nodeType = nodeOrder.children[i].nodeType;
 					var node = nodeOrder.children[i].node;
-					//Apply type
+					// Apply type
 					if (nodeType == "input" && nodeData.type != undefined) {
 						oplib.fn.Form.type(nodeData.id, nodeData.type, elem);
 						nodeData.type = undefined;
 					}
-					//Apply Attributes
+					// Apply Attributes
 					if (nodeData.attr != undefined) {
 						oplib.fn.Form.attr(nodeData.id, nodeData.attr, elem);
 						nodeData.attr = undefined;
 					}
-					//Apply html
+					// Apply html
 					if (nodeData.html != undefined) {
 						oplib.fn.Form.html(nodeData.id, nodeData.html, elem);
 						nodeData.html = undefined;
 					}
-					//Set State
+					// Set State
 					if (nodeData.state != undefined) {
 						oplib.fn.Form.state(nodeData.id, nodeData.state, elem);
 						nodeData.state = undefined;
 					}
-					//Apply Events
-					if (nodeData.events != undefined && typeof nodeData.events === "object") {
-						oplib.fn.Form.events(nodeData.id, nodeData.events, elem);
+					// Apply Events
+					if (nodeData.events != undefined
+							&& typeof nodeData.events === "object") {
+						oplib.fn.Form
+								.events(nodeData.id, nodeData.events, elem);
 						nodeData.events = undefined;
 					}
-					//Apply Actions
-					if (nodeData.actions != undefined && typeof nodeData.actions === "object") {
-						oplib.fn.Form.actions(nodeData.id, nodeData.actions, elem);
+					// Apply Actions
+					if (nodeData.actions != undefined
+							&& typeof nodeData.actions === "object") {
+						oplib.fn.Form.actions(nodeData.id, nodeData.actions,
+								elem);
 						nodeData.actions = undefined;
 					}
 					nodeData.created = false;
@@ -2988,11 +3322,14 @@ var oplib = (function() {
 		return false;
 	};
 
-	//DEPRECATED in updateData einfügen
-	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node, nodeOrder, pType, pId) {
-		var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, pType, pId);
-		var children = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, nodeType, nodeData.id);
-		//Kind existiert bereits. Knoten verschieben
+	// DEPRECATED in updateData einfügen
+	oplib.fn.Form.updateData.orderElems = function(nodeData, nodeType, node,
+			nodeOrder, pType, pId) {
+		var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder,
+				pType, pId);
+		var children = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder,
+				nodeType, nodeData.id);
+		// Kind existiert bereits. Knoten verschieben
 		if (children) {
 			parent.children.push(oplib.extend({}, children, {
 				parent : parent.node
@@ -3008,180 +3345,252 @@ var oplib = (function() {
 			});
 		}
 	};
-	//DEPRECATED 'pType' wird nicht benötigt
-	oplib.fn.Form.updateData.orderElems.getElems = function(nodeOrder, pType, pId) {
-		//Root
+	// DEPRECATED 'pType' wird nicht benötigt
+	oplib.fn.Form.updateData.orderElems.getElems = function(nodeOrder, pType,
+			pId) {
+		// Root
 		if (toString.call(nodeOrder) == "[object Array]" && nodeOrder.length) {
 			for (var i = 0; i < nodeOrder.length; i++) {
-				var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder[i], pType, pId);
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(
+						nodeOrder[i], pType, pId);
 				if (parent) {
 					return parent;
 				}
 			}
 		}
-		//Parent
-		else if (nodeOrder.children && toString.call(nodeOrder.children) == "[object Array]" && nodeOrder.children.length) {
+		// Parent
+		else if (nodeOrder.children
+				&& toString.call(nodeOrder.children) == "[object Array]"
+				&& nodeOrder.children.length) {
 			for (var i = 0; i < nodeOrder.children.length; i++) {
-				var parent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder.children[i], pType, pId);
+				var parent = oplib.fn.Form.updateData.orderElems.getElems(
+						nodeOrder.children[i], pType, pId);
 				if (parent) {
 					return parent;
 				}
 			}
 		}
-		//Ende der Rekursion
-		//NodeData *muss* vorhanden sein!
+		// Ende der Rekursion
+		// NodeData *muss* vorhanden sein!
 		if (!nodeOrder.nodeData) {
 			return false;
 		}
-		//IDs stimmen überein
-		if (nodeOrder.nodeData.id && nodeOrder.nodeData.id == pId && !nodeOrder.removed) {
+		// IDs stimmen überein
+		if (nodeOrder.nodeData.id && nodeOrder.nodeData.id == pId
+				&& !nodeOrder.removed) {
 			return nodeOrder;
 		}
-		//Nodes stimmen überein
+		// Nodes stimmen überein
 		else if (nodeOrder.node && nodeOrder.node == pId && !nodeOrder.removed) {
 			return nodeOrder;
 		}
-		//Nichts stimmt überein
+		// Nichts stimmt überein
 		else {
 			return false;
 		}
 	};
 
 	oplib.fn.Form.each = function(id, args, fn, elems) {
-		if (id == undefined || args == undefined || fn == undefined || elems == undefined) {
+		if (id == undefined || args == undefined || fn == undefined
+				|| elems == undefined) {
 			return false;
 		}
 		if (toString.call(elems) !== "[object Array]" && !oplib.isOPLib(elems)) {
-			elems = [elems];
+			elems = [ elems ];
 		}
 		return oplib.each(elems, function(id, args, fn) {
 			if (toString.call(id) == "[object Array]") {
 				oplib.each(id, function(args, fn, that) {
-					var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(that.oplib.Form.nodeOrder, "", this);
+					var nodeOrderElem = oplib.fn.Form.updateData.orderElems
+							.getElems(that.oplib.Form.nodeOrder, "", this);
 					if (nodeOrderElem == false) {
 						return;
 					} else {
-						fn.apply(nodeOrderElem, oplib.merge(args, [that]));
+						fn.apply(nodeOrderElem, oplib.merge(args, [ that ]));
 					}
-				}, [args, fn, this]);
+				}, [ args, fn, this ]);
 			} else {
-				var nodeOrderElem = oplib.fn.Form.updateData.orderElems.getElems(this.oplib.Form.nodeOrder, "", id);
+				var nodeOrderElem = oplib.fn.Form.updateData.orderElems
+						.getElems(this.oplib.Form.nodeOrder, "", id);
 				if (nodeOrderElem == false) {
 					return;
 				} else {
-					fn.apply(nodeOrderElem, oplib.merge(args, [this]));
+					fn.apply(nodeOrderElem, oplib.merge(args, [ this ]));
 				}
 			}
-		}, [id, args, fn]);
+		}, [ id, args, fn ]);
 	};
 
 	oplib.fn.Form.type = function(id, type, elems) {
-		return oplib.fn.Form.each(id, [type], function(type) {
+		return oplib.fn.Form.each(id, [ type ], function(type) {
 			$(this.node).attr("type", type);
 		}, elems);
 	};
 
 	oplib.fn.Form.attr = function(id, attr, elems) {
-		return oplib.fn.Form.each(id, [attr], function(attr) {
+		return oplib.fn.Form.each(id, [ attr ], function(attr) {
 			$(this.node).attr(attr);
 		}, elems);
 	};
 
 	oplib.fn.Form.html = function(id, html, elems) {
-		return oplib.fn.Form.each(id, [html], function(html) {
+		return oplib.fn.Form.each(id, [ html ], function(html) {
 			$(this.node).html(html);
 		}, elems);
 	};
 
 	oplib.fn.Form.state = function(id, state, elems) {
-		return oplib.fn.Form.each(id, [state], function(state, elem) {
-			//State auch auf label, legend und Neue Zeilen anwenden
-			var nodes = [];
-			var br = [];
-			var formSettings = this.nodeData;
-			var showAnimation = this.nodeType != "fieldset" ? formSettings.inputShowAnimation : formSettings.fieldsetShowAnimation;
-			var hideAnimation = this.nodeType != "fieldset" ? formSettings.inputHideAnimation : formSettings.fieldsetHideAnimation;
-			if (this.nodeData.label) {
-				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.label).node);
-			}
-			if (this.nodeData.br) {
-				br = oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.br.id).node;
-			}
-			if (this.nodeData.legend) {
-				nodes.push(oplib.fn.Form.updateData.orderElems.getElems(elem.oplib.Form.nodeOrder, "", this.nodeData.legend).node);
-			}
-			if (toString.call(state) !== "[object Array]") {
-				state = [state];
-			}
-			for (var i = 0; i < state.length; i++) {
-				switch (state[i]) {
-					case "shown":
-						OPLib(oplib.merge([], [this.node], nodes, [br])).stop(1);
-						if (this.nodeData.created && (formSettings.animateFirstShow || formSettings.animateFirst)) {
-							OPLib(this.node).anim(hideAnimation, 0);
-							OPLib(nodes).anim(formSettings.labelHideAnimation, 0);
-							OPLib(br).removeCss("display");
-							OPLib(this.node).anim(showAnimation, formSettings.showSpeed);
-							OPLib(nodes).anim(formSettings.labelShowAnimation, formSettings.showSpeed);
-						} else if (this.nodeData.created) {
-							OPLib(br).removeCss("display");
-							OPLib(this.node).hide(0).anim(showAnimation, 0);
-							OPLib(nodes).hide(0).anim(formSettings.labelShowAnimation, 0);
-						} else {
-							OPLib(br).removeCss("display");
-							OPLib(this.node).anim(showAnimation, formSettings.showSpeed);
-							OPLib(nodes).anim(formSettings.labelShowAnimation, formSettings.showSpeed);
-						}
-						break;
-					case "hidden":
-						OPLib(oplib.merge([], [this.node], nodes, [br])).stop(1);
-						if (this.nodeData.created && (formSettings.animateFirstHide || formSettings.animateFirst)) {
-							OPLib(br).removeCss("display");
-							OPLib(this.node).hide(0).anim(showAnimation, 0);
-							OPLib(nodes).hide(0).anim(formSettings.labelShowAnimation, 0);
-							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed, "", {
-								OPdone : function() {
-									OPLib(this).css("display", "none");
+		return oplib.fn.Form
+				.each(
+						id,
+						[ state ],
+						function(state, elem) {
+							// State auch auf label, legend und Neue Zeilen
+							// anwenden
+							var nodes = [];
+							var br = [];
+							var formSettings = this.nodeData;
+							var showAnimation = this.nodeType != "fieldset" ? formSettings.inputShowAnimation
+									: formSettings.fieldsetShowAnimation;
+							var hideAnimation = this.nodeType != "fieldset" ? formSettings.inputHideAnimation
+									: formSettings.fieldsetHideAnimation;
+							if (this.nodeData.label) {
+								nodes.push(oplib.fn.Form.updateData.orderElems
+										.getElems(elem.oplib.Form.nodeOrder,
+												"", this.nodeData.label).node);
+							}
+							if (this.nodeData.br) {
+								br = oplib.fn.Form.updateData.orderElems
+										.getElems(elem.oplib.Form.nodeOrder,
+												"", this.nodeData.br.id).node;
+							}
+							if (this.nodeData.legend) {
+								nodes.push(oplib.fn.Form.updateData.orderElems
+										.getElems(elem.oplib.Form.nodeOrder,
+												"", this.nodeData.legend).node);
+							}
+							if (toString.call(state) !== "[object Array]") {
+								state = [ state ];
+							}
+							for (var i = 0; i < state.length; i++) {
+								switch (state[i]) {
+								case "shown":
+									OPLib(
+											oplib.merge([], [ this.node ],
+													nodes, [ br ])).stop(1);
+									if (this.nodeData.created
+											&& (formSettings.animateFirstShow || formSettings.animateFirst)) {
+										OPLib(this.node).anim(hideAnimation, 0);
+										OPLib(nodes)
+												.anim(
+														formSettings.labelHideAnimation,
+														0);
+										OPLib(br).removeCss("display");
+										OPLib(this.node).anim(showAnimation,
+												formSettings.showSpeed);
+										OPLib(nodes)
+												.anim(
+														formSettings.labelShowAnimation,
+														formSettings.showSpeed);
+									} else if (this.nodeData.created) {
+										OPLib(br).removeCss("display");
+										OPLib(this.node).hide(0).anim(
+												showAnimation, 0);
+										OPLib(nodes)
+												.hide(0)
+												.anim(
+														formSettings.labelShowAnimation,
+														0);
+									} else {
+										OPLib(br).removeCss("display");
+										OPLib(this.node).anim(showAnimation,
+												formSettings.showSpeed);
+										OPLib(nodes)
+												.anim(
+														formSettings.labelShowAnimation,
+														formSettings.showSpeed);
+									}
+									break;
+								case "hidden":
+									OPLib(
+											oplib.merge([], [ this.node ],
+													nodes, [ br ])).stop(1);
+									if (this.nodeData.created
+											&& (formSettings.animateFirstHide || formSettings.animateFirst)) {
+										OPLib(br).removeCss("display");
+										OPLib(this.node).hide(0).anim(
+												showAnimation, 0);
+										OPLib(nodes)
+												.hide(0)
+												.anim(
+														formSettings.labelShowAnimation,
+														0);
+										OPLib(this.node).anim(
+												hideAnimation,
+												formSettings.hideSpeed,
+												"",
+												{
+													OPdone : function() {
+														OPLib(this).css(
+																"display",
+																"none");
+													}
+												}, br);
+										OPLib(nodes)
+												.anim(
+														formSettings.labelHideAnimation,
+														formSettings.hideSpeed);
+									} else if (this.nodeData.created) {
+										OPLib(this.node).anim(hideAnimation, 0);
+										OPLib(nodes)
+												.anim(
+														formSettings.labelHideAnimation,
+														0);
+										OPLib(br).anim(hideAnimation, 0);
+									} else {
+										OPLib(this.node).anim(
+												hideAnimation,
+												formSettings.hideSpeed,
+												"",
+												{
+													OPdone : function() {
+														OPLib(this).css(
+																"display",
+																"none");
+													}
+												}, br);
+										OPLib(nodes)
+												.anim(
+														formSettings.labelHideAnimation,
+														formSettings.hideSpeed);
+									}
+									break;
+								case "enabled":
+									OPLib(this.node).removeAttr("disabled");
+									OPLib(nodes).removeAttr("disabled");
+									break;
+								case "disabled":
+									OPLib(this.node).attr("disabled",
+											"disabled");
+									OPLib(nodes).attr("disabled", "disabled");
+									break;
+								default:
+									console.log(".Form: State [" + state[i]
+											+ "] not recognized.");
 								}
-							}, br);
-							OPLib(nodes).anim(formSettings.labelHideAnimation, formSettings.hideSpeed);
-						} else if (this.nodeData.created) {
-							OPLib(this.node).anim(hideAnimation, 0);
-							OPLib(nodes).anim(formSettings.labelHideAnimation, 0);
-							OPLib(br).anim(hideAnimation, 0);
-						} else {
-							OPLib(this.node).anim(hideAnimation, formSettings.hideSpeed, "", {
-								OPdone : function() {
-									OPLib(this).css("display", "none");
-								}
-							}, br);
-							OPLib(nodes).anim(formSettings.labelHideAnimation, formSettings.hideSpeed);
-						}
-						break;
-					case "enabled":
-						OPLib(this.node).removeAttr("disabled");
-						OPLib(nodes).removeAttr("disabled");
-						break;
-					case "disabled":
-						OPLib(this.node).attr("disabled", "disabled");
-						OPLib(nodes).attr("disabled", "disabled");
-						break;
-					default:
-						console.log(".Form: State [" + state[i] + "] not recognized.");
-				}
-			}
+							}
 
-		}, elems);
+						}, elems);
 	};
 
 	oplib.fn.Form.events = function(id, events, elems) {
-		return oplib.fn.Form.each(id, [events], function(events) {
-			for (var e in events) {
+		return oplib.fn.Form.each(id, [ events ], function(events) {
+			for ( var e in events) {
 				if (toString.call(events[e]) !== "[object Array]") {
-					events[e] = [events[e]];
+					events[e] = [ events[e] ];
 				}
 				for (var z = 0; z < events[e].length; z++) {
-					if ( typeof events[e][z] === "object") {
+					if (typeof events[e][z] === "object") {
 
 					} else {
 						$(this.node).events(e, events[e][z]);
@@ -3192,26 +3601,30 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.actions = function(id, actions, elems) {
-		return oplib.fn.Form.each(id, [actions], function(actions) {
-			for (var a in actions) {
+		return oplib.fn.Form.each(id, [ actions ], function(actions) {
+			for ( var a in actions) {
 				if (oplib.fn[a]) {
-					oplib.fn[a].apply(OPLib(this.node), [actions[a]]);
+					oplib.fn[a].apply(OPLib(this.node), [ actions[a] ]);
 				}
 			}
 		}, elems);
 	};
 
 	oplib.fn.Form.before = function(id, before, elems, dontUpdate) {
-		oplib.fn.Form.each(id, [before, dontUpdate], function(before, dontUpdate, elem) {
+		oplib.fn.Form.each(id, [ before, dontUpdate ], function(before,
+				dontUpdate, elem) {
 			if (dontUpdate) {
 				var nodeOrder = elem.oplib.Form.nodeOrder;
-				var nodeOrderBefore = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", before);
-				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var nodeOrderBefore = oplib.fn.Form.updateData.orderElems
+						.getElems(nodeOrder, "", before);
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems
+						.getElems(nodeOrder, "", this.parent);
 				var indexOfNode = nodeOrderParent.children.indexOf(this);
-				var indexOfBefore = nodeOrderParent.children.indexOf(nodeOrderBefore);
-				//Element entfernen
+				var indexOfBefore = nodeOrderParent.children
+						.indexOf(nodeOrderBefore);
+				// Element entfernen
 				nodeOrderParent.children.splice(indexOfNode, 1);
-				//Elemente neu einsortieren
+				// Elemente neu einsortieren
 				if (indexOfNode < indexOfBefore) {
 					indexOfBefore--;
 				}
@@ -3229,16 +3642,20 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.after = function(id, after, elems, dontUpdate) {
-		oplib.fn.Form.each(id, [after, dontUpdate], function(after, dontUpdate, elem) {
+		oplib.fn.Form.each(id, [ after, dontUpdate ], function(after,
+				dontUpdate, elem) {
 			if (dontUpdate) {
 				var nodeOrder = elem.oplib.Form.nodeOrder;
-				var nodeOrderAfter = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", after);
-				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var nodeOrderAfter = oplib.fn.Form.updateData.orderElems
+						.getElems(nodeOrder, "", after);
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems
+						.getElems(nodeOrder, "", this.parent);
 				var indexOfNode = nodeOrderParent.children.indexOf(this);
-				var indexOfAfter = nodeOrderParent.children.indexOf(nodeOrderAfter);
-				//Element entfernen
+				var indexOfAfter = nodeOrderParent.children
+						.indexOf(nodeOrderAfter);
+				// Element entfernen
 				nodeOrderParent.children.splice(indexOfNode, 1);
-				//Elemente neu einsortieren
+				// Elemente neu einsortieren
 				if (indexOfNode < indexOfAfter) {
 					indexOfAfter--;
 				}
@@ -3259,14 +3676,16 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.first = function(id, elems, dontUpdate) {
-		oplib.fn.Form.each(id, [first, dontUpdate], function(first, dontUpdate, elem) {
+		oplib.fn.Form.each(id, [ first, dontUpdate ], function(first,
+				dontUpdate, elem) {
 			if (dontUpdate) {
 				var nodeOrder = elem.oplib.Form.nodeOrder;
-				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems
+						.getElems(nodeOrder, "", this.parent);
 				var indexOfNode = nodeOrderParent.children.indexOf(this);
-				//Element entfernen
+				// Element entfernen
 				nodeOrderParent.children.splice(indexOfNode, 1);
-				//Element an den Anfang setzen
+				// Element an den Anfang setzen
 				nodeOrderParent.children.unshift(this);
 			} else {
 				this.nodeData.first = true;
@@ -3278,14 +3697,16 @@ var oplib = (function() {
 	};
 
 	oplib.fn.Form.last = function(id, elems, dontUpdate) {
-		oplib.fn.Form.each(id, [last, dontUpdate], function(last, dontUpdate, elem) {
+		oplib.fn.Form.each(id, [ last, dontUpdate ], function(last, dontUpdate,
+				elem) {
 			if (dontUpdate) {
 				var nodeOrder = elem.oplib.Form.nodeOrder;
-				var nodeOrderParent = oplib.fn.Form.updateData.orderElems.getElems(nodeOrder, "", this.parent);
+				var nodeOrderParent = oplib.fn.Form.updateData.orderElems
+						.getElems(nodeOrder, "", this.parent);
 				var indexOfNode = nodeOrderParent.children.indexOf(this);
-				//Element entfernen
+				// Element entfernen
 				nodeOrderParent.children.splice(indexOfNode, 1);
-				//Element an den Anfang setzen
+				// Element an den Anfang setzen
 				nodeOrderParent.children.push(this);
 			} else {
 				this.nodeData.last = true;
@@ -3363,8 +3784,9 @@ var oplib = (function() {
 		}
 		for (var i = 0; i < elem.oplib.Form.data[type].length; i++) {
 			if (elem.oplib.Form.data[type][i].id == id) {
-				//"br" wird intern bereits verwendet
-				if ( typeof elem.oplib.Form.data[type][i].br === "object" && data.br == true) {
+				// "br" wird intern bereits verwendet
+				if (typeof elem.oplib.Form.data[type][i].br === "object"
+						&& data.br == true) {
 					data.br = elem.oplib.Form.data[type][i].br;
 				}
 				elem.oplib.Form.data[type][i].update = data;
@@ -3386,7 +3808,7 @@ var oplib = (function() {
 		return false;
 	};
 
-	//Funktionen die mit Arrays arbeiten
+	// Funktionen die mit Arrays arbeiten
 	oplib.array = oplib.fn.array = {
 		includes : function(arr, elem) {
 			for (var i = 0; i < arr.length; i++) {
@@ -3397,20 +3819,20 @@ var oplib = (function() {
 			return -1;
 		},
 		sameElements : function(arr1, arr2) {
-			//Nur ein Argument angegeben? -> Dieses Object mit Argument
+			// Nur ein Argument angegeben? -> Dieses Object mit Argument
 			// vergleichen
 			if (arguments.length == 1) {
 				arr2 = arguments[0];
 				arr1 = this;
 			}
 			var newArr = [];
-			//Forschleife mit allen Elementen von arr1
+			// Forschleife mit allen Elementen von arr1
 			for (var i = 0; i < arr1.length; i++) {
-				//Forschleife mit allen Elementen von arr2
+				// Forschleife mit allen Elementen von arr2
 				for (var a = 0; a < arr2.length; a++) {
-					//Sind gleiche Elemente in arr1 und arr2 vorhanden
+					// Sind gleiche Elemente in arr1 und arr2 vorhanden
 					if (arr1[i] == arr2[a]) {
-						//Ja, dem neuen Array hinzufügen
+						// Ja, dem neuen Array hinzufügen
 						newArr.push(arr1[i]);
 					}
 				}
@@ -3443,35 +3865,38 @@ var oplib = (function() {
 		}
 	};
 
-	//Funktionen die mit Objects arbeiten
+	// Funktionen die mit Objects arbeiten
 	oplib.object = oplib.fn.object = {
 		compare : function(obj1, obj2) {
-			//Nur ein Argument angegeben? -> Dieses Object mit Argument
+			// Nur ein Argument angegeben? -> Dieses Object mit Argument
 			// vergleichen
 			if (arguments.length == 1) {
 				obj2 = arguments[0];
 				obj1 = this;
-			};
+			}
+			;
 			var newObj = {};
-			//Forschleife mit allen Elementen von abj1
-			for (var i in obj1) {
-				//Element von obj1 auch in ob2?
+			// Forschleife mit allen Elementen von abj1
+			for ( var i in obj1) {
+				// Element von obj1 auch in ob2?
 				if (obj2[i]) {
-					//Elemente von obj1 und obj2 gleich
+					// Elemente von obj1 und obj2 gleich
 					if (obj1[i] == obj2[i]) {
-						//Elemente newObj zuordnen
+						// Elemente newObj zuordnen
 						newObj[i] = obj1[i];
 					}
-				};
-			};
-			//Nur ein Argument angegeben? -> Object soll sich selbs verändern
+				}
+				;
+			}
+			;
+			// Nur ein Argument angegeben? -> Object soll sich selbs verändern
 			if (arguments.length == 1) {
-				//Alle eigenen Elemente löschen
-				for (var i in this) {
+				// Alle eigenen Elemente löschen
+				for ( var i in this) {
 					delete this[i];
 
 				}
-				for (var i in newObj) {//Gemeinsamme Elemente hinzufügen
+				for ( var i in newObj) {// Gemeinsamme Elemente hinzufügen
 					this[i] = newObj[i];
 				}
 			}
@@ -3479,21 +3904,21 @@ var oplib = (function() {
 		}
 	};
 
-	//Funktionen die mit RegExp arbeiten
+	// Funktionen die mit RegExp arbeiten
 	oplib.regexp = {
 		quote : function(str) {
 			return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
 		}
 	};
 
-	//Funktionen für die Zeit
+	// Funktionen für die Zeit
 	oplib.TIME = {
 		getCurrentTime : function() {
 			return new Date().getTime();
 		}
 	};
 
-	//Funktionen für IDs
+	// Funktionen für IDs
 	oplib.ID = {
 		uid : 0,
 		urid : 0,
@@ -3505,9 +3930,9 @@ var oplib = (function() {
 		}
 	};
 
-	//Standart Werte für name setzen
+	// Standart Werte für name setzen
 	oplib.defaults = function(group, name, value) {
-		//Keine Gruppe ausgewählt
+		// Keine Gruppe ausgewählt
 		if (!value) {
 			oplib.defaults[group] = name;
 		} else {
@@ -3518,17 +3943,17 @@ var oplib = (function() {
 		}
 		return this;
 	};
-	//Standartwerte
+	// Standartwerte
 	oplib.extend(oplib.defaults, {
-		//Gibt Default-Werte zurück
+		// Gibt Default-Werte zurück
 		get : function(group, name) {
 			if (!name) {
-				if ( typeof oplib.defaults[group] === "object") {
+				if (typeof oplib.defaults[group] === "object") {
 					return Object.create(oplib.defaults[group]);
 				}
 				return oplib.defaults[group];
 			} else {
-				if ( typeof oplib.defaults[group][name] === "object") {
+				if (typeof oplib.defaults[group][name] === "object") {
 					return Object.create(oplib.defaults[group][name]);
 				}
 				return oplib.defaults[group][name];
@@ -3644,7 +4069,7 @@ var oplib = (function() {
 			showSpeed : "fast",
 			hideSpeed : "fast",
 			inputSettings : {
-				state : ["shown", "enabled"],
+				state : [ "shown", "enabled" ],
 				br : true
 			},
 			fieldsetSettings : {
@@ -3653,22 +4078,22 @@ var oplib = (function() {
 		}
 	});
 
-	//Module, die nicht sofort initialisiert werden
+	// Module, die nicht sofort initialisiert werden
 	oplib.modules = {
 		isHover : false
 	};
 
-	//Debugging Console - Bugfix for IE
+	// Debugging Console - Bugfix for IE
 	if (!window.console) {
 		window.console = {
-			//Erstellt leere Funktion um IE-Crash zu verhindern
+			// Erstellt leere Funktion um IE-Crash zu verhindern
 			log : function() {
 			}
 		};
 
 	}
 
-	//Nötige Module aktivieren
+	// Nötige Module aktivieren
 	oplib.ElementSelection.isHover();
 
 	window._OPLib = window.OPLib;
