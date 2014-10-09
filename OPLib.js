@@ -3174,7 +3174,7 @@ var oplib = (function() {
 			case "br":
 			case "input":
 				node = document.createElement(type);
-				$(node).addClass("OPForm" + type + nodeData.id);
+				OPLib(node).addClass("OPForm" + type + nodeData.id);
 				break;
 			default:
 				console.log(".Form.updateData.createElement: Unknown Type: "
@@ -3188,7 +3188,7 @@ var oplib = (function() {
 			case "legend":
 			case "br":
 			case "input":
-				node = $(elem).find(" .OPForm" + type + nodeData.id)[0];
+				node = OPLib(elem).find(" .OPForm" + type + nodeData.id)[0];
 				break;
 			default:
 				console.log(".Form.updateData.createElement: Unknown Type: "
@@ -3204,7 +3204,7 @@ var oplib = (function() {
 			for (var i = 0; i < nodeOrder.length; i++) {
 				if (!nodeOrder[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder[i]);
-					$(nodeOrder[i].parent).append(nodeOrder[i].node);
+					OPLib(nodeOrder[i].parent).append(nodeOrder[i].node);
 				}
 			}
 
@@ -3215,7 +3215,7 @@ var oplib = (function() {
 			for (var i = 0; i < nodeOrder.children.length; i++) {
 				if (!nodeOrder.children[i].remove) {
 					oplib.fn.Form.updateData.insertElem(nodeOrder.children[i]);
-					$(nodeOrder.children[i].parent).append(
+					OPLib(nodeOrder.children[i].parent).append(
 							nodeOrder.children[i].node);
 				}
 			}
@@ -3423,19 +3423,19 @@ var oplib = (function() {
 
 	oplib.fn.Form.type = function(id, type, elems) {
 		return oplib.fn.Form.each(id, [ type ], function(type) {
-			$(this.node).attr("type", type);
+			OPLib(this.node).attr("type", type);
 		}, elems);
 	};
 
 	oplib.fn.Form.attr = function(id, attr, elems) {
 		return oplib.fn.Form.each(id, [ attr ], function(attr) {
-			$(this.node).attr(attr);
+			OPLib(this.node).attr(attr);
 		}, elems);
 	};
 
 	oplib.fn.Form.html = function(id, html, elems) {
 		return oplib.fn.Form.each(id, [ html ], function(html) {
-			$(this.node).html(html);
+			OPLib(this.node).html(html);
 		}, elems);
 	};
 
@@ -3593,7 +3593,7 @@ var oplib = (function() {
 					if (typeof events[e][z] === "object") {
 
 					} else {
-						$(this.node).events(e, events[e][z]);
+						OPLib(this.node).events(e, events[e][z]);
 					}
 				}
 			}
