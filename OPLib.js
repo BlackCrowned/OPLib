@@ -2600,6 +2600,32 @@ var oplib = (function() {
 		// Fügt handleList[elem] die auszuführende Funktion zu, etc.
 	});
 
+	// Overlays
+	oplib.Overlay = function(selector) {
+		oplib.Overlay.custom(selector);
+	};
+
+	oplib.Overlay.create = function(elem) {
+		var container = document.createElement("div");
+		$(container).appendTo("body").append(elem);
+		$(container).css({
+			position : "fixed"
+		});
+		$(container).css({
+			left : oplib.fn.finalizeCssExpressions("left", (window.innerWidth + window.pageXOffset) / 2 - oplib.fn.floatCssValue(oplib.getComputedStyle("width", container)) / 2)[1],
+			top : oplib.fn.finalizeCssExpressions("top", (window.innerHeight + window.pageYOffset) / 2 - oplib.fn.floatCssValue(oplib.getComputedStyle("height", container)) / 2)[1]
+		});
+	};
+
+	oplib.Overlay.custom = function(selector) {
+		var elem = oplib.ElementSelection(selector);
+		oplib.Overlay.create(elem);
+	};
+
+	oplib.Overlay.messageBox = function(title, message, confirmation) {
+
+	};
+
 	// Tooltips
 	oplib.fn.Tooltip = function(selector, context, options) {
 		if (!options) {
