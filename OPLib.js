@@ -2601,31 +2601,71 @@ var oplib = (function() {
 	});
 
 	// Overlays
-	oplib.Overlay = function(selector) {
-		oplib.Overlay.custom(selector);
+	oplib.Overlay = function(selector, callbacks, close, confirm, cancel) {
+		oplib.Overlay.custom(selector, callbacks, close, confirm, cancel);
 	};
 
-	oplib.Overlay.create = function(elem) {
+	oplib.Overlay.create = function(elems, callbacks, close, confirm, cancel) {
+		if (!elems) {
+			return;
+		}
+
 		var container = document.createElement("div");
-		$(container).appendTo("body").append(elem);
+		$(container).appendTo("body").append(elems);
 		$(container).css({
 			position : "fixed"
 		});
 		var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", container));
 		var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", container));
+
 		var windowWidth = window.innerWidth + window.pageXOffset;
 		var windowHeight = window.innerHeight + window.pageYOffset;
+
 		var left = (100 - width / windowWidth * 100) / 2;
 		var top = (100 - height / windowHeight * 100) / 2;
+
 		$(container).css({
 			left : left + "%",
 			top : top + "%"
 		});
+
+		OPLib(close, elems).events("click", function(e, container, callback) {
+			OPLib(container).hide("slow");
+		}, [container, callbacks.close]);
+
+		OPLib(confirm, elems).events("click", function(e, container, callback) {
+			OPLib(container).hide("slow");
+		}, [container, callbacks.confirm]);
+
+		OPLib(cancel, elems).events("click", function(e, container, callback) {
+			OPLib(container).hide("slow");
+		}, [container, callbacks.cancel]);
+
 	};
 
-	oplib.Overlay.custom = function(selector) {
-		var elem = oplib.ElementSelection(selector);
-		oplib.Overlay.create(elem);
+	oplib.Overlay.custom = function(selector, callbacks, close, confirm, cancel) {
+		if (!callbacks) {
+			callbacks = {};
+		}
+		if ( typeof callbacks === "function") {
+			callbacks = {
+				close : callbacks
+			};
+		}
+		//Verhindern, dass der Standart Selektor (body) ausgewählt wird
+		if (close == undefined) {
+			close = [];
+		}
+		if (confirm == undefined) {
+			confirm = [];
+		}
+		if (cancel == undefined) {
+			cancel = [];
+		}
+		
+		var elems = oplib.ElementSelection(selector);
+
+		oplib.Overlay.create(elems, callbacks, close, confirm, cancel);
 	};
 
 	oplib.Overlay.messageBox = function(title, message, confirmation) {
