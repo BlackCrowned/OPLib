@@ -2611,9 +2611,15 @@ var oplib = (function() {
 		$(container).css({
 			position : "fixed"
 		});
+		var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", container));
+		var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", container));
+		var windowWidth = window.innerWidth + window.pageXOffset;
+		var windowHeight = window.innerHeight + window.pageYOffset;
+		var left = (100 - width / windowWidth * 100) / 2;
+		var top = (100 - height / windowHeight * 100) / 2;
 		$(container).css({
-			left : oplib.fn.finalizeCssExpressions("left", (window.innerWidth + window.pageXOffset) / 2 - oplib.fn.floatCssValue(oplib.getComputedStyle("width", container)) / 2)[1],
-			top : oplib.fn.finalizeCssExpressions("top", (window.innerHeight + window.pageYOffset) / 2 - oplib.fn.floatCssValue(oplib.getComputedStyle("height", container)) / 2)[1]
+			left : left + "%",
+			top : top + "%"
 		});
 	};
 
