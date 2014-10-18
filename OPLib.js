@@ -444,7 +444,7 @@ var oplib = (function() {
 			}
 			return this;
 		},
-		// Entfernt die ausgew√§hlten aus dem DOM
+		// Entfernt die ausgew‰hlten aus dem DOM
 		remove : function() {
 			return this.each(function() {
 				//Muss bereits im DOM eingeordnet sein
@@ -2641,15 +2641,21 @@ var oplib = (function() {
 		});
 
 		OPLib(close, elem).events("click", function(e, elem, callback) {
-			OPLib(elem).hide("slow");
+			OPLib(elem).hide("slow", "", function(elem) {
+				OPLib(elem).remove();
+			});
 		}, [elem, callbacks.close]);
 
 		OPLib(confirm, elem).events("click", function(e, elem, callback) {
-			OPLib(elem).hide("slow");
+			OPLib(elem).hide("slow", "", function(elem) {
+				OPLib(elem).remove();
+			});
 		}, [elem, callbacks.confirm]);
 
 		OPLib(cancel, elem).events("click", function(e, elem, callback) {
-			OPLib(elem).hide("slow");
+			OPLib(elem).hide("slow", "", function(elem) {
+				OPLib(elem).remove();
+			});
 		}, [elem, callbacks.cancel]);
 
 	};
@@ -2673,7 +2679,7 @@ var oplib = (function() {
 		if (cancel == undefined) {
 			cancel = [];
 		}
-		
+
 		var elem = oplib.ElementSelection(selector)[0];
 
 		oplib.Overlay.create(elem, callbacks, close, confirm, cancel);
