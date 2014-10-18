@@ -2605,18 +2605,20 @@ var oplib = (function() {
 		oplib.Overlay.custom(selector, callbacks, close, confirm, cancel);
 	};
 
-	oplib.Overlay.create = function(elems, callbacks, close, confirm, cancel) {
-		if (!elems) {
+	oplib.Overlay.create = function(elem, callbacks, close, confirm, cancel) {
+		if (!elem) {
 			return;
 		}
 
-		var container = document.createElement("div");
-		$(container).appendTo("body").append(elems);
-		$(container).css({
+		if (!elem.parentNode) {
+			$(elem).appendTo("body");
+		}
+
+		$(elem).css({
 			position : "fixed"
 		});
-		var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", container));
-		var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", container));
+		var width = oplib.fn.floatCssValue(oplib.getComputedStyle("width", elem));
+		var height = oplib.fn.floatCssValue(oplib.getComputedStyle("height", elem));
 
 		var windowWidth = window.innerWidth + window.pageXOffset;
 		var windowHeight = window.innerHeight + window.pageYOffset;
@@ -2624,22 +2626,22 @@ var oplib = (function() {
 		var left = (100 - width / windowWidth * 100) / 2;
 		var top = (100 - height / windowHeight * 100) / 2;
 
-		$(container).css({
+		$(elem).css({
 			left : left + "%",
 			top : top + "%"
 		});
 
-		OPLib(close, elems).events("click", function(e, container, callback) {
-			OPLib(container).hide("slow");
-		}, [container, callbacks.close]);
+		OPLib(close, elem).events("click", function(e, elem, callback) {
+			OPLib(elem).hide("slow");
+		}, [elem, callbacks.close]);
 
-		OPLib(confirm, elems).events("click", function(e, container, callback) {
-			OPLib(container).hide("slow");
-		}, [container, callbacks.confirm]);
+		OPLib(confirm, elem).events("click", function(e, elem, callback) {
+			OPLib(elem).hide("slow");
+		}, [elem, callbacks.confirm]);
 
-		OPLib(cancel, elems).events("click", function(e, container, callback) {
-			OPLib(container).hide("slow");
-		}, [container, callbacks.cancel]);
+		OPLib(cancel, elem).events("click", function(e, elem, callback) {
+			OPLib(elem).hide("slow");
+		}, [elem, callbacks.cancel]);
 
 	};
 
@@ -2663,9 +2665,9 @@ var oplib = (function() {
 			cancel = [];
 		}
 		
-		var elems = oplib.ElementSelection(selector);
+		var elem = oplib.ElementSelection(selector)[0];
 
-		oplib.Overlay.create(elems, callbacks, close, confirm, cancel);
+		oplib.Overlay.create(elem, callbacks, close, confirm, cancel);
 	};
 
 	oplib.Overlay.messageBox = function(title, message, confirmation) {
