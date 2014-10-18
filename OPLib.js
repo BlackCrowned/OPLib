@@ -2796,6 +2796,19 @@ var oplib = (function() {
 		}, [elems]);
 	};
 
+	oplib.fn.Menu = function(options) {
+		options = oplib.extend(options, oplib.defaults.get("menuSettings"));
+		
+		this.each(function(options) {
+			if (OPLib(this).attr(options.header)) {
+				if (OPLib(this).attr(options.collapseable) && !OPLib(this).attr(options.disabled)) {
+				
+				}
+			}
+		}, [options]);
+		
+	};
+
 	oplib.fn.Form = function(data, options) {
 		/*
 		 * data: { fieldset: {id, fieldset, label, legend, after, before, first,
@@ -3702,6 +3715,10 @@ var oplib = (function() {
 			},
 			hideCallbacks : function() {
 			}
+		},
+		menuSettings: {
+			header: "OPMenuHeader",
+			disabled: "OPMenuDisabled",
 		},
 		formSettings : {
 			animateFirst : false,
