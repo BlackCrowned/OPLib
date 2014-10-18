@@ -432,7 +432,7 @@ var oplib = (function() {
 			}
 			return this;
 		},
-		// Ersetzt die ausgewähöten Elemente mit einem neuen Element
+		// Ersetzt die ausgewählten Elemente mit einem neuen Element
 		replace : function(selector, context) {
 			var elems = oplib.ElementSelection(selector, context);
 			var replaced = oplib.ElementSelection.replace(elems, this);
@@ -443,6 +443,15 @@ var oplib = (function() {
 				this.push(replaced[i]);
 			}
 			return this;
+		},
+		// Entfernt die ausgewÃ¤hlten aus dem DOM
+		remove : function() {
+			return this.each(function() {
+				//Muss bereits im DOM eingeordnet sein
+				if (this.parentNode) {
+					this.parentNode.removeChild(this);
+				}
+			}, []);
 		},
 		// Gibt an ob die Elemente gehovert sind
 		isHover : function(selector, context) {
